@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Track Metrika goal",
+      "method": "POST",
+      "body": {
+        "goal": "test_goal"
+      },
+      "expectedStatus": 200
+    },
+    {
+      "name": "OPTIONS request for CORS",
+      "method": "OPTIONS",
+      "expectedStatus": 200
+    }
+  ]
+}

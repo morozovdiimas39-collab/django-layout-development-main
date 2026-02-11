@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Get gallery images",
+      "method": "GET",
+      "path": "/?resource=gallery",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get reviews",
+      "method": "GET",
+      "path": "/?resource=reviews",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "partial"
+    }
+  ]
+}

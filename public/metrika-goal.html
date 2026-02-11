@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отправка цели</title>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(104854671, 'init', {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104854671" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    
+    <script>
+        // Получаем параметры из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const goal = urlParams.get('goal') || 'trial';
+        const clientId = urlParams.get('client_id') || '';
+        
+        console.log('Sending Metrika goal:', goal, 'Client ID:', clientId);
+        
+        // Ждём загрузки счётчика и отправляем цель
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof ym !== 'undefined') {
+                    ym(104854671, 'reachGoal', goal);
+                    console.log('✅ Goal sent:', goal);
+                    document.getElementById('status').innerHTML = '✅ Цель "' + goal + '" отправлена в Яндекс.Метрику';
+                } else {
+                    console.error('❌ Yandex.Metrika not loaded');
+                    document.getElementById('status').innerHTML = '❌ Ошибка: счётчик не загружен';
+                }
+            }, 2000);
+        });
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        #status {
+            padding: 20px 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="status">⏳ Отправка цели...</div>
+</body>
+</html>

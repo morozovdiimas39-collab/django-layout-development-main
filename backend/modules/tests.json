@@ -1,0 +1,10 @@
+{
+  "tests": [
+    {
+      "name": "Get acting modules",
+      "method": "GET",
+      "path": "/?course_type=acting",
+      "expectedStatus": 200
+    }
+  ]
+}

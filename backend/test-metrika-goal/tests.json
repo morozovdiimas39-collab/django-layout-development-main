@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "name": "GET request to send test goal",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "goal": "целевой_верь_мне"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

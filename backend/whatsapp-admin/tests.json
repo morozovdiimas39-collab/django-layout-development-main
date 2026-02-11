@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Get WhatsApp queue",
+      "method": "GET",
+      "path": "/?resource=queue",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Get WhatsApp stats",
+      "method": "GET",
+      "path": "/?resource=stats",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "active_campaigns": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

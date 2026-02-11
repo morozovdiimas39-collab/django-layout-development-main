@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Generate sitemap.xml",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "contains",
+      "expectedBodyContains": [
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
+        "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/",
+        "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting",
+        "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog"
+      ]
+    }
+  ]
+}

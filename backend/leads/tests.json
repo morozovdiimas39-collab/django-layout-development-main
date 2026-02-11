@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Create new lead",
+      "method": "POST",
+      "body": {
+        "phone": "+79991234567",
+        "source": "hero_form"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "phone": "+79991234567"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get all leads",
+      "method": "GET",
+      "expectedStatus": 200
+    }
+  ]
+}
