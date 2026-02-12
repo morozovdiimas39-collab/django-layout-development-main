@@ -1,7 +1,7 @@
 {
   "test-metrika-goal": "https://functions.yandexcloud.net/d4erb2302ru7d55d4rg8",
   "metrika-conversion": "https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c",
-  "whatsapp-sender": "https://functions.poehali.dev/cf9d81b7-d63b-4dfb-b6a5-e5b8024d550f",
+  "whatsapp-sender": "https://functions.yandexcloud.net/d4ekf1kqhsodfoojvu00",
   "sitemap": "https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3",
   "telegram-bot": "https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre",
   "gallery": "https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71",
@@ -14,5 +14,6 @@
   "metrika-goal-sender": "https://functions.yandexcloud.net/d4ernaei15ginpcjm2mm",
   "metrika-goals": "https://functions.yandexcloud.net/d4eh38e9uosso0tcsj48",
   "telegram-webhook-setup": "https://functions.yandexcloud.net/d4edo7gm4juibpt01mi1",
-  "whatsapp-admin": "https://functions.yandexcloud.net/d4e3ua2afh8p6196fe3n"
+  "whatsapp-admin": "https://functions.yandexcloud.net/d4e3ua2afh8p6196fe3n",
+  "whatsapp-cron": "https://functions.yandexcloud.net/d4e0v0dad2s56ino778s"
 }
