@@ -1,14 +1,16 @@
 {
   "test-metrika-goal": "https://functions.poehali.dev/eaf71132-0378-49cf-9966-68059de2f6fb",
-  "metrika-conversion": "https://functions.poehali.dev/deecaa66-01c6-4ce9-9cf5-9e65f82ada0b",
+  "metrika-conversion": "https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c",
   "whatsapp-sender": "https://functions.poehali.dev/cf9d81b7-d63b-4dfb-b6a5-e5b8024d550f",
   "sitemap": "https://functions.poehali.dev/f79990ef-62a3-4eb2-a904-1da4dc946923",
   "telegram-bot": "https://functions.poehali.dev/ee18a8c5-48c7-4ecd-bf90-d69fbfc2d751",
   "gallery": "https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71",
-  "modules": "https://functions.poehali.dev/c068a827-a908-48e9-8afa-9996a1421fe0",
-  "leads": "https://functions.poehali.dev/ec40ed33-a116-4026-8c8a-a3974e78b2fa",
+  "modules": "https://functions.yandexcloud.net/d4ekdduu52tfmtsjmq4f",
+  "leads": "https://functions.yandexcloud.net/d4edr6jj85mv48hoo4e1",
   "content": "https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq",
   "auth": "https://functions.yandexcloud.net/d4eq5vh7oqlkrud2jm37",
   "conversions-csv": "https://functions.yandexcloud.net/d4erc5m3p0asthme8kcj",
-  "get-chat-id": "https://functions.yandexcloud.net/d4e14nsqubhivk9cje5p"
+  "get-chat-id": "https://functions.yandexcloud.net/d4e14nsqubhivk9cje5p",
+  "metrika-goal-sender": "https://functions.yandexcloud.net/d4ernaei15ginpcjm2mm",
+  "metrika-goals": "https://functions.yandexcloud.net/d4eh38e9uosso0tcsj48"
 }
