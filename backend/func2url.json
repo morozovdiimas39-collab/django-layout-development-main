@@ -7,5 +7,6 @@
   "gallery": "https://functions.poehali.dev/42a4a1c9-5ce7-4d3d-8760-f3ef702ed550",
   "modules": "https://functions.poehali.dev/c068a827-a908-48e9-8afa-9996a1421fe0",
   "leads": "https://functions.poehali.dev/ec40ed33-a116-4026-8c8a-a3974e78b2fa",
-  "content": "https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247"
+  "content": "https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247",
+  "auth": "https://functions.yandexcloud.net/d4eq5vh7oqlkrud2jm37"
 }
