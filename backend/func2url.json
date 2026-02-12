@@ -4,9 +4,11 @@
   "whatsapp-sender": "https://functions.poehali.dev/cf9d81b7-d63b-4dfb-b6a5-e5b8024d550f",
   "sitemap": "https://functions.poehali.dev/f79990ef-62a3-4eb2-a904-1da4dc946923",
   "telegram-bot": "https://functions.poehali.dev/ee18a8c5-48c7-4ecd-bf90-d69fbfc2d751",
-  "gallery": "https://functions.poehali.dev/42a4a1c9-5ce7-4d3d-8760-f3ef702ed550",
+  "gallery": "https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71",
   "modules": "https://functions.poehali.dev/c068a827-a908-48e9-8afa-9996a1421fe0",
   "leads": "https://functions.poehali.dev/ec40ed33-a116-4026-8c8a-a3974e78b2fa",
-  "content": "https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247",
-  "auth": "https://functions.yandexcloud.net/d4eq5vh7oqlkrud2jm37"
+  "content": "https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq",
+  "auth": "https://functions.yandexcloud.net/d4eq5vh7oqlkrud2jm37",
+  "conversions-csv": "https://functions.yandexcloud.net/d4erc5m3p0asthme8kcj",
+  "get-chat-id": "https://functions.yandexcloud.net/d4e14nsqubhivk9cje5p"
 }
