@@ -1,7 +1,7 @@
 const API_URLS = {
   auth: 'https://functions.poehali.dev/83abe3b3-8c2b-4e55-8a3d-5eccd2d5f356',
   content: 'https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247',
-  leads: 'https://functions.poehali.dev/ec40ed33-a116-4026-8c8a-a3974e78b2fa',
+  leads: 'https://functions.yandexcloud.net/d4edr6jj85mv48hoo4e1',
   modules: 'https://functions.poehali.dev/c068a827-a908-48e9-8afa-9996a1421fe0',
   gallery: 'https://functions.poehali.dev/42a4a1c9-5ce7-4d3d-8760-f3ef702ed550',
   whatsapp: 'https://functions.poehali.dev/ea8edaad-cd4c-4b81-9401-3e985f910159',
