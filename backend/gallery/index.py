@@ -60,14 +60,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'POST':
             headers = event.get('headers', {})
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
-            
-            if not token:
-                return {
-                    'statusCode': 401,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Authorization required'})
-                }
-            
             body_data = json.loads(event.get('body', '{}'))
             resource = body_data.get('resource', resource)
             
@@ -91,6 +83,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                         'body': resp.read().decode(),
                     }
+            
+            if not token:
+                return {
+                    'statusCode': 401,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Authorization required'})
+                }
             
             if resource == 'gallery':
                 cur.execute(

@@ -9,6 +9,7 @@ import PhoneForm from "@/components/PhoneForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { api, TeamMember } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
+import { SITE_URL } from "@/lib/constants";
 
 export default function TeacherPage() {
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -326,7 +327,7 @@ export default function TeacherPage() {
             "Постановка сериалов",
             "Обучение актёров",
           ],
-          url: "https://acting-school.poehali.dev/teacher",
+          url: `${SITE_URL}/teacher`,
           image:
             "https://st.business-key.com/i/files/45470/2024/02/1707986927.jpg",
           sameAs: [

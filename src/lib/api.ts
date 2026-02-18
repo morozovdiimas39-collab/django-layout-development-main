@@ -1,4 +1,4 @@
-const API_URLS = {
+export const API_URLS = {
   auth: 'https://functions.yandexcloud.net/d4eq5vh7oqlkrud2jm37',
   content: 'https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq',
   leads: 'https://functions.yandexcloud.net/d4edr6jj85mv48hoo4e1',

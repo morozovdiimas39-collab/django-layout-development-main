@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_URLS } from '@/lib/api';
 
 interface ContentContextType {
   content: Record<string, string>;
@@ -16,7 +17,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const fetchContent = async () => {
     try {
-      const response = await fetch('https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq');
+      const response = await fetch(API_URLS.content);
       if (response.ok) {
         const data = await response.json();
         const contentMap: Record<string, string> = {};

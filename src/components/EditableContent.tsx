@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useContent } from '@/contexts/ContentContext';
+import { API_URLS } from '@/lib/api';
 import Icon from '@/components/ui/icon';
 
 interface EditableContentProps {
@@ -48,7 +49,7 @@ export default function EditableContent({
     try {
       setIsSaving(true);
       const response = await fetch(
-        'https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq',
+        API_URLS.content,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
