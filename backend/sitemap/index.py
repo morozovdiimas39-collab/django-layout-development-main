@@ -48,7 +48,7 @@ def handler(event: dict, context) -> dict:
         cur = conn.cursor()
         cur.execute("""
             SELECT slug, updated_at, created_at 
-            FROM blog_posts 
+            FROM public.blog_posts 
             ORDER BY created_at DESC
         """)
         

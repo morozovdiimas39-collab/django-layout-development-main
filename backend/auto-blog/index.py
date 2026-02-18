@@ -116,7 +116,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         conn = psycopg2.connect(db_url)
         cur = conn.cursor()
         cur.execute("""
-            CREATE TABLE IF NOT EXISTS blog_posts (
+            CREATE TABLE IF NOT EXISTS public.blog_posts (
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 slug VARCHAR(255) UNIQUE NOT NULL,
@@ -133,7 +133,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             try_slug = f"{slug}-{attempt}" if attempt else slug
             try:
                 cur.execute(
-                    """INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published)
+                    """INSERT INTO public.blog_posts (title, slug, content, excerpt, image_url, published)
                        VALUES (%s, %s, %s, %s, %s, true) RETURNING id""",
                     (title, try_slug, content, excerpt, image_url),
                 )

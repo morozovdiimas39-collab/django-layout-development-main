@@ -72,3 +72,13 @@ jobs:
             --source-path=backend/auto-blog \
             || true
 
+      - name: Deploy sitemap function
+        run: |
+          yc serverless function version create \
+            --function-name=sitemap \
+            --runtime=python312 \
+            --entrypoint=handler \
+            --memory=128m \
+            --execution-timeout=30 \
+            --source-path=backend/sitemap \
+            || true
