@@ -46,9 +46,6 @@ def handler(event: dict, context) -> dict:
         dsn = os.environ.get('DATABASE_URL')
         conn = psycopg2.connect(dsn)
         cur = conn.cursor()
-        schema = (os.environ.get('DB_SCHEMA') or 'public').strip()
-        if schema and all(c.isalnum() or c in '_.-' for c in schema):
-            cur.execute("SET search_path TO %s", (schema,))
         cur.execute("""
             SELECT slug, updated_at, created_at 
             FROM blog_posts 

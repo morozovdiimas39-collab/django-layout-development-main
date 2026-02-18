@@ -115,12 +115,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         conn = psycopg2.connect(db_url)
         cur = conn.cursor()
-        schema = (os.environ.get("DB_SCHEMA") or "public").strip()
-        if not schema or not re.match(r"^[a-zA-Z0-9_]+$", schema):
-            schema = "public"
-        tbl = f'"{schema}".blog_posts'
-        cur.execute(f"""
-            CREATE TABLE IF NOT EXISTS {tbl} (
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS blog_posts (
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 slug VARCHAR(255) UNIQUE NOT NULL,
@@ -137,7 +133,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             try_slug = f"{slug}-{attempt}" if attempt else slug
             try:
                 cur.execute(
-                    f"""INSERT INTO {tbl} (title, slug, content, excerpt, image_url, published)
+                    """INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published)
                        VALUES (%s, %s, %s, %s, %s, true) RETURNING id""",
                     (title, try_slug, content, excerpt, image_url),
                 )
