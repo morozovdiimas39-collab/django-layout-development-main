@@ -6,6 +6,7 @@ import os
 import psycopg2
 from datetime import datetime
 
+
 def handler(event: dict, context) -> dict:
     """Генерирует sitemap.xml с статическими и динамическими URL"""
     method = event.get('httpMethod', 'GET')
@@ -45,10 +46,12 @@ def handler(event: dict, context) -> dict:
         dsn = os.environ.get('DATABASE_URL')
         conn = psycopg2.connect(dsn)
         cur = conn.cursor()
-        
+        schema = (os.environ.get('DB_SCHEMA') or 'public').strip()
+        if schema and all(c.isalnum() or c in '_.-' for c in schema):
+            cur.execute("SET search_path TO %s", (schema,))
         cur.execute("""
             SELECT slug, updated_at, created_at 
-            FROM t_p90119217_django_layout_develo.blog_posts 
+            FROM blog_posts 
             ORDER BY created_at DESC
         """)
         

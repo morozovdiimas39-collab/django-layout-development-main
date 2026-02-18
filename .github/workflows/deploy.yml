@@ -50,3 +50,25 @@ jobs:
         run: |
           yc storage cp --recursive ./dist "s3://$YC_BUCKET"
 
+      - name: Deploy gallery function
+        run: |
+          yc serverless function version create \
+            --function-name=gallery \
+            --runtime=python312 \
+            --entrypoint=handler \
+            --memory=256m \
+            --execution-timeout=60 \
+            --source-path=backend/gallery \
+            || true
+
+      - name: Deploy auto-blog function
+        run: |
+          yc serverless function version create \
+            --function-name=auto-blog \
+            --runtime=python312 \
+            --entrypoint=handler \
+            --memory=256m \
+            --execution-timeout=60 \
+            --source-path=backend/auto-blog \
+            || true
+
