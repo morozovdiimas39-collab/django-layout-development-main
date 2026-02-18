@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 interface BlogManagerProps {
   blog: BlogPost[];
+  onGenerate?: () => Promise<void>;
   newBlogPost: {
     title: string;
     excerpt: string;
@@ -29,6 +30,7 @@ interface BlogManagerProps {
 
 export default function BlogManager({
   blog,
+  onGenerate,
   newBlogPost,
   editingBlogPost,
   onNewPostChange,
@@ -41,6 +43,17 @@ export default function BlogManager({
   onLoadSamples
 }: BlogManagerProps) {
   const [loadingSamples, setLoadingSamples] = useState(false);
+  const [loadingGenerate, setLoadingGenerate] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!onGenerate) return;
+    setLoadingGenerate(true);
+    try {
+      await onGenerate();
+    } finally {
+      setLoadingGenerate(false);
+    }
+  };
 
   const handleLoadSamples = async () => {
     setLoadingSamples(true);
@@ -115,10 +128,18 @@ export default function BlogManager({
               placeholder="https://example.com/image.jpg"
             />
           </div>
-          <Button onClick={onCreate} className="w-full">
-            <Icon name="Plus" size={16} className="mr-2" />
-            Добавить статью
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={onCreate} className="flex-1">
+              <Icon name="Plus" size={16} className="mr-2" />
+              Добавить статью
+            </Button>
+            {onGenerate && (
+              <Button onClick={handleGenerate} variant="secondary" disabled={loadingGenerate}>
+                <Icon name="Sparkles" size={16} className="mr-2" />
+                {loadingGenerate ? 'Генерирую...' : 'Сгенерировать (Gemini)'}
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 

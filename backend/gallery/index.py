@@ -1,5 +1,6 @@
 import json
 import os
+import urllib.request
 from typing import Dict, Any
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -69,6 +70,27 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             body_data = json.loads(event.get('body', '{}'))
             resource = body_data.get('resource', resource)
+            
+            if resource == 'blog' and body_data.get('action') == 'generate':
+                url = os.environ.get('AUTO_BLOG_URL', '').strip()
+                if not url:
+                    return {
+                        'statusCode': 500,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'AUTO_BLOG_URL not configured'}),
+                    }
+                req = urllib.request.Request(
+                    url,
+                    data=b'{}',
+                    method='POST',
+                    headers={'Content-Type': 'application/json'}
+                )
+                with urllib.request.urlopen(req, timeout=120) as resp:
+                    return {
+                        'statusCode': 200,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': resp.read().decode(),
+                    }
             
             if resource == 'gallery':
                 cur.execute(

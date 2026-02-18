@@ -368,6 +368,21 @@ export const api = {
       }
       return response.json();
     },
+    generateBlogPost: async (token: string) => {
+      const response = await fetch(API_URLS.gallery, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify({ resource: 'blog', action: 'generate' })
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(err.error || 'Failed to generate post');
+      }
+      return response.json();
+    },
     deleteBlogPost: async (id: number, token: string) => {
       const response = await fetch(API_URLS.gallery, {
         method: 'DELETE',

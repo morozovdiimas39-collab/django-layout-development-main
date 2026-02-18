@@ -451,6 +451,17 @@ export default function AdminPage() {
     }
   };
 
+  const handleGenerateBlogPost = async () => {
+    try {
+      const res = await api.gallery.generateBlogPost(token);
+      await loadData(token);
+      alert(res?.ok ? `✅ Статья опубликована: ${res.title || ''}` : 'Статья добавлена');
+    } catch (error) {
+      console.error('Error generating blog post:', error);
+      alert(`Ошибка: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} loading={loading} />;
   }
@@ -563,6 +574,7 @@ export default function AdminPage() {
           <TabsContent value="blog">
             <BlogManager
               blog={blog}
+              onGenerate={handleGenerateBlogPost}
               newBlogPost={newBlogPost}
               editingBlogPost={editingBlogPost}
               onNewPostChange={(field, value) => setNewBlogPost({ ...newBlogPost, [field]: value })}
