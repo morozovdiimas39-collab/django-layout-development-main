@@ -37,7 +37,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             result = json.loads(response.read().decode('utf-8'))
         
         # Восстанавливаем webhook
-        webhook_url = 'https://functions.poehali.dev/ee18a8c5-48c7-4ecd-bf90-d69fbfc2d751'
+        webhook_url = 'https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre'
         set_webhook_url = f'https://api.telegram.org/bot{BOT_TOKEN}/setWebhook'
         webhook_data = json.dumps({'url': webhook_url}).encode('utf-8')
         webhook_req = urllib.request.Request(

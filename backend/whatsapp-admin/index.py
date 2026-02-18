@@ -150,7 +150,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 cur.close()
                 conn.close()
                 
-                sender_url = 'https://functions.poehali.dev/056bc93d-3039-4809-b29d-580752202bea'
+                sender_url = 'https://functions.yandexcloud.net/d4ekf1kqhsodfoojvu00'
                 try:
                     req = urllib.request.Request(sender_url, method='GET')
                     with urllib.request.urlopen(req, timeout=5) as response:

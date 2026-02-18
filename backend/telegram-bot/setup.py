@@ -3,7 +3,7 @@ import urllib.request
 import json
 
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
-WEBHOOK_URL = "https://functions.poehali.dev/ee18a8c5-48c7-4ecd-bf90-d69fbfc2d751"
+WEBHOOK_URL = "https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre"
 
 print("🔍 Проверяю текущий webhook...")
 url = f'https://api.telegram.org/bot{BOT_TOKEN}/getWebhookInfo'

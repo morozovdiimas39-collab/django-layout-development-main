@@ -48,7 +48,7 @@ export default function EditableContent({
     try {
       setIsSaving(true);
       const response = await fetch(
-        'https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247',
+        'https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq',
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

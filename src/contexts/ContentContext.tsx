@@ -16,7 +16,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const fetchContent = async () => {
     try {
-      const response = await fetch('https://functions.poehali.dev/61658db6-95ff-425a-9741-d83782aae247');
+      const response = await fetch('https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq');
       if (response.ok) {
         const data = await response.json();
         const contentMap: Record<string, string> = {};

@@ -4,7 +4,7 @@ import os
 from typing import Dict, Any
 
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN_NEW') or os.environ.get('TELEGRAM_BOT_TOKEN')
-WEBHOOK_URL = "https://functions.poehali.dev/ee18a8c5-48c7-4ecd-bf90-d69fbfc2d751"
+WEBHOOK_URL = "https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre"
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''

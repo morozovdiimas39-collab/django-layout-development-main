@@ -108,16 +108,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     (body_data.get('question'), body_data.get('answer'), body_data.get('order_num', 0))
                 )
             elif resource == 'blog':
-                title = body_data.get('title', '')
-                slug = body_data.get('slug', '')
-                if not slug and title:
-                    import re
+                import re
+                title = (body_data.get('title') or '').strip() or 'Без названия'
+                content = body_data.get('content') or ''
+                slug = (body_data.get('slug') or '').strip()
+                if not slug:
                     slug = re.sub(r'[^\w\s-]', '', title.lower())
-                    slug = re.sub(r'[\s_-]+', '-', slug)
-                    slug = slug.strip('-')[:200]
+                    slug = re.sub(r'[\s_-]+', '-', slug).strip('-')[:200] or 'post'
+                excerpt = body_data.get('excerpt') or ''
+                image_url = body_data.get('image_url') or ''
                 cur.execute(
                     "INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published) VALUES (%s, %s, %s, %s, %s, %s) RETURNING *",
-                    (title, slug, body_data.get('content'), body_data.get('excerpt'), body_data.get('image_url'), body_data.get('published', False))
+                    (title, slug, content, excerpt, image_url, body_data.get('published', False))
                 )
             elif resource == 'team':
                 cur.execute(

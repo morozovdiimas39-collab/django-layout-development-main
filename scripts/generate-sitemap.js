@@ -23,7 +23,7 @@ const staticPages = [
 
 async function fetchBlogPosts() {
   try {
-    const response = await fetch('https://functions.poehali.dev/65f1e479-1fb4-4fc3-b8f4-0a72c2c39de5');
+    const response = await fetch('https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3');
     const posts = await response.json();
     return posts.map(post => ({
       loc: `/blog/${post.slug}`,

@@ -361,7 +361,7 @@ def update_telegram_message(lead: dict):
 
 def send_metrika_goal(goal: str, client_id: str, lead_id: int, params: dict = None):
     '''Отправка цели в Яндекс.Метрику'''
-    metrika_url = 'https://functions.poehali.dev/3d824f97-2f09-44e4-8c9a-54af8aa6ccce'
+    metrika_url = 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c'
     
     payload = {
         'goal': goal,

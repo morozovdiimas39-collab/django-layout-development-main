@@ -104,9 +104,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             "body": json.dumps({"error": str(e)}),
         }
 
-    title = article.get("title", "Статья")[:255]
+    title = (article.get("title") or "Статья").strip()[:255] or "Статья"
     excerpt = (article.get("excerpt") or "")[:500]
-    content = article.get("content", "")
+    content = (article.get("content") or "").strip() or "<p>Содержание статьи.</p>"
     slug = slugify(title)
     image_url = f"{site_url}/images/b34e4f5d-452d-44bb-bedb-a00378237a0c.jpg"
 
