@@ -107,7 +107,8 @@ export const api = {
   content: {
     getAll: async (): Promise<SiteContent[]> => {
       const response = await fetch(API_URLS.content);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     getByKey: async (key: string): Promise<SiteContent> => {
       const response = await fetch(`${API_URLS.content}?key=${key}`);
@@ -131,7 +132,8 @@ export const api = {
       const response = await fetch(API_URLS.leads, {
         headers: { 'X-Auth-Token': token }
       });
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     create: async (data: { 
       name?: string; 
@@ -164,11 +166,13 @@ export const api = {
   modules: {
     getAll: async (): Promise<CourseModule[]> => {
       const response = await fetch(API_URLS.modules);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     getByCourse: async (courseType: string): Promise<CourseModule[]> => {
       const response = await fetch(`${API_URLS.modules}?course_type=${courseType}`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     create: async (module: Partial<CourseModule>, token: string) => {
       const response = await fetch(API_URLS.modules, {
@@ -208,7 +212,8 @@ export const api = {
   gallery: {
     getImages: async (): Promise<GalleryImage[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=gallery`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     createImage: async (image: Partial<GalleryImage>, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -245,7 +250,8 @@ export const api = {
     },
     getReviews: async (): Promise<Review[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=reviews`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     createReview: async (review: Partial<Review>, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -297,7 +303,8 @@ export const api = {
     },
     getFAQ: async (): Promise<FAQ[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=faq`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     createFAQ: async (faq: Partial<FAQ>, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -334,7 +341,8 @@ export const api = {
     },
     getBlog: async (): Promise<BlogPost[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=blog`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     createBlogPost: async (post: Partial<BlogPost>, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -401,7 +409,8 @@ export const api = {
     },
     getTeam: async (): Promise<TeamMember[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=team`);
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     createTeamMember: async (member: Partial<TeamMember>, token: string) => {
       const response = await fetch(`${API_URLS.gallery}?resource=team`, {

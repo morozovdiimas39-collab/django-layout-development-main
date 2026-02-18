@@ -20,7 +20,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         const contentMap: Record<string, string> = {};
-        data.forEach((item: { key: string; value: string }) => {
+        const items = Array.isArray(data) ? data : [];
+        items.forEach((item: { key: string; value: string }) => {
           contentMap[item.key] = item.value;
         });
         setContent(contentMap);
