@@ -115,12 +115,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         conn = psycopg2.connect(db_url)
         cur = conn.cursor()
-        cur.execute("SELECT table_schema FROM information_schema.tables WHERE table_name = 'blog_posts' LIMIT 1")
-        row = cur.fetchone()
-        sch = row[0] if row else 'public'
-        if not row:
-            cur.execute(f"""
-                CREATE TABLE IF NOT EXISTS "{sch}".blog_posts (
+        cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS blog_posts (
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 slug VARCHAR(255) UNIQUE NOT NULL,
@@ -131,14 +128,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
-            conn.commit()
+        """)
+        conn.commit()
         for attempt in range(5):
             try_slug = f"{slug}-{attempt}" if attempt else slug
             try:
                 cur.execute(
-                    f'''INSERT INTO "{sch}".blog_posts (title, slug, content, excerpt, image_url, published)
-                       VALUES (%s, %s, %s, %s, %s, true) RETURNING id''',
+                    """INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published)
+                       VALUES (%s, %s, %s, %s, %s, true) RETURNING id""",
                     (title, try_slug, content, excerpt, image_url),
                 )
                 row = cur.fetchone()

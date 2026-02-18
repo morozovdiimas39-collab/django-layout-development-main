@@ -46,12 +46,10 @@ def handler(event: dict, context) -> dict:
         dsn = os.environ.get('DATABASE_URL')
         conn = psycopg2.connect(dsn)
         cur = conn.cursor()
-        cur.execute("SELECT table_schema FROM information_schema.tables WHERE table_name = 'blog_posts' LIMIT 1")
-        row = cur.fetchone()
-        sch = row[0] if row else 'public'
-        cur.execute(f"""
+        cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+        cur.execute("""
             SELECT slug, updated_at, created_at 
-            FROM "{sch}".blog_posts 
+            FROM blog_posts 
             ORDER BY created_at DESC
         """)
         
