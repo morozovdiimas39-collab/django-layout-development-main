@@ -1,10 +1,12 @@
 """
 Генерация sitemap.xml с динамическими URL статей блога
+Соответствует стандарту sitemaps.org protocol 0.9
 """
 import json
 import os
 import psycopg2
 from datetime import datetime
+from xml.sax.saxutils import escape
 
 
 def handler(event: dict, context) -> dict:
@@ -44,32 +46,53 @@ def handler(event: dict, context) -> dict:
     blog_posts = []
     try:
         dsn = os.environ.get('DATABASE_URL')
-        conn = psycopg2.connect(dsn)
-        cur = conn.cursor()
-        cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
-        cur.execute("""
-            SELECT slug, updated_at, created_at 
-            FROM blog_posts 
-            ORDER BY created_at DESC
-        """)
-        
-        rows = cur.fetchall()
-        for row in rows:
-            slug, updated_at, created_at = row
-            lastmod = (updated_at or created_at).strftime('%Y-%m-%d') if (updated_at or created_at) else datetime.now().strftime('%Y-%m-%d')
-            blog_posts.append({
-                'loc': f'/blog/{slug}',
-                'priority': '0.7',
-                'changefreq': 'monthly',
-                'lastmod': lastmod
-            })
-        
-        cur.close()
-        conn.close()
+        if not dsn:
+            print("[sitemap] DATABASE_URL not set")
+        else:
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor()
+            cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+            cur.execute("""
+                SELECT slug, updated_at, created_at 
+                FROM blog_posts 
+                WHERE published = true
+                ORDER BY COALESCE(updated_at, created_at) DESC
+            """)
+            
+            rows = cur.fetchall()
+            print(f"[sitemap] Found {len(rows)} published blog posts")
+            for row in rows:
+                slug, updated_at, created_at = row
+                if not slug:
+                    print(f"[sitemap] Skipping post with empty slug")
+                    continue
+                
+                # Используем updated_at если есть, иначе created_at, иначе текущую дату
+                if updated_at:
+                    lastmod = updated_at.strftime('%Y-%m-%d')
+                elif created_at:
+                    lastmod = created_at.strftime('%Y-%m-%d')
+                else:
+                    lastmod = datetime.now().strftime('%Y-%m-%d')
+                
+                blog_posts.append({
+                    'loc': f'/blog/{slug}',
+                    'priority': '0.7',
+                    'changefreq': 'monthly',
+                    'lastmod': lastmod
+                })
+                print(f"[sitemap] Added post: {slug}, lastmod: {lastmod}")
+            
+            print(f"[sitemap] Total blog posts in sitemap: {len(blog_posts)}")
+            
+            cur.close()
+            conn.close()
     except Exception as e:
-        print(f"Error fetching blog posts: {e}")
+        import traceback
+        print(f"[sitemap] Error fetching blog posts: {e}")
+        print(f"[sitemap] Traceback: {traceback.format_exc()}")
     
-    # Генерируем XML
+    # Генерируем XML согласно стандарту sitemaps.org protocol 0.9
     today = datetime.now().strftime('%Y-%m-%d')
     
     xml_lines = ['<?xml version="1.0" encoding="UTF-8"?>']
@@ -77,8 +100,9 @@ def handler(event: dict, context) -> dict:
     
     # Статические страницы
     for page in static_pages:
+        loc = escape(f'{base_url}{page["loc"]}')
         xml_lines.append('  <url>')
-        xml_lines.append(f'    <loc>{base_url}{page["loc"]}</loc>')
+        xml_lines.append(f'    <loc>{loc}</loc>')
         xml_lines.append(f'    <lastmod>{today}</lastmod>')
         xml_lines.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
         xml_lines.append(f'    <priority>{page["priority"]}</priority>')
@@ -86,8 +110,9 @@ def handler(event: dict, context) -> dict:
     
     # Статьи блога
     for post in blog_posts:
+        loc = escape(f'{base_url}{post["loc"]}')
         xml_lines.append('  <url>')
-        xml_lines.append(f'    <loc>{base_url}{post["loc"]}</loc>')
+        xml_lines.append(f'    <loc>{loc}</loc>')
         xml_lines.append(f'    <lastmod>{post["lastmod"]}</lastmod>')
         xml_lines.append(f'    <changefreq>{post["changefreq"]}</changefreq>')
         xml_lines.append(f'    <priority>{post["priority"]}</priority>')
