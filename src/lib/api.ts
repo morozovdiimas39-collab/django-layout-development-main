@@ -344,6 +344,11 @@ export const api = {
       const data = await response.json();
       return Array.isArray(data) ? data : [];
     },
+    getBlogPost: async (slug: string): Promise<BlogPost | null> => {
+      const response = await fetch(`${API_URLS.gallery}?resource=blog&slug=${encodeURIComponent(slug)}`);
+      const data = await response.json();
+      return Array.isArray(data) && data[0] ? data[0] : null;
+    },
     createBlogPost: async (post: Partial<BlogPost>, token: string) => {
       const response = await fetch(API_URLS.gallery, {
         method: 'POST',

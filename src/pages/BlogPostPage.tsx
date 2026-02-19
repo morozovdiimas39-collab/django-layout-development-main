@@ -20,10 +20,10 @@ export default function BlogPostPage() {
   }, [slug]);
 
   const loadPost = async () => {
+    if (!slug) return;
     try {
       setLoading(true);
-      const posts = await api.gallery.getBlog();
-      const foundPost = posts.find((p) => p.slug === slug);
+      const foundPost = await api.gallery.getBlogPost(slug);
       if (foundPost) {
         setPost(foundPost);
       } else {
@@ -149,9 +149,10 @@ export default function BlogPostPage() {
             )}
 
             <div className="prose prose-lg max-w-none">
-              <div className="text-base md:text-lg leading-relaxed whitespace-pre-wrap">
-                {post.content}
-              </div>
+              <div 
+                className="text-base md:text-lg leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
             </div>
 
             <Card className="mt-12 bg-primary/5 border-primary/20">

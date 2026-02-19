@@ -30,23 +30,46 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         conn = psycopg2.connect(os.environ['DATABASE_URL'])
         cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
-        params = event.get('queryStringParameters', {})
-        resource = params.get('resource', 'gallery') if params else 'gallery'
+        params = event.get('queryStringParameters') or {}
+        if not isinstance(params, dict):
+            params = {}
+        resource = params.get('resource', 'gallery')
 
         if method == 'GET':
+            result = []
             if resource == 'gallery':
                 cur.execute("SELECT * FROM gallery_images ORDER BY order_num")
+                items = cur.fetchall()
+                result = [dict(row) for row in items]
             elif resource == 'reviews':
                 cur.execute("SELECT * FROM reviews ORDER BY order_num")
+                items = cur.fetchall()
+                result = [dict(row) for row in items]
             elif resource == 'faq':
                 cur.execute("SELECT * FROM faq ORDER BY order_num")
+                items = cur.fetchall()
+                result = [dict(row) for row in items]
             elif resource == 'blog':
-                cur.execute("SELECT * FROM blog_posts ORDER BY created_at DESC")
+                blog_slug = params.get('slug')
+                if blog_slug:
+                    cur.execute("SELECT * FROM blog_posts WHERE slug = %s", (blog_slug,))
+                    row = cur.fetchone()
+                    result = [dict(row)] if row else []
+                else:
+                    cur.execute("SELECT * FROM blog_posts ORDER BY created_at DESC LIMIT 20")
+                    items = cur.fetchall()
+                    result = []
+                    for row in items:
+                        r = dict(row)
+                        # Убираем data URL из списка - они слишком большие для передачи
+                        img_url = r.get('image_url', '')
+                        if img_url and str(img_url).startswith('data:'):
+                            r['image_url'] = ''  # Убираем data URL из списка
+                        result.append(r)
             elif resource == 'team':
                 cur.execute("SELECT * FROM team_members ORDER BY sort_order")
-            
-            items = cur.fetchall()
-            result = [dict(row) for row in items]
+                items = cur.fetchall()
+                result = [dict(row) for row in items]
             
             cur.close()
             conn.close()
@@ -64,6 +87,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             resource = body_data.get('resource', resource)
             
             if resource == 'blog' and body_data.get('action') == 'generate':
+                cur.close()
+                conn.close()
                 url = os.environ.get('AUTO_BLOG_URL', '').strip()
                 if not url:
                     return {
@@ -85,6 +110,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     }
             
             if not token:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 401,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -142,6 +169,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
             
             if not token:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 401,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -153,6 +182,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             item_id = body_data.get('id') or (params.get('id') if params else None)
             
             if not item_id:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -170,9 +201,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     (body_data.get('name'), body_data.get('text'), body_data.get('rating', 5), body_data.get('image_url'), body_data.get('order_num', 0), item_id)
                 )
             elif resource == 'blog':
+                image_url = body_data.get('image_url') or ''
                 cur.execute(
                     "UPDATE blog_posts SET title = %s, content = %s, excerpt = %s, image_url = %s WHERE id = %s RETURNING *",
-                    (body_data.get('title'), body_data.get('content'), body_data.get('excerpt'), body_data.get('image_url'), item_id)
+                    (body_data.get('title'), body_data.get('content'), body_data.get('excerpt'), image_url, item_id)
                 )
             elif resource == 'faq':
                 cur.execute(
@@ -211,6 +243,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
             
             if not token:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 401,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -222,6 +256,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             item_id = body_data.get('id') or (params.get('id') if params else None)
             
             if not item_id:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -249,10 +285,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'success': True})
             }
         
-        cur.close()
-        conn.close()
-        
     except Exception as e:
+        try:
+            if 'cur' in locals() and cur:
+                cur.close()
+        except:
+            pass
+        try:
+            if 'conn' in locals() and conn:
+                conn.close()
+        except:
+            pass
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},

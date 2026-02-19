@@ -29,8 +29,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
         if method == 'GET':
-            params = event.get('queryStringParameters', {})
-            course_type = params.get('course_type') if params else None
+            params = event.get('queryStringParameters') or {}
+            course_type = params.get('course_type')
             
             if course_type:
                 cur.execute(

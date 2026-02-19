@@ -11,6 +11,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     Returns: HTTP response with content data
     '''
     method: str = event.get('httpMethod', 'GET')
+    print(f"[content] {method}")
     
     if method == 'OPTIONS':
         return {
@@ -26,14 +27,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     try:
-        params = event.get('queryStringParameters', {})
-        
-        conn = psycopg2.connect(os.environ['DATABASE_URL'])
+        params = event.get('queryStringParameters') or {}
+        db_url = os.environ.get('DATABASE_URL', '')
+        print(f"[content] DATABASE_URL present: {bool(db_url)}")
+        conn = psycopg2.connect(db_url)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
         if method == 'GET':
-            key = params.get('key') if params else None
-            page = params.get('page') if params else None
+            key = params.get('key')
+            page = params.get('page')
             
             if key:
                 escaped_key = key.replace("'", "''")
@@ -103,10 +105,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         conn.close()
         
     except Exception as e:
+        import traceback
+        err_msg = str(e)
+        print(f"[content] ERROR: {err_msg}")
+        print(f"[content] TRACEBACK: {traceback.format_exc()}")
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)}),
+            'body': json.dumps({'error': err_msg}),
             'isBase64Encoded': False
         }
     
