@@ -4,7 +4,7 @@ const SITEMAP_URL = 'https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3';
 
 export default function SitemapPage() {
   useEffect(() => {
-    // Сразу редиректим на функцию sitemap для правильной работы с поисковыми системами
+    // Редиректим на функцию sitemap для получения актуального XML
     window.location.replace(SITEMAP_URL);
   }, []);
 
