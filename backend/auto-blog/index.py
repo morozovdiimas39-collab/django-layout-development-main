@@ -41,6 +41,26 @@ def slugify(text: str) -> str:
     return text.strip("-")[:200] or "post"
 
 
+def format_html_content(html: str) -> str:
+    """Форматирует HTML контент с правильными отступами и пробелами."""
+    if not html:
+        return html
+    
+    # Добавляем пробелы между блочными элементами для правильного отображения
+    html = re.sub(r'(</p>)(<p)', r'\1\n\n\2', html)
+    html = re.sub(r'(</h2>)(<p)', r'\1\n\n\2', html)
+    html = re.sub(r'(</h2>)(<h2>)', r'\1\n\n\2', html)
+    html = re.sub(r'(</ul>)(<p)', r'\1\n\n\2', html)
+    html = re.sub(r'(</ol>)(<p)', r'\1\n\n\2', html)
+    html = re.sub(r'(</li>)(<li>)', r'\1\n\2', html)
+    
+    # Убираем только множественные пробелы внутри текста, но сохраняем структуру
+    html = re.sub(r' +', ' ', html)
+    html = html.strip()
+    
+    return html
+
+
 def _get_proxies() -> dict | None:
     raw = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy") or ""
     proxy_url = raw.strip().strip('"').strip("'")
@@ -58,31 +78,43 @@ def generate_article(gemini_key: str, topic: str) -> dict:
     article_type = random.choice(["article", "exercise"])
     
     if article_type == "exercise":
-        prompt = f"""Напиши упражнение для блога школы актёрского и ораторского мастерства Казбека Меретукова.
+        prompt = f"""Напиши подробное упражнение для блога школы актёрского и ораторского мастерства Казбека Меретукова.
 Тема: {topic}
+
+Требования:
+- Напиши ПОЛНОЕ и ПОДРОБНОЕ описание упражнения (минимум 500-800 слов)
+- Используй HTML теги для структуры: <h2> для заголовков разделов, <p> для параграфов, <ol><li> для пошаговых инструкций, <ul><li> для списков и примеров
+- Обязательно включи: цель упражнения, подробную подготовку, детальную задачу, описание препятствий, процесс адаптации, обратную связь, советы и примеры заданий
+- Каждый раздел должен быть подробно расписан
 
 Верни ТОЛЬКО валидный JSON без markdown, без пояснений:
 {{
   "title": "Название упражнения (до 80 символов)",
   "excerpt": "Краткое описание упражнения 1-2 предложения (до 200 символов)",
-  "content": "Описание упражнения в HTML: цель упражнения в <h2>, пошаговая инструкция в <ol><li>, советы в <p>, примеры в <ul><li>"
+  "content": "ПОЛНОЕ описание упражнения в HTML. Используй <h2>Цель упражнения</h2>, <h2>Подготовка</h2>, <h2>Задача</h2>, <h2>Препятствие</h2>, <h2>Адаптация</h2>, <h2>Обратная связь</h2>, <h2>Советы</h2>, <h2>Примеры заданий</h2>. Каждый раздел должен быть подробным с параграфами <p> и списками <ul><li> или <ol><li>."
 }}"""
     else:
-        prompt = f"""Напиши статью для блога школы актёрского и ораторского мастерства Казбека Меретукова.
+        prompt = f"""Напиши подробную статью для блога школы актёрского и ораторского мастерства Казбека Меретукова.
 Тема: {topic}
+
+Требования:
+- Напиши ПОЛНУЮ и ПОДРОБНУЮ статью (минимум 800-1200 слов)
+- Используй HTML теги для структуры: <h2> для заголовков разделов, <p> для параграфов, <ul><li> и <ol><li> для списков
+- Статья должна быть информативной, полезной и хорошо структурированной
+- Каждый раздел должен быть подробно расписан с примерами
 
 Верни ТОЛЬКО валидный JSON без markdown, без пояснений:
 {{
   "title": "Заголовок статьи (до 80 символов)",
   "excerpt": "Краткое описание 1-2 предложения для превью (до 200 символов)",
-  "content": "Основной текст статьи в HTML: параграфы в <p>, заголовки в <h2>, списки в <ul><li>"
+  "content": "ПОЛНЫЙ текст статьи в HTML. Используй <h2> для заголовков разделов, <p> для параграфов (каждый параграф в отдельном теге <p>), <ul><li> для маркированных списков, <ol><li> для нумерованных списков. Между параграфами должны быть пробелы. Статья должна быть подробной и информативной."
 }}"""
     proxies = _get_proxies()
     resp = requests.post(
         f"{GEMINI_TEXT_URL}?key={gemini_key}",
         json={
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.8, "maxOutputTokens": 4096},
+            "generationConfig": {"temperature": 0.8, "maxOutputTokens": 8192},
         },
         proxies=proxies,
         timeout=60,
@@ -195,7 +227,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
     title = (article.get("title") or "Статья").strip()[:255] or "Статья"
     excerpt = (article.get("excerpt") or "")[:500]
-    content = (article.get("content") or "").strip() or "<p>Содержание статьи.</p>"
+    raw_content = (article.get("content") or "").strip() or "<p>Содержание статьи.</p>"
+    content = format_html_content(raw_content)
     slug = slugify(title)
 
     image_url = ""
@@ -329,6 +362,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"error": f"DB: {e}"}),
         }
+
+    # Автоматически обновляем sitemap после создания статьи
+    try:
+        sitemap_url = os.environ.get("SITEMAP_URL", "https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3")
+        proxies = _get_proxies()
+        requests.get(sitemap_url, proxies=proxies, timeout=10)
+        print(f"[auto-blog] Sitemap updated automatically")
+    except Exception as e:
+        print(f"[auto-blog] Error updating sitemap: {e}")
 
     print(f"[auto-blog] done id={post_id}")
     return {

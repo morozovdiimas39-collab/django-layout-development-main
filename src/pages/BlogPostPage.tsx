@@ -148,12 +148,21 @@ export default function BlogPostPage() {
               </p>
             )}
 
-            <div className="prose prose-lg max-w-none">
-              <div 
-                className="text-base md:text-lg leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
-            </div>
+            <div 
+              className="prose prose-lg max-w-none 
+                prose-headings:font-bold prose-headings:text-foreground
+                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:text-foreground
+                prose-p:mb-4 prose-p:text-base prose-p:md:text-lg prose-p:text-foreground prose-p:leading-relaxed
+                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:text-foreground
+                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:text-foreground
+                prose-li:mb-2 prose-li:text-foreground prose-li:leading-relaxed
+                prose-strong:font-bold prose-strong:text-foreground
+                prose-a:text-primary prose-a:underline prose-a:no-underline hover:prose-a:underline
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic
+                prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded-lg"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
 
             <Card className="mt-12 bg-primary/5 border-primary/20">
               <CardContent className="p-6 md:p-8">

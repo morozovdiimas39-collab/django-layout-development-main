@@ -31,6 +31,19 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Generate sitemap
+        run: node scripts/generate-sitemap.js
+        continue-on-error: true
+
+      - name: Copy sitemap to dist
+        run: |
+          if [ -f public/sitemap.xml ]; then
+            cp public/sitemap.xml dist/sitemap.xml
+            echo "✅ Sitemap copied to dist"
+          else
+            echo "⚠️  Sitemap not found, skipping copy"
+          fi
+
       - name: Install Yandex Cloud CLI
         run: |
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash

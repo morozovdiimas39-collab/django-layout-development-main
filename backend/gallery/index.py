@@ -4,6 +4,17 @@ import urllib.request
 from typing import Dict, Any
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import requests
+
+
+def _update_sitemap():
+    """Обновляет sitemap после изменения статей блога"""
+    try:
+        sitemap_url = os.environ.get("SITEMAP_URL", "https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3")
+        requests.get(sitemap_url, timeout=10)
+        print(f"[gallery] Sitemap updated automatically")
+    except Exception as e:
+        print(f"[gallery] Error updating sitemap: {e}")
 
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -158,6 +169,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             cur.close()
             conn.close()
             
+            # Обновляем sitemap после создания статьи блога
+            if resource == 'blog':
+                _update_sitemap()
+            
             return {
                 'statusCode': 201,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -232,6 +247,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             cur.close()
             conn.close()
             
+            # Обновляем sitemap после обновления статьи блога
+            if resource == 'blog':
+                _update_sitemap()
+            
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -278,6 +297,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             conn.commit()
             cur.close()
             conn.close()
+            
+            # Обновляем sitemap после удаления статьи блога
+            if resource == 'blog':
+                _update_sitemap()
             
             return {
                 'statusCode': 200,
