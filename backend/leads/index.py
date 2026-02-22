@@ -184,7 +184,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     except Exception as e:
                         print(f"Failed to update telegram message: {e}")
                 
-                if old_status != status and lead.get('ym_client_id'):
+                if old_status != status:
+                    # client_id: с сайта — ym_client_id; только из Telegram — виртуальный telegram_{id}
+                    client_id = lead.get('ym_client_id') or f"telegram_{lead['id']}"
                     goal_map = {
                         'trial_scheduled': 'trial_scheduled',
                         'trial_completed': 'trial_completed',
@@ -196,15 +198,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         try:
                             send_metrika_goal(
                                 goal=goal_map[status],
-                                client_id=lead['ym_client_id'],
+                                client_id=client_id,
                                 lead_id=lead['id'],
                                 params={
                                     'status': status,
                                     'source': lead.get('source', 'unknown'),
-                                    'course': lead.get('course', 'unknown')
+                                    'course': lead.get('course', 'unknown'),
+                                    'phone': lead.get('phone', '')
                                 }
                             )
-                            print(f"Metrika goal sent: {goal_map[status]} for lead {lead['id']}")
+                            print(f"Metrika goal sent: {goal_map[status]} for lead {lead['id']} (client_id={client_id})")
                         except Exception as e:
                             print(f"Failed to send metrika goal: {e}")
                 
@@ -316,7 +319,10 @@ def update_telegram_message(lead: dict):
     status_names = {
         'new': 'Новая заявка',
         'trial': 'Записался на пробное',
+        'trial_scheduled': 'Записался на пробное',
+        'trial_completed': 'Прошёл пробное',
         'enrolled': 'Записался на обучение',
+        'paid': 'Оплатил',
         'thinking': 'Думает',
         'irrelevant': 'Нецелевой'
     }
@@ -324,7 +330,10 @@ def update_telegram_message(lead: dict):
     status_emojis = {
         'new': '🔔',
         'trial': '✅',
+        'trial_scheduled': '✅',
+        'trial_completed': '✅',
         'enrolled': '🎓',
+        'paid': '💰',
         'thinking': '🤔',
         'irrelevant': '❌'
     }
@@ -360,22 +369,23 @@ def update_telegram_message(lead: dict):
         return json.loads(response.read().decode('utf-8'))
 
 def send_metrika_goal(goal: str, client_id: str, lead_id: int, params: dict = None):
-    '''Отправка цели в Яндекс.Метрику'''
-    metrika_url = 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c'
-    
+    '''Отправка офлайн-конверсии в Яндекс.Метрику по официальному API (CSV upload).'''
+    metrika_conversion_url = 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c'
+    params = params or {}
     payload = {
         'goal': goal,
         'client_id': client_id,
         'lead_id': lead_id,
-        'params': params or {}
+        'phone': params.get('phone', ''),
+        'course': params.get('course', ''),
+        **params
     }
-    
     data = json.dumps(payload).encode('utf-8')
     req = urllib.request.Request(
-        metrika_url,
+        metrika_conversion_url,
         data=data,
+        method='POST',
         headers={'Content-Type': 'application/json'}
     )
-    
-    with urllib.request.urlopen(req, timeout=5) as response:
+    with urllib.request.urlopen(req, timeout=30) as response:
         return json.loads(response.read().decode('utf-8'))

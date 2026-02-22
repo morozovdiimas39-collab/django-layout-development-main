@@ -193,6 +193,17 @@ export default function AdminPage() {
     }
   };
 
+  const handleAddContent = async (key: string, value: string) => {
+    try {
+      await api.content.update(key, value, token);
+      await loadData(token);
+      alert('Поле добавлено');
+    } catch (error) {
+      alert('Ошибка добавления контента');
+      throw error;
+    }
+  };
+
   const startEditingContent = (item: SiteContent) => {
     setEditingKey(item.key);
     setEditingValue(item.value);
@@ -508,6 +519,7 @@ export default function AdminPage() {
                 setEditingKey('');
                 setEditingValue('');
               }}
+              onAdd={handleAddContent}
             />
           </TabsContent>
 
