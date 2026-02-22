@@ -67,16 +67,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     row = cur.fetchone()
                     result = [dict(row)] if row else []
                 else:
-                    cur.execute("SELECT * FROM blog_posts ORDER BY created_at DESC LIMIT 20")
+                    page = max(1, int(params.get('page', 1)))
+                    per_page = min(100, max(1, int(params.get('per_page', 20))))
+                    offset = (page - 1) * per_page
+                    cur.execute("SELECT COUNT(*) FROM blog_posts")
+                    total = cur.fetchone()['count']
+                    cur.execute(
+                        "SELECT * FROM blog_posts ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                        (per_page, offset)
+                    )
                     items = cur.fetchall()
-                    result = []
+                    result = {
+                        'items': [],
+                        'total': total,
+                        'page': page,
+                        'per_page': per_page,
+                        'total_pages': (total + per_page - 1) // per_page if per_page else 0,
+                    }
                     for row in items:
                         r = dict(row)
-                        # Убираем data URL из списка - они слишком большие для передачи
                         img_url = r.get('image_url', '')
                         if img_url and str(img_url).startswith('data:'):
-                            r['image_url'] = ''  # Убираем data URL из списка
-                        result.append(r)
+                            r['image_url'] = ''
+                        result['items'].append(r)
             elif resource == 'team':
                 cur.execute("SELECT * FROM team_members ORDER BY sort_order")
                 items = cur.fetchall()

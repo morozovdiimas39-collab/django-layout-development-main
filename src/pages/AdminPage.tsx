@@ -91,7 +91,7 @@ export default function AdminPage() {
         api.gallery.getFAQ(),
         api.gallery.getImages(),
         api.gallery.getReviews(),
-        api.gallery.getBlog(),
+        api.gallery.getBlog(1, 500),
         api.gallery.getTeam()
       ]);
       setLeads(leadsData);
@@ -100,7 +100,7 @@ export default function AdminPage() {
       setFaqs(faqData);
       setGallery(galleryData);
       setReviews(reviewsData);
-      setBlog(blogData);
+      setBlog(blogData.items);
       setTeam(teamData);
     } catch (error) {
       console.error('Error loading data:', error);

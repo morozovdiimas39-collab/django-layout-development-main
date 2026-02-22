@@ -42,14 +42,14 @@ export default function HomePage() {
       const [reviewsData, blogData, teamData, galleryData, contentData] =
         await Promise.all([
           api.gallery.getReviews(),
-          api.gallery.getBlog(),
+          api.gallery.getBlog(1, 6),
           api.gallery.getTeam(),
           api.gallery.getImages(),
           api.content.getAll(),
         ]);
 
       setReviews(reviewsData);
-      setBlog(blogData.slice(0, 3));
+      setBlog(blogData.items.slice(0, 3));
       setTeam(teamData);
       setGallery(galleryData);
 

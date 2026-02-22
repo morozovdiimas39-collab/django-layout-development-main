@@ -41,7 +41,7 @@ export default function ActingCardsPage() {
         api.content.getAll(),
         api.gallery.getImages(),
         api.gallery.getReviews(),
-        api.gallery.getBlog(),
+        api.gallery.getBlog(1, 20),
       ]);
 
       const contentMap: Record<string, string> = {};
@@ -51,7 +51,7 @@ export default function ActingCardsPage() {
       setContent(contentMap);
       setGallery(galleryData);
       setReviews(reviewsData);
-      setBlog(blogData);
+      setBlog(blogData.items);
     } catch (error) {
       console.error("Error loading data:", error);
     }

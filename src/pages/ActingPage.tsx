@@ -60,7 +60,7 @@ export default function ActingPage() {
         api.gallery.getReviews(),
         api.gallery.getFAQ(),
         api.gallery.getImages(),
-        api.gallery.getBlog(),
+        api.gallery.getBlog(1, 20),
         api.gallery.getTeam(),
         api.content.getAll(),
       ]);
@@ -69,7 +69,7 @@ export default function ActingPage() {
       setReviews(reviewsData);
       setFAQ(faqData);
       setGallery(galleryData);
-      setBlog(blogData);
+      setBlog(blogData.items);
       setTeam(teamData);
 
       const contentMap: Record<string, string> = {};

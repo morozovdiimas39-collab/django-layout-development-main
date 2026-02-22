@@ -75,6 +75,14 @@ export interface BlogPost {
   created_at: string;
 }
 
+export interface BlogPaginated {
+  items: BlogPost[];
+  total: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
+}
+
 export interface TeamMember {
   id: number;
   name: string;
@@ -339,10 +347,20 @@ export const api = {
       });
       return response.json();
     },
-    getBlog: async (): Promise<BlogPost[]> => {
-      const response = await fetch(`${API_URLS.gallery}?resource=blog`);
+    getBlog: async (page = 1, per_page = 20): Promise<BlogPaginated> => {
+      const params = new URLSearchParams({ resource: 'blog', page: String(page), per_page: String(per_page) });
+      const response = await fetch(`${API_URLS.gallery}?${params}`);
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      if (data && typeof data === 'object' && Array.isArray(data.items)) {
+        return {
+          items: data.items,
+          total: Number(data.total) || data.items.length,
+          page: Number(data.page) || 1,
+          per_page: Number(data.per_page) || per_page,
+          total_pages: Number(data.total_pages) ?? 1,
+        };
+      }
+      return { items: [], total: 0, page: 1, per_page, total_pages: 0 };
     },
     getBlogPost: async (slug: string): Promise<BlogPost | null> => {
       const response = await fetch(`${API_URLS.gallery}?resource=blog&slug=${encodeURIComponent(slug)}`);

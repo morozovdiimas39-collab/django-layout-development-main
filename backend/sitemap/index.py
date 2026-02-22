@@ -37,13 +37,14 @@ def handler(event: dict, context) -> dict:
         {'loc': '/teacher', 'priority': '0.8', 'changefreq': 'monthly'},
         {'loc': '/team', 'priority': '0.7', 'changefreq': 'monthly'},
         {'loc': '/reviews', 'priority': '0.7', 'changefreq': 'weekly'},
-        {'loc': '/blog', 'priority': '0.8', 'changefreq': 'weekly'},
         {'loc': '/contacts', 'priority': '0.6', 'changefreq': 'monthly'},
         {'loc': '/showreel', 'priority': '0.7', 'changefreq': 'monthly'},
     ]
     
-    # Получаем статьи блога из БД
+    # Получаем статьи блога и страницы пагинации из БД
     blog_posts = []
+    blog_list_pages = []  # /blog, /blog?page=2, ...
+    per_page = 12
     try:
         dsn = os.environ.get('DATABASE_URL')
         if not dsn:
@@ -52,39 +53,37 @@ def handler(event: dict, context) -> dict:
             conn = psycopg2.connect(dsn)
             cur = conn.cursor()
             cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+            cur.execute("SELECT COUNT(*) FROM blog_posts")
+            total_posts = cur.fetchone()[0]
+            total_pages = (total_posts + per_page - 1) // per_page if total_posts else 1
+            for p in range(1, total_pages + 1):
+                loc = '/blog' if p == 1 else f'/blog?page={p}'
+                blog_list_pages.append({'loc': loc, 'priority': '0.8' if p == 1 else '0.6', 'changefreq': 'weekly'})
             cur.execute("""
                 SELECT slug, updated_at, created_at 
                 FROM blog_posts 
                 WHERE published = true
                 ORDER BY COALESCE(updated_at, created_at) DESC
             """)
-            
             rows = cur.fetchall()
-            print(f"[sitemap] Found {len(rows)} published blog posts")
+            print(f"[sitemap] Found {len(rows)} published blog posts, {total_pages} list pages")
             for row in rows:
                 slug, updated_at, created_at = row
                 if not slug:
                     print(f"[sitemap] Skipping post with empty slug")
                     continue
-                
-                # Используем updated_at если есть, иначе created_at, иначе текущую дату
                 if updated_at:
                     lastmod = updated_at.strftime('%Y-%m-%d')
                 elif created_at:
                     lastmod = created_at.strftime('%Y-%m-%d')
                 else:
                     lastmod = datetime.now().strftime('%Y-%m-%d')
-                
                 blog_posts.append({
                     'loc': f'/blog/{slug}',
                     'priority': '0.7',
                     'changefreq': 'monthly',
                     'lastmod': lastmod
                 })
-                print(f"[sitemap] Added post: {slug}, lastmod: {lastmod}")
-            
-            print(f"[sitemap] Total blog posts in sitemap: {len(blog_posts)}")
-            
             cur.close()
             conn.close()
     except Exception as e:
@@ -107,7 +106,17 @@ def handler(event: dict, context) -> dict:
         xml_lines.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
         xml_lines.append(f'    <priority>{page["priority"]}</priority>')
         xml_lines.append('  </url>')
-    
+
+    # Страницы пагинации блога (/blog, /blog?page=2, ...)
+    for page in blog_list_pages:
+        loc = escape(f'{base_url}{page["loc"]}')
+        xml_lines.append('  <url>')
+        xml_lines.append(f'    <loc>{loc}</loc>')
+        xml_lines.append(f'    <lastmod>{today}</lastmod>')
+        xml_lines.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
+        xml_lines.append(f'    <priority>{page["priority"]}</priority>')
+        xml_lines.append('  </url>')
+
     # Статьи блога
     for post in blog_posts:
         loc = escape(f'{base_url}{post["loc"]}')

@@ -36,7 +36,7 @@ export default function OratoryPage() {
           api.content.getAll(),
           api.gallery.getReviews(),
           api.gallery.getImages(),
-          api.gallery.getBlog(),
+          api.gallery.getBlog(1, 20),
         ]);
 
       const contentMap: Record<string, string> = {};
@@ -46,7 +46,7 @@ export default function OratoryPage() {
       setContent(contentMap);
       setReviews(reviewsData);
       setGallery(galleryData);
-      setBlog(blogData);
+      setBlog(blogData.items);
     } catch (error) {
       console.error("Error loading content:", error);
     }
