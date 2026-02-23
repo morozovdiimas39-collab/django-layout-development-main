@@ -4,13 +4,29 @@ from typing import Dict, Any
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
+    body = event.get('body') or '{}'
+    if isinstance(body, dict):
+        return body
+    if event.get('isBase64Encoded') and isinstance(body, str):
+        import base64
+        try:
+            body = base64.b64decode(body).decode('utf-8')
+        except Exception:
+            pass
+    try:
+        return json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return {}
+
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
     Business: Manage editable site content
     Args: event with httpMethod, body, queryStringParameters
     Returns: HTTP response with content data
     '''
-    method: str = event.get('httpMethod', 'GET')
+    method: str = (event.get('httpMethod') or 'GET').upper()
     print(f"[content] {method}")
     
     if method == 'OPTIONS':
@@ -28,27 +44,26 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     try:
         params = event.get('queryStringParameters') or {}
-        db_url = os.environ.get('DATABASE_URL', '')
-        print(f"[content] DATABASE_URL present: {bool(db_url)}")
-        conn = psycopg2.connect(db_url)
+        conn = psycopg2.connect(os.environ['DATABASE_URL'])
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
+        cur.execute("SET search_path TO public")
+
         if method == 'GET':
             key = params.get('key')
             page = params.get('page')
             
             if key:
                 escaped_key = key.replace("'", "''")
-                cur.execute(f"SELECT * FROM editable_content WHERE content_key = '{escaped_key}'")
+                cur.execute(f"SELECT * FROM public.editable_content WHERE content_key = '{escaped_key}'")
                 content = cur.fetchone()
                 result = dict(content) if content else None
             elif page:
                 escaped_page = page.replace("'", "''")
-                cur.execute(f"SELECT * FROM editable_content WHERE page = '{escaped_page}' ORDER BY content_key")
+                cur.execute(f"SELECT * FROM public.editable_content WHERE page = '{escaped_page}' ORDER BY content_key")
                 content = cur.fetchall()
                 result = [dict(row) for row in content]
             else:
-                cur.execute("SELECT id, key, value, updated_at FROM site_content ORDER BY key")
+                cur.execute("SELECT id, key, value, updated_at FROM public.site_content ORDER BY key")
                 content = cur.fetchall()
                 result = [dict(row) for row in content]
             
@@ -63,11 +78,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'PUT':
-            body_data = json.loads(event.get('body', '{}'))
+            body_data = _parse_body(event)
             content_key = body_data.get('key')
             content_value = body_data.get('value')
             
             if not content_key or content_value is None:
+                cur.close()
+                conn.close()
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -75,19 +92,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'isBase64Encoded': False
                 }
             
-            escaped_key = content_key.replace("'", "''")
-            escaped_value = str(content_value).replace("'", "''") if content_value else ''
-            
+            value_str = str(content_value) if content_value else ''
             cur.execute(
-                f"""
-                INSERT INTO site_content (key, value, updated_at)
-                VALUES ('{escaped_key}', '{escaped_value}', CURRENT_TIMESTAMP)
+                """
+                INSERT INTO public.site_content (key, value, updated_at)
+                VALUES (%s, %s, CURRENT_TIMESTAMP)
                 ON CONFLICT (key)
-                DO UPDATE SET 
-                    value = EXCLUDED.value, 
+                DO UPDATE SET
+                    value = EXCLUDED.value,
                     updated_at = CURRENT_TIMESTAMP
                 RETURNING *
-                """
+                """,
+                (content_key, value_str)
             )
             updated = cur.fetchone()
             conn.commit()

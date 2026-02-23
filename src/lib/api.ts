@@ -115,7 +115,8 @@ export const api = {
   content: {
     getAll: async (): Promise<SiteContent[]> => {
       const response = await fetch(API_URLS.content);
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Content ${response.status}`);
       return Array.isArray(data) ? data : [];
     },
     getByKey: async (key: string): Promise<SiteContent> => {
@@ -131,7 +132,9 @@ export const api = {
         headers,
         body: JSON.stringify({ key, value })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Content ${response.status}`);
+      return data;
     }
   },
   

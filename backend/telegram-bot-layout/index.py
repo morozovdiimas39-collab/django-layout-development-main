@@ -21,11 +21,6 @@ def _handle_callback_query(callback_query: dict, telegram_token: str, proxy_url:
 
     print(f"Callback: data={data}, chat_id={chat_id}")
 
-    # Позвонил клиенту — только уведомление, статус не меняем (или можно добавить статус "called")
-    if data.startswith('called_'):
-        _answer_callback(telegram_token, callback_id, "Отмечено: позвонил", proxy_url)
-        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'status': 'ok'}), 'isBase64Encoded': False}
-
     if not data.startswith('status_'):
         _answer_callback(telegram_token, callback_id, "Неизвестная кнопка", proxy_url)
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'status': 'ok'}), 'isBase64Encoded': False}
@@ -76,7 +71,7 @@ def _answer_callback(telegram_token: str, callback_id: str, text: str, proxy_url
 
 
 def handler(event: dict, context) -> dict:
-    '''Telegram бот с интеграцией Gemini 2.5 Flash через прокси'''
+    '''Telegram бот (layout) с интеграцией Gemini 2.5 Flash через прокси'''
     
     print(f"Received event: {json.dumps(event)}")
     method = event.get('httpMethod', 'POST')

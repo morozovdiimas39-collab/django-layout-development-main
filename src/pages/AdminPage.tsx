@@ -189,7 +189,8 @@ export default function AdminPage() {
       setEditingValue('');
       alert('Контент обновлен');
     } catch (error) {
-      alert('Ошибка обновления контента');
+      const msg = error instanceof Error ? error.message : String(error);
+      alert('Ошибка обновления контента: ' + msg);
     }
   };
 
@@ -199,7 +200,8 @@ export default function AdminPage() {
       await loadData(token);
       alert('Поле добавлено');
     } catch (error) {
-      alert('Ошибка добавления контента');
+      const msg = error instanceof Error ? error.message : String(error);
+      alert('Ошибка добавления контента: ' + msg);
       throw error;
     }
   };

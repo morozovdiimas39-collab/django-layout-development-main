@@ -17,21 +17,29 @@ from io import StringIO
 # Окно атрибуции: конверсии старше 113 дней Директ отклонит (ошибка «create_date_time is older than 113 days»)
 MAX_DAYS_AGE = 113
 
+# Номера, которые не попадают в CSV (тестовые/плохие). Нормализованный вид: только цифры, 11 знаков с 7.
+BLOCKLIST_PHONES_NORMALIZED = {'71231312312', '72831612312', '72424234234'}
+
 # Ценность конверсии по статусу (руб.). Директ: неотрицательное число, макс. 9223372036854
 CONVERSION_REVENUE = {
     'trial_scheduled': 500,
     'trial_completed': 1000,
     'enrolled': 5000,
     'paid': 15000,
+    'thinking': 0,
+    'irrelevant': 0,
 }
 MAX_REVENUE = 9223372036854
 
-# В файле для Директа order_status — только 4 значения: IN_PROGRESS, PAID, CANCELLED, SPAM (как в интерфейсе)
+# В файле для Директа order_status — только 4 значения: IN_PROGRESS, PAID, CANCELLED, SPAM
+# Записался на пробное → IN_PROGRESS, записался на обучение → PAID, думает → CANCELLED, нецелевой → SPAM
 STATUS_TO_ORDER_STATUS = {
     'trial_scheduled': 'IN_PROGRESS',
     'trial_completed': 'IN_PROGRESS',
-    'enrolled': 'IN_PROGRESS',
+    'enrolled': 'PAID',
     'paid': 'PAID',
+    'thinking': 'CANCELLED',
+    'irrelevant': 'SPAM',
 }
 
 
@@ -99,7 +107,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         conn = psycopg2.connect(os.environ['DATABASE_URL'])
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+        cur.execute("SET search_path TO public")
         cur.execute("""
             SELECT 
                 id,
@@ -111,7 +119,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 created_at,
                 updated_at
             FROM leads 
-            WHERE status IN ('trial_scheduled', 'trial_completed', 'enrolled', 'paid')
+            WHERE status IN ('trial_scheduled', 'trial_completed', 'enrolled', 'paid', 'thinking', 'irrelevant')
             ORDER BY updated_at DESC
         """)
         leads = cur.fetchall()
@@ -169,6 +177,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         phones_md5 = _phone_md5(phones)
 
         if not client_ids and not phones:
+            continue
+        if phones and phones in BLOCKLIST_PHONES_NORMALIZED:
             continue
 
         order_status = STATUS_TO_ORDER_STATUS.get(lead['status'], 'IN_PROGRESS')

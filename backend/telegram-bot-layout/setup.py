@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+"""Проверка и установка webhook для telegram-bot-layout."""
 import urllib.request
 import json
 
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
-WEBHOOK_URL = "https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre"
+WEBHOOK_URL = "https://functions.yandexcloud.net/d4eg7ndil8cisa90cjhu"
 
 print("🔍 Проверяю текущий webhook...")
 url = f'https://api.telegram.org/bot{BOT_TOKEN}/getWebhookInfo'

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Скрипт для настройки webhook Telegram бота
-Запустите после добавления TELEGRAM_BOT_TOKEN в секреты
+Скрипт для настройки webhook Telegram бота (проект layout).
+Запустите после добавления TELEGRAM_BOT_TOKEN в секреты.
+Webhook должен указывать на URL функции telegram-bot-layout в Yandex Cloud.
 """
 
 import urllib.request
@@ -9,7 +10,8 @@ import json
 import sys
 
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
-WEBHOOK_URL = "https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre"
+# URL функции telegram-bot-layout в Yandex Cloud (замените на свой после деплоя)
+WEBHOOK_URL = "https://functions.yandexcloud.net/d4eg7ndil8cisa90cjhu"
 
 def set_webhook():
     """Установка webhook для бота"""
@@ -51,7 +53,7 @@ def get_webhook_info():
         return None
 
 if __name__ == '__main__':
-    print("🤖 Настройка Telegram бота...\n")
+    print("🤖 Настройка Telegram бота (layout)...\n")
     print(f"🔗 Webhook URL: {WEBHOOK_URL}\n")
     
     if set_webhook():

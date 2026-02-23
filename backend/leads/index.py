@@ -278,8 +278,6 @@ def send_telegram_notification(lead: dict):
         'parse_mode': 'HTML',
         'reply_markup': {
             'inline_keyboard': [[
-                {'text': '📞 Позвонил клиенту', 'callback_data': f'called_{lead.get("id")}'}
-            ], [
                 {'text': '✅ Записался на пробное', 'callback_data': f'status_{lead.get("id")}_trial'},
                 {'text': '🎓 Записался на обучение', 'callback_data': f'status_{lead.get("id")}_enrolled'}
             ], [

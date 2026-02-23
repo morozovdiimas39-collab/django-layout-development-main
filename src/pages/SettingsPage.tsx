@@ -136,7 +136,7 @@ export default function SettingsPage() {
               <CardContent className="space-y-4">
                 <div className="bg-muted p-4 rounded-lg">
                   <code className="text-sm break-all">
-                    https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre
+                    https://functions.yandexcloud.net/d4eg7ndil8cisa90cjhu
                   </code>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -144,7 +144,7 @@ export default function SettingsPage() {
                 </p>
                 <div className="bg-muted p-4 rounded-lg">
                   <code className="text-sm break-all">
-                    curl -X POST https://api.telegram.org/bot&lt;YOUR_TOKEN&gt;/setWebhook?url=https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre
+                    curl -X POST https://api.telegram.org/bot&lt;YOUR_TOKEN&gt;/setWebhook?url=https://functions.yandexcloud.net/d4eg7ndil8cisa90cjhu
                   </code>
                 </div>
               </CardContent>

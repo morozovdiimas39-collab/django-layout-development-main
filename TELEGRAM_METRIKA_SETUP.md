@@ -8,8 +8,8 @@
 
 | Переменная | Где нужна | Описание |
 |------------|-----------|----------|
-| `TELEGRAM_BOT_TOKEN` | telegram-bot, leads | Токен бота от @BotFather |
-| `TELEGRAM_ADMIN_CHAT_ID` | telegram-bot, leads | Ваш Chat ID (куда приходят заявки) |
+| `TELEGRAM_BOT_TOKEN` | telegram-bot-layout, leads | Токен бота от @BotFather |
+| `TELEGRAM_ADMIN_CHAT_ID` | telegram-bot-layout, leads | Ваш Chat ID (куда приходят заявки) |
 | `YANDEX_METRIKA_MP_TOKEN` | metrika-goal-sender | Токен Measurement Protocol (см. ниже) |
 
 **Как получить YANDEX_METRIKA_MP_TOKEN:**
@@ -22,7 +22,7 @@
 
 ### 2. Webhook
 
-Webhook бота должен указывать на URL функции `telegram-bot`:
+Webhook бота должен указывать на URL функции `telegram-bot-layout`:
 
 ```
 https://api.telegram.org/bot<TOKEN>/setWebhook?url=<URL_ФУНКЦИИ_TELEGRAM_BOT>
@@ -45,12 +45,12 @@ https://api.telegram.org/bot<TOKEN>/setWebhook?url=<URL_ФУНКЦИИ_TELEGRAM_
 ### 4. Деплой
 
 Задеплойте обновлённые функции:
-- `telegram-bot`
+- `telegram-bot-layout`
 - `leads`
 
 ---
 
 ## Важно
 
-- **Один бот** — и для уведомлений (leads), и для webhook (telegram-bot). Используйте один `TELEGRAM_BOT_TOKEN`.
+- **Один бот** — и для уведомлений (leads), и для webhook (telegram-bot-layout). Используйте один `TELEGRAM_BOT_TOKEN`.
 - Без `TELEGRAM_ADMIN_CHAT_ID` кнопки в заявках не будут работать.

@@ -27,18 +27,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         conn = psycopg2.connect(os.environ['DATABASE_URL'])
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
+        cur.execute("SET search_path TO public")
+
         if method == 'GET':
             params = event.get('queryStringParameters') or {}
             course_type = params.get('course_type')
             
             if course_type:
                 cur.execute(
-                    "SELECT * FROM course_modules WHERE course_type = %s ORDER BY order_num",
+                    "SELECT * FROM public.course_modules WHERE course_type = %s ORDER BY order_num",
                     (course_type,)
                 )
             else:
-                cur.execute("SELECT * FROM course_modules ORDER BY course_type, order_num")
+                cur.execute("SELECT * FROM public.course_modules ORDER BY course_type, order_num")
             
             modules = cur.fetchall()
             result = [dict(row) for row in modules]
@@ -57,7 +58,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             cur.execute(
                 """
-                INSERT INTO course_modules 
+                INSERT INTO public.course_modules 
                 (course_type, title, description, result, image_url, order_num)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING *
@@ -88,7 +89,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             cur.execute(
                 """
-                UPDATE course_modules 
+                UPDATE public.course_modules 
                 SET title = %s, description = %s, result = %s, 
                     image_url = %s, order_num = %s
                 WHERE id = %s
@@ -120,6 +121,34 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                     'body': json.dumps({'error': 'Module not found'})
                 }
+        
+        elif method == 'DELETE':
+            body_data = json.loads(event.get('body', '{}'))
+            module_id = body_data.get('id')
+            if not module_id:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'id required'})
+                }
+            cur.execute("DELETE FROM public.course_modules WHERE id = %s RETURNING id", (module_id,))
+            deleted = cur.fetchone()
+            conn.commit()
+            cur.close()
+            conn.close()
+            if deleted:
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'deleted': True, 'id': module_id})
+                }
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Module not found'})
+            }
         
         cur.close()
         conn.close()

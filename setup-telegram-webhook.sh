@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BOT_TOKEN="8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
-WEBHOOK_URL="https://functions.yandexcloud.net/d4eb3ckc7i9h81v7gcre"
+WEBHOOK_URL="https://functions.yandexcloud.net/d4eg7ndil8cisa90cjhu"
 
 echo "🔧 Настройка Telegram webhook..."
 echo "URL: $WEBHOOK_URL"
