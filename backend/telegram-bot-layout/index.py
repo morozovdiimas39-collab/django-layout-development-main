@@ -25,7 +25,7 @@ def _handle_callback_query(callback_query: dict, telegram_token: str, proxy_url:
         _answer_callback(telegram_token, callback_id, "Неизвестная кнопка", proxy_url)
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'status': 'ok'}), 'isBase64Encoded': False}
 
-    parts = data.split('_')
+    parts = data.split('_', 2)
     if len(parts) != 3:
         _answer_callback(telegram_token, callback_id, "Ошибка формата", proxy_url)
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'status': 'ok'}), 'isBase64Encoded': False}

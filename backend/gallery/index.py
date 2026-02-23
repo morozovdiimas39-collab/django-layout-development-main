@@ -17,13 +17,29 @@ def _update_sitemap():
         print(f"[gallery] Error updating sitemap: {e}")
 
 
+def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
+    body = event.get('body') or '{}'
+    if isinstance(body, dict):
+        return body
+    if event.get('isBase64Encoded') and isinstance(body, str):
+        import base64
+        try:
+            body = base64.b64decode(body).decode('utf-8')
+        except Exception:
+            pass
+    try:
+        return json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return {}
+
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
     Business: Manage gallery images, reviews, FAQ, blog, team (v2)
     Args: event with httpMethod, body, queryStringParameters
     Returns: HTTP response with data
     '''
-    method: str = event.get('httpMethod', 'GET')
+    method: str = (event.get('httpMethod') or 'GET').upper()
     
     if method == 'OPTIONS':
         return {
@@ -105,10 +121,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'POST':
-            headers = event.get('headers', {})
+            headers = event.get('headers') or {}
+            if not isinstance(headers, dict):
+                headers = {}
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
-            body_data = json.loads(event.get('body', '{}'))
-            resource = body_data.get('resource', resource)
+            if not token and isinstance(headers, dict):
+                for k, v in headers.items():
+                    if k and str(k).lower() == 'x-auth-token' and v:
+                        token = v
+                        break
+            body_data = _parse_body(event)
+            resource = body_data.get('resource') or params.get('resource') or 'gallery'
             
             if resource == 'blog' and body_data.get('action') == 'generate':
                 cur.close()
@@ -193,8 +216,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'PUT':
-            headers = event.get('headers', {})
+            headers = event.get('headers') or {}
+            if not isinstance(headers, dict):
+                headers = {}
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
+            if not token:
+                for k, v in headers.items():
+                    if k and str(k).lower() == 'x-auth-token' and v:
+                        token = v
+                        break
             
             if not token:
                 cur.close()
@@ -205,9 +235,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps({'error': 'Authorization required'})
                 }
             
-            body_data = json.loads(event.get('body', '{}'))
-            resource = body_data.get('resource', resource)
+            body_data = _parse_body(event)
+            resource = body_data.get('resource') or params.get('resource') or 'gallery'
             item_id = body_data.get('id') or (params.get('id') if params else None)
+            if item_id is not None and isinstance(item_id, str) and item_id.isdigit():
+                item_id = int(item_id)
             
             if not item_id:
                 cur.close()
@@ -271,8 +303,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'DELETE':
-            headers = event.get('headers', {})
+            headers = event.get('headers') or {}
+            if not isinstance(headers, dict):
+                headers = {}
             token = headers.get('X-Auth-Token') or headers.get('x-auth-token')
+            if not token:
+                for k, v in headers.items():
+                    if k and str(k).lower() == 'x-auth-token' and v:
+                        token = v
+                        break
             
             if not token:
                 cur.close()
@@ -283,9 +322,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps({'error': 'Authorization required'})
                 }
             
-            body_data = json.loads(event.get('body', '{}')) if event.get('body') else {}
-            resource = body_data.get('resource', resource)
+            body_data = _parse_body(event)
+            resource = body_data.get('resource') or params.get('resource') or 'gallery'
             item_id = body_data.get('id') or (params.get('id') if params else None)
+            if item_id is not None and isinstance(item_id, str) and str(item_id).isdigit():
+                item_id = int(item_id)
             
             if not item_id:
                 cur.close()

@@ -252,7 +252,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'gallery', ...image })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     updateImage: async (image: GalleryImage, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -263,10 +265,12 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'gallery', ...image })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     deleteImage: async (id: number, token: string) => {
-      const response = await fetch(API_URLS.gallery, {
+      const response = await fetch(`${API_URLS.gallery}?resource=gallery&id=${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +278,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'gallery', id })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     getReviews: async (): Promise<Review[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=reviews`);
@@ -290,12 +296,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'reviews', ...review })
       });
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('Create review failed:', error);
-        throw new Error(`Failed to create review: ${error}`);
-      }
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     updateReview: async (review: Review, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -306,15 +309,12 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'reviews', ...review })
       });
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('Update review failed:', error);
-        throw new Error(`Failed to update review: ${error}`);
-      }
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     deleteReview: async (id: number, token: string) => {
-      const response = await fetch(API_URLS.gallery, {
+      const response = await fetch(`${API_URLS.gallery}?resource=reviews&id=${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -322,12 +322,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'reviews', id })
       });
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('Delete review failed:', error);
-        throw new Error(`Failed to delete review: ${error}`);
-      }
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     getFAQ: async (): Promise<FAQ[]> => {
       const response = await fetch(`${API_URLS.gallery}?resource=faq`);
@@ -343,7 +340,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'faq', ...faq })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     updateFAQ: async (faq: FAQ, token: string) => {
       const response = await fetch(API_URLS.gallery, {
@@ -354,10 +353,12 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'faq', ...faq })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     deleteFAQ: async (id: number, token: string) => {
-      const response = await fetch(API_URLS.gallery, {
+      const response = await fetch(`${API_URLS.gallery}?resource=faq&id=${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -365,7 +366,9 @@ export const api = {
         },
         body: JSON.stringify({ resource: 'faq', id })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     getBlog: async (page = 1, per_page = 20): Promise<BlogPaginated> => {
       const params = new URLSearchParams({ resource: 'blog', page: String(page), per_page: String(per_page) });
@@ -462,9 +465,11 @@ export const api = {
           'Content-Type': 'application/json',
           'X-Auth-Token': token
         },
-        body: JSON.stringify(member)
+        body: JSON.stringify({ resource: 'team', ...member })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     updateTeamMember: async (member: TeamMember, token: string) => {
       const response = await fetch(`${API_URLS.gallery}?resource=team&id=${member.id}`, {
@@ -475,7 +480,9 @@ export const api = {
         },
         body: JSON.stringify(member)
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     deleteTeamMember: async (id: number, token: string) => {
       const response = await fetch(`${API_URLS.gallery}?resource=team&id=${id}`, {
@@ -485,7 +492,9 @@ export const api = {
           'X-Auth-Token': token
         }
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     }
   },
   
