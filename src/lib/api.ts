@@ -221,6 +221,19 @@ export const api = {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
       return data;
+    },
+    reorder: async (id: number, direction: 'up' | 'down', token: string) => {
+      const response = await fetch(API_URLS.modules, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify({ action: 'reorder', id, direction })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     }
   },
   

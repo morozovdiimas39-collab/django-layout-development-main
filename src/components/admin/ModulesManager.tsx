@@ -22,6 +22,7 @@ interface ModulesManagerProps {
   onCreate: () => void;
   onUpdate: () => void;
   onDelete: (id: number) => void;
+  onReorder: (id: number, direction: 'up' | 'down') => void;
   onStartEditing: (module: CourseModule) => void;
   onCancelEditing: () => void;
 }
@@ -35,6 +36,7 @@ export default function ModulesManager({
   onCreate,
   onUpdate,
   onDelete,
+  onReorder,
   onStartEditing,
   onCancelEditing
 }: ModulesManagerProps) {
@@ -119,7 +121,15 @@ export default function ModulesManager({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {modules.map((module) => (
+            {[...modules].sort((a, b) => {
+              if (a.course_type !== b.course_type) return a.course_type.localeCompare(b.course_type);
+              return (a.order_num ?? 0) - (b.order_num ?? 0);
+            }).map((module, index, arr) => {
+              const sameCourse = arr.filter(m => m.course_type === module.course_type);
+              const pos = sameCourse.findIndex(m => m.id === module.id);
+              const canMoveUp = pos > 0;
+              const canMoveDown = pos < sameCourse.length - 1 && pos >= 0;
+              return (
               <div key={module.id}>
                 {editingModule?.id === module.id ? (
                   <Card>
@@ -214,7 +224,27 @@ export default function ModulesManager({
                               Результат: {module.result}
                             </p>
                           )}
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => onReorder(module.id, 'up')}
+                                disabled={!canMoveUp}
+                                title="Поднять выше"
+                              >
+                                <Icon name="ChevronUp" size={14} />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => onReorder(module.id, 'down')}
+                                disabled={!canMoveDown}
+                                title="Опустить ниже"
+                              >
+                                <Icon name="ChevronDown" size={14} />
+                              </Button>
+                            </div>
                             <Button
                               variant="outline"
                               size="sm"
@@ -237,7 +267,8 @@ export default function ModulesManager({
                   </Card>
                 )}
               </div>
-            ))}
+            );
+            })}
           </div>
         </CardContent>
       </Card>

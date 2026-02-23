@@ -52,11 +52,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if course_type:
                 cur.execute(
-                    "SELECT * FROM public.course_modules WHERE course_type = %s ORDER BY order_num",
+                    "SELECT * FROM public.course_modules WHERE course_type = %s ORDER BY order_num, id",
                     (course_type,)
                 )
             else:
-                cur.execute("SELECT * FROM public.course_modules ORDER BY course_type, order_num")
+                cur.execute("SELECT * FROM public.course_modules ORDER BY course_type, order_num, id")
             
             modules = cur.fetchall()
             result = [dict(row) for row in modules]
@@ -73,6 +73,52 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'POST':
             body_data = _parse_body(event)
             
+            if body_data.get('action') == 'reorder':
+                module_id = body_data.get('id')
+                direction = body_data.get('direction')
+                if not module_id or direction not in ('up', 'down'):
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'id and direction (up/down) required'})
+                    }
+                cur.execute("SELECT id, course_type, order_num FROM course_modules WHERE id = %s", (int(module_id),))
+                mod = cur.fetchone()
+                if not mod:
+                    cur.close()
+                    conn.close()
+                    return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Module not found'})}
+                ct, onum = mod['course_type'], mod['order_num']
+                if direction == 'up':
+                    cur.execute(
+                        "SELECT id, order_num FROM course_modules WHERE course_type = %s AND order_num < %s ORDER BY order_num DESC LIMIT 1",
+                        (ct, onum)
+                    )
+                else:
+                    cur.execute(
+                        "SELECT id, order_num FROM course_modules WHERE course_type = %s AND order_num > %s ORDER BY order_num ASC LIMIT 1",
+                        (ct, onum)
+                    )
+                swap_with = cur.fetchone()
+                if swap_with:
+                    cur.execute("UPDATE course_modules SET order_num = %s WHERE id = %s", (swap_with['order_num'], int(module_id)))
+                    cur.execute("UPDATE course_modules SET order_num = %s WHERE id = %s", (onum, swap_with['id']))
+                    conn.commit()
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'ok': True})
+                }
+            
+            cur.execute(
+                "SELECT COALESCE(MAX(order_num), -1) + 1 AS next_num FROM course_modules WHERE course_type = %s",
+                (body_data.get('course_type'),)
+            )
+            next_order = cur.fetchone()['next_num']
             cur.execute(
                 """
                 INSERT INTO public.course_modules 
@@ -86,7 +132,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     body_data.get('description'),
                     body_data.get('result'),
                     body_data.get('image_url'),
-                    body_data.get('order_num', 0)
+                    body_data.get('order_num', next_order)
                 )
             )
             module = cur.fetchone()

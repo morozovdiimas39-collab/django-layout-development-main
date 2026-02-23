@@ -255,6 +255,15 @@ export default function AdminPage() {
     }
   };
 
+  const handleReorderModule = async (id: number, direction: 'up' | 'down') => {
+    try {
+      await api.modules.reorder(id, direction, token);
+      await loadData(token);
+    } catch (error) {
+      alert('Ошибка смены порядка');
+    }
+  };
+
   const handleCreateFAQ = async () => {
     if (!newFAQ.question || !newFAQ.answer) {
       alert('Заполните все поля');
@@ -535,6 +544,7 @@ export default function AdminPage() {
               onCreate={handleCreateModule}
               onUpdate={handleUpdateModule}
               onDelete={handleDeleteModule}
+              onReorder={handleReorderModule}
               onStartEditing={setEditingModule}
               onCancelEditing={() => setEditingModule(null)}
             />
