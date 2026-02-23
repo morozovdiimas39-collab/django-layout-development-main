@@ -3,10 +3,10 @@ import os
 from typing import Optional
 import requests
 
-# Маппинг callback_data кнопок -> статус в БД (leads). trial_scheduled/enrolled попадают в Метрику и CSV.
+# Маппинг callback_data кнопок -> статус в БД (leads). В Директ: called_target→IN_PROGRESS, trial_scheduled→PAID, thinking→CANCELLED, irrelevant→SPAM.
 CALLBACK_TO_STATUS = {
+    'called_target': 'called_target',
     'trial': 'trial_scheduled',
-    'enrolled': 'enrolled',
     'thinking': 'thinking',
     'irrelevant': 'irrelevant',
 }
@@ -72,10 +72,10 @@ def _answer_callback(telegram_token: str, callback_id: str, text: str, proxy_url
 
 def handler(event: dict, context) -> dict:
     '''Telegram бот (layout) с интеграцией Gemini 2.5 Flash через прокси'''
-    
+
     print(f"Received event: {json.dumps(event)}")
     method = event.get('httpMethod', 'POST')
-    
+
     if method == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -87,7 +87,7 @@ def handler(event: dict, context) -> dict:
             'body': '',
             'isBase64Encoded': False
         }
-    
+
     if method != 'POST':
         return {
             'statusCode': 405,
@@ -95,19 +95,19 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'error': 'Method not allowed'}),
             'isBase64Encoded': False
         }
-    
+
     telegram_token = os.environ.get('TELEGRAM_BOT_TOKEN_NEW') or os.environ.get('TELEGRAM_BOT_TOKEN')
-    gemini_api_key = os.environ.get('GEMINI_API_KEY')
+    gemini_api_key = os.environ.get('GEMINI_API_KEY')  # необязательно — только для ответов на текстовые сообщения
     proxy_url = os.environ.get('TELEGRAM_PROXY_URL')
-    
-    if not telegram_token or not gemini_api_key:
+
+    if not telegram_token:
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Missing credentials'}),
+            'body': json.dumps({'error': 'Missing TELEGRAM_BOT_TOKEN'}),
             'isBase64Encoded': False
         }
-    
+
     proxies = None
     if proxy_url:
         proxies = {
@@ -115,15 +115,29 @@ def handler(event: dict, context) -> dict:
             'https': proxy_url
         }
         print(f"Using proxy: {proxy_url}")
-    
-    try:
-        body_str = event.get('body', '{}')
-        print(f"Body: {body_str}")
-        update = json.loads(body_str)
-        print(f"Update parsed: {json.dumps(update)}")
 
-        # Нажатие кнопки под сообщением о заявке: обновляем статус в leads и уходим в Метрику/CSV
-        if 'callback_query' in update:
+    try:
+        body = event.get('body') or '{}'
+        if isinstance(body, dict):
+            update = body
+        else:
+            raw = body if isinstance(body, str) else str(body)
+            try:
+                update = json.loads(raw)
+            except json.JSONDecodeError:
+                if event.get('isBase64Encoded'):
+                    try:
+                        import base64
+                        update = json.loads(base64.b64decode(raw).decode('utf-8'))
+                    except Exception:
+                        update = {}
+                else:
+                    update = {}
+        if not isinstance(update, dict):
+            update = {}
+
+        # Нажатие кнопки — сразу в обработчик, чтобы ответить Telegram вовремя
+        if update.get('callback_query'):
             return _handle_callback_query(update['callback_query'], telegram_token, proxy_url)
 
         if 'message' not in update:
@@ -139,7 +153,7 @@ def handler(event: dict, context) -> dict:
         chat_id = message['chat']['id']
         text = message.get('text', '')
         print(f"Chat ID: {chat_id}, Text: {text}")
-        
+
         if not text:
             print("No text in message")
             return {
@@ -148,70 +162,39 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'status': 'ok'}),
                 'isBase64Encoded': False
             }
-        
-        print(f"Calling Gemini API with text: {text}")
-        gemini_url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_api_key}'
-        
-        gemini_payload = {
-            'contents': [{
-                'parts': [{
-                    'text': text
-                }]
-            }]
-        }
-        
-        gemini_response = requests.post(
-            gemini_url,
-            json=gemini_payload,
-            proxies=proxies,
-            timeout=30
-        )
-        
-        print(f"Gemini status: {gemini_response.status_code}")
-        print(f"Gemini response: {gemini_response.text}")
-        
-        if gemini_response.status_code != 200:
-            return {
-                'statusCode': 500,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Gemini API error', 'details': gemini_response.text}),
-                'isBase64Encoded': False
-            }
-        
-        gemini_data = gemini_response.json()
-        reply_text = gemini_data['candidates'][0]['content']['parts'][0]['text']
-        print(f"Gemini reply: {reply_text}")
-        
+
         telegram_api_url = f'https://api.telegram.org/bot{telegram_token}/sendMessage'
-        
-        payload = {
-            'chat_id': chat_id,
-            'text': reply_text,
-            'parse_mode': 'Markdown'
-        }
-        
-        telegram_response = requests.post(
+
+        if gemini_api_key:
+            print(f"Calling Gemini API with text: {text}")
+            gemini_url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_api_key}'
+            gemini_payload = {'contents': [{'parts': [{'text': text}]}]}
+            try:
+                gemini_response = requests.post(gemini_url, json=gemini_payload, proxies=proxies, timeout=30)
+                if gemini_response.status_code == 200:
+                    reply_text = gemini_response.json()['candidates'][0]['content']['parts'][0]['text']
+                else:
+                    reply_text = "Сейчас не могу ответить. Оставьте заявку на сайте."
+            except Exception as e:
+                print(f"Gemini error: {e}")
+                reply_text = "Сейчас не могу ответить. Оставьте заявку на сайте."
+        else:
+            reply_text = "Оставьте заявку на сайте — мы перезвоним."
+
+        requests.post(
             telegram_api_url,
-            json=payload,
+            json={'chat_id': chat_id, 'text': reply_text, 'parse_mode': 'Markdown'},
             proxies=proxies,
-            timeout=30
+            timeout=10
         )
-        
-        if telegram_response.status_code != 200:
-            return {
-                'statusCode': 500,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Failed to send message', 'details': telegram_response.text}),
-                'isBase64Encoded': False
-            }
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'status': 'ok', 'reply': reply_text}),
+            'body': json.dumps({'status': 'ok'}),
             'isBase64Encoded': False
         }
-        
+
     except Exception as e:
         print(f"ERROR: {str(e)}")
         import traceback

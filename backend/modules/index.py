@@ -4,13 +4,30 @@ from typing import Dict, Any
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+
+def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
+    body = event.get('body') or '{}'
+    if isinstance(body, dict):
+        return body
+    if event.get('isBase64Encoded') and isinstance(body, str):
+        import base64
+        try:
+            body = base64.b64decode(body).decode('utf-8')
+        except Exception:
+            pass
+    try:
+        return json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return {}
+
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
     Business: Manage course modules
     Args: event with httpMethod, body, queryStringParameters
     Returns: HTTP response with modules data
     '''
-    method: str = event.get('httpMethod', 'GET')
+    method: str = (event.get('httpMethod') or 'GET').upper()
     
     if method == 'OPTIONS':
         return {
@@ -54,7 +71,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'POST':
-            body_data = json.loads(event.get('body', '{}'))
+            body_data = _parse_body(event)
             
             cur.execute(
                 """
@@ -84,18 +101,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'PUT':
-            body_data = json.loads(event.get('body', '{}'))
+            body_data = _parse_body(event)
             module_id = body_data.get('id')
             
             cur.execute(
                 """
                 UPDATE public.course_modules 
-                SET title = %s, description = %s, result = %s, 
+                SET course_type = %s, title = %s, description = %s, result = %s, 
                     image_url = %s, order_num = %s
                 WHERE id = %s
                 RETURNING *
                 """,
                 (
+                    body_data.get('course_type'),
                     body_data.get('title'),
                     body_data.get('description'),
                     body_data.get('result'),
@@ -123,15 +141,26 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
         
         elif method == 'DELETE':
-            body_data = json.loads(event.get('body', '{}'))
-            module_id = body_data.get('id')
-            if not module_id:
+            params = event.get('queryStringParameters') or {}
+            body_data = _parse_body(event)
+            raw_id = body_data.get('id') or params.get('id')
+            if not raw_id:
                 cur.close()
                 conn.close()
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                     'body': json.dumps({'error': 'id required'})
+                }
+            try:
+                module_id = int(raw_id)
+            except (TypeError, ValueError):
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'id must be a number'})
                 }
             cur.execute("DELETE FROM public.course_modules WHERE id = %s RETURNING id", (module_id,))
             deleted = cur.fetchone()

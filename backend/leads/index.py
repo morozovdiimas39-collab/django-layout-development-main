@@ -9,6 +9,23 @@ import urllib.request
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
 ADMIN_CHAT_ID = os.environ.get('TELEGRAM_ADMIN_CHAT_ID', '')
 
+
+def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
+    body = event.get('body') or '{}'
+    if isinstance(body, dict):
+        return body
+    if event.get('isBase64Encoded') and isinstance(body, str):
+        import base64
+        try:
+            body = base64.b64decode(body).decode('utf-8')
+        except Exception:
+            pass
+    try:
+        return json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return {}
+
+
 def get_seats_remaining(course: str) -> dict:
     '''Подсчет оставшихся мест на основе даты пробного занятия'''
     try:
@@ -96,7 +113,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'POST':
-            body_data = json.loads(event.get('body', '{}'))
+            body_data = _parse_body(event)
             name = body_data.get('name')
             phone = body_data.get('phone')
             source = body_data.get('source', 'website')
@@ -153,7 +170,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif method == 'PUT':
-            body_data = json.loads(event.get('body', '{}'))
+            body_data = _parse_body(event)
             lead_id = body_data.get('id')
             status = body_data.get('status')
             
@@ -188,6 +205,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     # client_id: с сайта — ym_client_id; только из Telegram — виртуальный telegram_{id}
                     client_id = lead.get('ym_client_id') or f"telegram_{lead['id']}"
                     goal_map = {
+                        'called_target': 'called_target',
                         'trial_scheduled': 'trial_scheduled',
                         'trial_completed': 'trial_completed',
                         'enrolled': 'enrolled',
@@ -195,22 +213,25 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     }
                     
                     if status in goal_map:
-                        try:
-                            send_metrika_goal(
-                                goal=goal_map[status],
-                                client_id=client_id,
-                                lead_id=lead['id'],
-                                params={
-                                    'status': status,
-                                    'source': lead.get('source', 'unknown'),
-                                    'course': lead.get('course', 'unknown'),
-                                    'phone': lead.get('phone', '')
-                                }
-                            )
-                            print(f"Metrika goal sent: {goal_map[status]} for lead {lead['id']} (client_id={client_id})")
-                        except Exception as e:
-                            print(f"Failed to send metrika goal: {e}")
-                
+                        def _send_metrika():
+                            try:
+                                send_metrika_goal(
+                                    goal=goal_map[status],
+                                    client_id=client_id,
+                                    lead_id=lead['id'],
+                                    params={
+                                        'status': status,
+                                        'source': lead.get('source', 'unknown'),
+                                        'course': lead.get('course', 'unknown'),
+                                        'phone': lead.get('phone', '')
+                                    }
+                                )
+                                print(f"Metrika goal sent: {goal_map[status]} for lead {lead['id']}")
+                            except Exception as e:
+                                print(f"Failed to send metrika goal: {e}")
+                        import threading
+                        threading.Thread(target=_send_metrika, daemon=True).start()
+
                 return {
                     'statusCode': 200,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -278,8 +299,8 @@ def send_telegram_notification(lead: dict):
         'parse_mode': 'HTML',
         'reply_markup': {
             'inline_keyboard': [[
-                {'text': '✅ Записался на пробное', 'callback_data': f'status_{lead.get("id")}_trial'},
-                {'text': '🎓 Записался на обучение', 'callback_data': f'status_{lead.get("id")}_enrolled'}
+                {'text': '📞 Дозвонились, целевой', 'callback_data': f'status_{lead.get("id")}_called_target'},
+                {'text': '✅ Записался на пробное', 'callback_data': f'status_{lead.get("id")}_trial'}
             ], [
                 {'text': '🤔 Думает', 'callback_data': f'status_{lead.get("id")}_thinking'},
                 {'text': '❌ Нецелевой', 'callback_data': f'status_{lead.get("id")}_irrelevant'}
@@ -316,6 +337,7 @@ def update_telegram_message(lead: dict):
     status = lead.get('status', 'new')
     status_names = {
         'new': 'Новая заявка',
+        'called_target': 'Дозвонились, целевой',
         'trial': 'Записался на пробное',
         'trial_scheduled': 'Записался на пробное',
         'trial_completed': 'Прошёл пробное',
@@ -327,6 +349,7 @@ def update_telegram_message(lead: dict):
     
     status_emojis = {
         'new': '🔔',
+        'called_target': '📞',
         'trial': '✅',
         'trial_scheduled': '✅',
         'trial_completed': '✅',

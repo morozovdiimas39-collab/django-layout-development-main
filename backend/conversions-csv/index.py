@@ -22,6 +22,7 @@ BLOCKLIST_PHONES_NORMALIZED = {'71231312312', '72831612312', '72424234234'}
 
 # Ценность конверсии по статусу (руб.). Директ: неотрицательное число, макс. 9223372036854
 CONVERSION_REVENUE = {
+    'called_target': 300,
     'trial_scheduled': 500,
     'trial_completed': 1000,
     'enrolled': 5000,
@@ -32,10 +33,11 @@ CONVERSION_REVENUE = {
 MAX_REVENUE = 9223372036854
 
 # В файле для Директа order_status — только 4 значения: IN_PROGRESS, PAID, CANCELLED, SPAM
-# Записался на пробное → IN_PROGRESS, записался на обучение → PAID, думает → CANCELLED, нецелевой → SPAM
+# Дозвонились целевой → IN_PROGRESS, записался на пробное → PAID, думает → CANCELLED, нецелевой → SPAM
 STATUS_TO_ORDER_STATUS = {
-    'trial_scheduled': 'IN_PROGRESS',
-    'trial_completed': 'IN_PROGRESS',
+    'called_target': 'IN_PROGRESS',
+    'trial_scheduled': 'PAID',
+    'trial_completed': 'PAID',
     'enrolled': 'PAID',
     'paid': 'PAID',
     'thinking': 'CANCELLED',
@@ -119,7 +121,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 created_at,
                 updated_at
             FROM leads 
-            WHERE status IN ('trial_scheduled', 'trial_completed', 'enrolled', 'paid', 'thinking', 'irrelevant')
+            WHERE status IN ('called_target', 'trial_scheduled', 'trial_completed', 'enrolled', 'paid', 'thinking', 'irrelevant')
             ORDER BY updated_at DESC
         """)
         leads = cur.fetchall()

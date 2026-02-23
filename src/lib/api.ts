@@ -205,10 +205,12 @@ export const api = {
         },
         body: JSON.stringify(module)
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     },
     delete: async (id: number, token: string) => {
-      const response = await fetch(API_URLS.modules, {
+      const response = await fetch(`${API_URLS.modules}?id=${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +218,9 @@ export const api = {
         },
         body: JSON.stringify({ id })
       });
-      return response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
+      return data;
     }
   },
   
