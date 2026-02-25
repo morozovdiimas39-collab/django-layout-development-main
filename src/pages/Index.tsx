@@ -354,7 +354,7 @@ const Index = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Телефон *</label>
-                    <Input type="tel" placeholder="(999) 123-45-67" required />
+                    <Input type="tel" placeholder="Номер телефона" required />
                   </div>
                 </div>
                 <div className="space-y-2">

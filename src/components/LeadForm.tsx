@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import InputMask from 'react-input-mask';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -82,22 +81,15 @@ export default function LeadForm({
           <Label htmlFor={`phone-${source}`} className="text-sm sm:text-base font-semibold mb-2 block">
             Номер телефона
           </Label>
-          <InputMask
-            mask="(999) 999-99-99"
+          <Input
+            id={`phone-${source}`}
+            type="tel"
+            placeholder="Номер телефона"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-          >
-            {((inputProps: any) => (
-              <Input
-                {...inputProps}
-                id={`phone-${source}`}
-                type="tel"
-                placeholder="(999) 999-99-99"
-                required
-                className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
-              />
-            )) as any}
-          </InputMask>
+            required
+            className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
+          />
         </div>
         
         <Button 

@@ -37,31 +37,11 @@ export default function PhoneForm({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const formatPhoneNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
-    if (cleaned.length === 0) return '';
-    let digits = cleaned;
-    if (digits.length === 11 && (digits[0] === '7' || digits[0] === '8')) digits = digits.slice(1);
-    if (digits.length > 10) digits = digits.slice(0, 10);
-    if (digits.length <= 3) return digits.length ? `(${digits}` : '';
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    if (digits.length <= 8) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`;
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const formatted = formatPhoneNumber(input);
-    setPhone(formatted);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const cleaned = phone.replace(/\D/g, '');
-    const digits = cleaned.length === 11 && (cleaned[0] === '7' || cleaned[0] === '8') ? cleaned.slice(1) : cleaned;
-    if (digits.length < 10) {
-      alert('Пожалуйста, введите корректный номер телефона');
+    const trimmed = phone.trim();
+    if (!trimmed) {
+      alert('Пожалуйста, введите номер телефона');
       return;
     }
 
@@ -71,7 +51,7 @@ export default function PhoneForm({
       const clientId = await getYandexClientID();
       
       await api.leads.create({ 
-        phone, 
+        phone: trimmed, 
         source, 
         course,
         utm,
@@ -128,16 +108,12 @@ export default function PhoneForm({
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(999) 123-45-67"
+                placeholder="Номер телефона"
                 value={phone}
-                onChange={handlePhoneChange}
-                maxLength={18}
+                onChange={(e) => setPhone(e.target.value)}
                 required
                 className="text-sm sm:text-base"
               />
-              <p className="text-xs text-muted-foreground">
-                Формат: (999) 123-45-67
-              </p>
             </div>
             <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading} size="sm">
               {loading ? (
