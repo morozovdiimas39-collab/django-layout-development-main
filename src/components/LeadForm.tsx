@@ -83,7 +83,7 @@ export default function LeadForm({
             Номер телефона
           </Label>
           <InputMask
-            mask="+7 (999) 999-99-99"
+            mask="(999) 999-99-99"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           >
@@ -92,7 +92,7 @@ export default function LeadForm({
                 {...inputProps}
                 id={`phone-${source}`}
                 type="tel"
-                placeholder="+7 (999) 999-99-99"
+                placeholder="(999) 999-99-99"
                 required
                 className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
               />

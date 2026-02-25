@@ -39,28 +39,14 @@ export default function PhoneForm({
 
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/\D/g, '');
-    
     if (cleaned.length === 0) return '';
-    
-    let formatted = '+7';
-    
-    if (cleaned.length > 1) {
-      formatted += ' (' + cleaned.substring(1, 4);
-    }
-    
-    if (cleaned.length >= 5) {
-      formatted += ') ' + cleaned.substring(4, 7);
-    }
-    
-    if (cleaned.length >= 8) {
-      formatted += '-' + cleaned.substring(7, 9);
-    }
-    
-    if (cleaned.length >= 10) {
-      formatted += '-' + cleaned.substring(9, 11);
-    }
-    
-    return formatted;
+    let digits = cleaned;
+    if (digits.length === 11 && (digits[0] === '7' || digits[0] === '8')) digits = digits.slice(1);
+    if (digits.length > 10) digits = digits.slice(0, 10);
+    if (digits.length <= 3) return digits.length ? `(${digits}` : '';
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    if (digits.length <= 8) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +59,8 @@ export default function PhoneForm({
     e.preventDefault();
     
     const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length !== 11) {
+    const digits = cleaned.length === 11 && (cleaned[0] === '7' || cleaned[0] === '8') ? cleaned.slice(1) : cleaned;
+    if (digits.length < 10) {
       alert('Пожалуйста, введите корректный номер телефона');
       return;
     }
@@ -141,7 +128,7 @@ export default function PhoneForm({
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+7 (999) 123-45-67"
+                placeholder="(999) 123-45-67"
                 value={phone}
                 onChange={handlePhoneChange}
                 maxLength={18}
@@ -149,7 +136,7 @@ export default function PhoneForm({
                 className="text-sm sm:text-base"
               />
               <p className="text-xs text-muted-foreground">
-                Формат: +7 (999) 123-45-67
+                Формат: (999) 123-45-67
               </p>
             </div>
             <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading} size="sm">
