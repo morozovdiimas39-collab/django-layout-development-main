@@ -1,10 +1,20 @@
 import { useState } from 'react';
+import InputMask from 'react-input-mask';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
 import { getStoredUTM, getYandexClientID } from '@/lib/utm';
+import { getRecaptchaToken } from '@/lib/recaptcha';
+
+function phoneToDigits(masked: string): string {
+  const digits = masked.replace(/\D/g, '');
+  if (digits.length === 10 && digits.startsWith('9')) return '7' + digits;
+  if (digits.length === 11 && digits.startsWith('8')) return '7' + digits.slice(1);
+  if (digits.length >= 11) return digits.startsWith('7') ? digits : '7' + digits.slice(-10);
+  return digits;
+}
 
 interface LeadFormProps {
   source: string;
@@ -27,18 +37,25 @@ export default function LeadForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const normalized = phoneToDigits(phone);
+    if (normalized.length < 11) {
+      alert('Пожалуйста, введите полный номер телефона');
+      return;
+    }
     setLoading(true);
 
     try {
       const utm = getStoredUTM();
       const clientId = await getYandexClientID();
+      const recaptcha_token = await getRecaptchaToken('submit_form');
 
       await api.leads.create({ 
-        phone, 
+        phone: normalized, 
         source, 
         course,
         ym_client_id: clientId || undefined,
-        utm
+        utm,
+        recaptcha_token: recaptcha_token || undefined
       });
       
       setSubmitted(true);
@@ -81,15 +98,20 @@ export default function LeadForm({
           <Label htmlFor={`phone-${source}`} className="text-sm sm:text-base font-semibold mb-2 block">
             Номер телефона
           </Label>
-          <Input
-            id={`phone-${source}`}
-            type="tel"
-            placeholder="Номер телефона"
+          <InputMask
+            mask="+7 (999) 999-99-99"
+            maskChar={null}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            required
-            className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
-          />
+          >
+            <Input
+              id={`phone-${source}`}
+              type="tel"
+              placeholder="+7 (___) ___-__-__"
+              required
+              className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
+            />
+          </InputMask>
         </div>
         
         <Button 

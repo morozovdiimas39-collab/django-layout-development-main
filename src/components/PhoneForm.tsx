@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import InputMask from 'react-input-mask';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,16 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
 import { getStoredUTM, getYandexClientID } from '@/lib/utm';
+import { getRecaptchaToken } from '@/lib/recaptcha';
+
+/** Номер из маски в цифры 7XXXXXXXXXX для API */
+function phoneToDigits(masked: string): string {
+  const digits = masked.replace(/\D/g, '');
+  if (digits.length === 10 && digits.startsWith('9')) return '7' + digits;
+  if (digits.length === 11 && digits.startsWith('8')) return '7' + digits.slice(1);
+  if (digits.length >= 11) return digits.startsWith('7') ? digits : '7' + digits.slice(-10);
+  return digits;
+}
 
 interface PhoneFormProps {
   source: string;
@@ -39,9 +50,9 @@ export default function PhoneForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = phone.trim();
-    if (!trimmed) {
-      alert('Пожалуйста, введите номер телефона');
+    const normalized = phoneToDigits(phone);
+    if (normalized.length < 11) {
+      alert('Пожалуйста, введите полный номер телефона');
       return;
     }
 
@@ -49,13 +60,15 @@ export default function PhoneForm({
     try {
       const utm = getStoredUTM();
       const clientId = await getYandexClientID();
-      
+      const recaptcha_token = await getRecaptchaToken('submit_form');
+
       await api.leads.create({ 
-        phone: trimmed, 
+        phone: normalized, 
         source, 
         course,
         utm,
-        ym_client_id: clientId || undefined
+        ym_client_id: clientId || undefined,
+        recaptcha_token: recaptcha_token || undefined
       });
       setSuccess(true);
       
@@ -105,15 +118,20 @@ export default function PhoneForm({
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="space-y-1.5 sm:space-y-2">
               <Label htmlFor="phone" className="text-sm">Номер телефона</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="Номер телефона"
+              <InputMask
+                mask="+7 (999) 999-99-99"
+                maskChar={null}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                required
-                className="text-sm sm:text-base"
-              />
+              >
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+7 (___) ___-__-__"
+                  required
+                  className="text-sm sm:text-base"
+                />
+              </InputMask>
             </div>
             <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading} size="sm">
               {loading ? (
