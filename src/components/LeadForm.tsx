@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
 import { getStoredUTM, getYandexClientID } from '@/lib/utm';
-import { getRecaptchaToken, isRecaptchaConfigured } from '@/lib/recaptcha';
 
 function phoneToDigits(masked: string): string {
   const digits = masked.replace(/\D/g, '');
@@ -47,21 +46,13 @@ export default function LeadForm({
     try {
       const utm = getStoredUTM();
       const clientId = await getYandexClientID();
-      const recaptcha_token = await getRecaptchaToken('submit_form');
-
-      if (isRecaptchaConfigured() && !recaptcha_token) {
-        alert('Проверка не пройдена. Обновите страницу и попробуйте снова.');
-        setLoading(false);
-        return;
-      }
 
       await api.leads.create({ 
         phone: normalized, 
         source, 
         course,
         ym_client_id: clientId || undefined,
-        utm,
-        recaptcha_token: recaptcha_token || undefined
+        utm
       });
       
       setSubmitted(true);

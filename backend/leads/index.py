@@ -10,31 +10,6 @@ import urllib.request
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
 ADMIN_CHAT_ID = os.environ.get('TELEGRAM_ADMIN_CHAT_ID', '')
 
-# reCAPTCHA v3: минимальный score (0.0–1.0), ниже — считаем ботом
-RECAPTCHA_MIN_SCORE = 0.3
-
-
-def _verify_recaptcha(token: str, secret: str) -> bool:
-    """Проверка токена reCAPTCHA v3 у Google. Возвращает True если успех и score >= RECAPTCHA_MIN_SCORE."""
-    if not token or not secret:
-        return False
-    try:
-        data = urllib.parse.urlencode({'secret': secret, 'response': token}).encode()
-        req = urllib.request.Request(
-            'https://www.google.com/recaptcha/api/siteverify',
-            data=data,
-            method='POST',
-            headers={'Content-Type': 'application/x-www-form-urlencoded'}
-        )
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            result = json.loads(resp.read().decode())
-        if not result.get('success'):
-            return False
-        return float(result.get('score', 0)) >= RECAPTCHA_MIN_SCORE
-    except Exception:
-        return False
-
-
 def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     body = event.get('body') or '{}'
     if isinstance(body, dict):
@@ -139,16 +114,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'POST':
             body_data = _parse_body(event)
-            recaptcha_secret = os.environ.get('RECAPTCHA_SECRET_KEY', '')
-            recaptcha_token = (body_data.get('recaptcha_token') or '').strip()
-            # Проверяем капчу только если токен передан (форма с сайта). Заявки без токена (Telegram-бот и т.п.) пропускаем.
-            if recaptcha_secret and recaptcha_token:
-                if not _verify_recaptcha(recaptcha_token, recaptcha_secret):
-                    return {
-                        'statusCode': 400,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({'error': 'Проверка не пройдена. Обновите страницу и попробуйте снова.'})
-                    }
 
             name = body_data.get('name')
             phone = body_data.get('phone')

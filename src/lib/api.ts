@@ -153,7 +153,6 @@ export const api = {
       course?: string;
       utm?: any;
       ym_client_id?: string;
-      recaptcha_token?: string;
     }) => {
       const response = await fetch(API_URLS.leads, {
         method: 'POST',
