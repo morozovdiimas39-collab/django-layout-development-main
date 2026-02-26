@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
 import { getStoredUTM, getYandexClientID } from '@/lib/utm';
-import { getRecaptchaToken } from '@/lib/recaptcha';
+import { getRecaptchaToken, isRecaptchaConfigured } from '@/lib/recaptcha';
 
 /** Номер из маски в цифры 7XXXXXXXXXX для API */
 function phoneToDigits(masked: string): string {
@@ -62,6 +62,12 @@ export default function PhoneForm({
       const clientId = await getYandexClientID();
       const recaptcha_token = await getRecaptchaToken('submit_form');
 
+      if (isRecaptchaConfigured() && !recaptcha_token) {
+        alert('Проверка не пройдена. Обновите страницу и попробуйте снова.');
+        setLoading(false);
+        return;
+      }
+
       await api.leads.create({ 
         phone: normalized, 
         source, 
@@ -82,7 +88,8 @@ export default function PhoneForm({
         setPhone('');
       }, 2000);
     } catch (error) {
-      alert('Ошибка отправки. Попробуйте позже.');
+      const message = error instanceof Error ? error.message : 'Ошибка отправки. Попробуйте позже.';
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -120,17 +127,20 @@ export default function PhoneForm({
               <Label htmlFor="phone" className="text-sm">Номер телефона</Label>
               <InputMask
                 mask="+7 (999) 999-99-99"
-                maskChar={null}
+                maskChar="_"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               >
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+7 (___) ___-__-__"
-                  required
-                  className="text-sm sm:text-base"
-                />
+                {(inputProps) => (
+                  <Input
+                    {...inputProps}
+                    id="phone"
+                    type="tel"
+                    placeholder="+7 (___) ___-__-__"
+                    required
+                    className="text-sm sm:text-base"
+                  />
+                )}
               </InputMask>
             </div>
             <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading} size="sm">

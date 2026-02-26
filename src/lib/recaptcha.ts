@@ -36,6 +36,12 @@ declare global {
   }
 }
 
+/** Предзагрузка скрипта reCAPTCHA (чтобы бейдж появился и в Network было видно запрос). */
+export function preloadRecaptcha(): void {
+  if (!SITE_KEY || typeof window === 'undefined') return;
+  loadScript(SITE_KEY).catch(() => {});
+}
+
 /**
  * Возвращает токен reCAPTCHA v3 для действия (например submit_form).
  * Если ключ не задан — возвращает пустую строку (бэкенд может не проверять).

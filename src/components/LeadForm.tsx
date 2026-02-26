@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
 import { getStoredUTM, getYandexClientID } from '@/lib/utm';
-import { getRecaptchaToken } from '@/lib/recaptcha';
+import { getRecaptchaToken, isRecaptchaConfigured } from '@/lib/recaptcha';
 
 function phoneToDigits(masked: string): string {
   const digits = masked.replace(/\D/g, '');
@@ -49,6 +49,12 @@ export default function LeadForm({
       const clientId = await getYandexClientID();
       const recaptcha_token = await getRecaptchaToken('submit_form');
 
+      if (isRecaptchaConfigured() && !recaptcha_token) {
+        alert('Проверка не пройдена. Обновите страницу и попробуйте снова.');
+        setLoading(false);
+        return;
+      }
+
       await api.leads.create({ 
         phone: normalized, 
         source, 
@@ -68,7 +74,8 @@ export default function LeadForm({
       setTimeout(() => setSubmitted(false), 3000);
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Произошла ошибка. Попробуйте еще раз.');
+      const message = error instanceof Error ? error.message : 'Произошла ошибка. Попробуйте еще раз.';
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -100,17 +107,20 @@ export default function LeadForm({
           </Label>
           <InputMask
             mask="+7 (999) 999-99-99"
-            maskChar={null}
+            maskChar="_"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           >
-            <Input
-              id={`phone-${source}`}
-              type="tel"
-              placeholder="+7 (___) ___-__-__"
-              required
-              className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
-            />
+            {(inputProps) => (
+              <Input
+                {...inputProps}
+                id={`phone-${source}`}
+                type="tel"
+                placeholder="+7 (___) ___-__-__"
+                required
+                className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
+              />
+            )}
           </InputMask>
         </div>
         

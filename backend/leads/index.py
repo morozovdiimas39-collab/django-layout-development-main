@@ -140,8 +140,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'POST':
             body_data = _parse_body(event)
             recaptcha_secret = os.environ.get('RECAPTCHA_SECRET_KEY', '')
-            if recaptcha_secret:
-                recaptcha_token = body_data.get('recaptcha_token') or ''
+            recaptcha_token = (body_data.get('recaptcha_token') or '').strip()
+            # Проверяем капчу только если токен передан (форма с сайта). Заявки без токена (Telegram-бот и т.п.) пропускаем.
+            if recaptcha_secret and recaptcha_token:
                 if not _verify_recaptcha(recaptcha_token, recaptcha_secret):
                     return {
                         'statusCode': 400,

@@ -160,7 +160,13 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      return response.json();
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const err = new Error((body && body.error) || 'Ошибка отправки') as Error & { body?: unknown };
+        err.body = body;
+        throw err;
+      }
+      return body;
     },
     updateStatus: async (id: number, status: string, token: string) => {
       const response = await fetch(API_URLS.leads, {
