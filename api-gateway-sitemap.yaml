@@ -1,26 +1,18 @@
-# Спецификация API Gateway для отдачи sitemap по пути /sitemap.xml на своём домене.
-# Консоль Yandex Cloud → API Gateway → Создать API → вставить или загрузить этот файл.
-# Привязать домен казбек-меретуков.рф к этому API. Тогда https://казбек-меретуков.рф/sitemap.xml
-# будет вызывать функцию sitemap и отдавать 200 + XML (всегда актуальный).
-#
-# ID функции sitemap из backend/func2url.json: d4e970s0n7por7g0cpc3
+# Только sitemap — без бакета. Вставь это в API Gateway и сохрани.
+# Проверка: https://ТВОЙ_СЛУЖЕБНЫЙ_ДОМЕН/sitemap.xml должен отдать XML.
+# Сайт пусть по-прежнему раздаётся с бакета (домен на бакет). Sitemap — по служебному домену или отдельному поддомену.
 
 openapi: 3.0.0
 info:
-  title: Sitemap proxy
+  title: Sitemap only
   version: 1.0.0
 paths:
   /sitemap.xml:
     get:
-      summary: Sitemap XML
       operationId: sitemap
       responses:
-        '200':
-          description: XML sitemap
-          content:
-            application/xml:
-              schema:
-                type: string
+        "200":
+          description: OK
       x-yc-apigateway-integration:
         type: cloud_functions
         function_id: d4e970s0n7por7g0cpc3
