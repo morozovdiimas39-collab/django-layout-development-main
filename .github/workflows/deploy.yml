@@ -49,9 +49,16 @@ jobs:
       - name: Generate sitemap to dist
         run: node scripts/generate-sitemap.js
 
-      - name: Upload frontend to Object Storage
+      - name: List dist before upload
+        run: ls -la ./dist && test -f ./dist/sitemap.xml && echo "sitemap.xml present" || (echo "sitemap.xml MISSING" && exit 1)
+
+      - name: Upload frontend to Object Storage (contents of dist to bucket root)
         run: |
-          yc storage cp --recursive ./dist "s3://$YC_BUCKET"
+          cd dist
+          yc storage cp --recursive . "s3://$YC_BUCKET/"
+
+      - name: List bucket after upload
+        run: yc storage ls "s3://$YC_BUCKET/" | head -30
 
       - name: Deploy gallery function
         run: |
