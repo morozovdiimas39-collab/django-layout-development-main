@@ -1,0 +1,48 @@
+# Основной домен через API Gateway: сайт из бакета + sitemap из функции
+# Подставь внизу BUCKET_NAME и (при 400) SERVICE_ACCOUNT_ID, залей в API Gateway, привяжи домен казбек-меретуков.рф к шлюзу.
+
+openapi: 3.0.0
+info:
+  title: Main domain
+  version: 1.0.0
+paths:
+  /sitemap.xml:
+    get:
+      operationId: sitemap
+      responses:
+        "200":
+          description: OK
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: d4e970s0n7por7g0cpc3
+        tag: "$latest"
+  /:
+    get:
+      operationId: index
+      responses:
+        "200":
+          description: OK
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: "BUCKET_NAME"
+        object: "index.html"
+        error_object: "index.html"
+        service_account_id: "SERVICE_ACCOUNT_ID"
+  /{path}:
+    get:
+      operationId: static
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: "BUCKET_NAME"
+        object: "{path}"
+        error_object: "index.html"
+        service_account_id: "SERVICE_ACCOUNT_ID"

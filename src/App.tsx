@@ -20,6 +20,7 @@ import ContactsPage from "./pages/ContactsPage";
 import MetrikaGoalPage from "./pages/MetrikaGoalPage";
 
 import SettingsPage from "./pages/SettingsPage";
+import SitemapRedirect from "./pages/SitemapRedirect";
 import NotFound from "./pages/NotFound";
 import { saveUTMToStorage } from "./lib/utm";
 import ScrollToTop from "./components/ScrollToTop";
@@ -57,6 +58,7 @@ const App = () => {
                 <Route path="/metrika-goal" element={<MetrikaGoalPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/sitemap.xml" element={<SitemapRedirect />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

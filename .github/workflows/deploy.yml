@@ -28,12 +28,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build frontend
-        run: npm run build
-
-      - name: Generate sitemap to dist
-        run: node scripts/generate-sitemap.js
-
       - name: Install Yandex Cloud CLI
         run: |
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
@@ -48,6 +42,62 @@ jobs:
         env:
           YC_SERVICE_ACCOUNT_KEY_JSON: ${{ env.YC_SERVICE_ACCOUNT_KEY_JSON }}
         shell: bash
+
+      - name: Generate API Gateway spec
+        run: node scripts/generate-api-gateway-spec.js
+        env:
+          YC_BUCKET: ${{ env.YC_BUCKET }}
+          YC_SERVICE_ACCOUNT_KEY_JSON: ${{ env.YC_SERVICE_ACCOUNT_KEY_JSON }}
+
+      - name: Deploy API Gateway
+        id: gateway
+        uses: yc-actions/yc-api-gateway-deploy@v3
+        with:
+          gateway-name: main-domain
+          folder-id: ${{ env.YC_FOLDER_ID }}
+          spec-file: api-gateway-generated.yaml
+          yc-sa-json-credentials: ${{ env.YC_SERVICE_ACCOUNT_KEY_JSON }}
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          VITE_SITEMAP_URL: https://${{ steps.gateway.outputs.domain }}/sitemap.xml
+
+      - name: Generate sitemap to dist
+        run: node scripts/generate-sitemap.js
+
+      - name: Write robots.txt with gateway sitemap URL
+        run: |
+          SITEMAP_URL="https://${{ steps.gateway.outputs.domain }}/sitemap.xml"
+          cat > dist/robots.txt << ROBOTS
+          User-agent: *
+          Allow: /
+          Disallow: /admin
+          Disallow: /settings
+          Disallow: /metrika-goal
+
+          Sitemap: $SITEMAP_URL
+
+          # Специфичные боты
+          User-agent: Googlebot
+          Allow: /
+          Disallow: /admin
+          Disallow: /settings
+          Disallow: /metrika-goal
+
+          User-agent: Bingbot
+          Allow: /
+          Disallow: /admin
+          Disallow: /settings
+          Disallow: /metrika-goal
+
+          User-agent: Yandex
+          Allow: /
+          Disallow: /admin
+          Disallow: /settings
+          Disallow: /metrika-goal
+          Clean-param: etext&ybaip
+          ROBOTS
 
       - name: Upload frontend to Object Storage
         run: |
