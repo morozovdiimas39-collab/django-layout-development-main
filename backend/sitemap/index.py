@@ -52,7 +52,8 @@ def handler(event: dict, context) -> dict:
         else:
             conn = psycopg2.connect(dsn)
             cur = conn.cursor()
-            cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
+            search_path = os.environ.get("DB_SEARCH_PATH", "t_p90119217_django_layout_develo, public")
+            cur.execute(f"SET search_path TO {search_path}")
             cur.execute("SELECT COUNT(*) FROM blog_posts")
             total_posts = cur.fetchone()[0]
             total_pages = (total_posts + per_page - 1) // per_page if total_posts else 1
