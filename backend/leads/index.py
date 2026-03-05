@@ -210,7 +210,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'trial_scheduled': 'trial_scheduled',
                         'trial_completed': 'trial_completed',
                         'enrolled': 'enrolled',
-                        'paid': 'payment_completed'
+                        'paid': 'payment_completed',
+                        'irrelevant': 'close',
+                        'thinking': 'wait',
                     }
                     
                     if status in goal_map:
