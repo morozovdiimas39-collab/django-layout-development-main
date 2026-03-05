@@ -1,11 +1,12 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const baseUrl = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const BASE_URL = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const GALLERY_URL = process.env.GALLERY_URL || 'https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71';
 const today = new Date().toISOString().split('T')[0];
 
 const staticPages = [
@@ -16,38 +17,98 @@ const staticPages = [
   { loc: '/teacher', priority: '0.8', changefreq: 'monthly' },
   { loc: '/team', priority: '0.7', changefreq: 'monthly' },
   { loc: '/reviews', priority: '0.7', changefreq: 'weekly' },
-  { loc: '/blog', priority: '0.8', changefreq: 'weekly' },
   { loc: '/contacts', priority: '0.6', changefreq: 'monthly' },
   { loc: '/showreel', priority: '0.7', changefreq: 'monthly' },
 ];
 
+function escapeXml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function urlNode(loc, priority, changefreq, lastmod = today) {
+  const locEsc = escapeXml(BASE_URL + loc);
+  return `  <url>
+    <loc>${locEsc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+}
+
 function getFallbackXml() {
+  const urls = [
+    ...staticPages.map((p) => urlNode(p.loc, p.priority, p.changefreq)),
+    urlNode('/blog', '0.8', 'weekly'),
+  ];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${staticPages.map(page => `  <url>
-    <loc>${baseUrl}${page.loc}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('\n')}
+${urls.join('\n')}
 </urlset>`;
+}
+
+async function fetchAllBlogSlugs() {
+  const slugs = [];
+  let page = 1;
+  let totalPages = 1;
+  const perPage = 100;
+  do {
+    const url = `${GALLERY_URL}?resource=blog&page=${page}&per_page=${perPage}`;
+    const res = await fetch(url);
+    if (!res.ok) return { slugs: [], totalPages: 1 };
+    const data = await res.json();
+    const items = data.items || [];
+    totalPages = data.total_pages || 1;
+    for (const item of items) {
+      if (item.slug) slugs.push({ slug: item.slug, updated_at: item.updated_at || item.created_at });
+    }
+    page++;
+  } while (page <= totalPages);
+  return { slugs, totalPages };
+}
+
+function buildXml(blogSlugs, blogListPagesCount) {
+  const lines = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ];
+  for (const p of staticPages) {
+    lines.push(urlNode(p.loc, p.priority, p.changefreq));
+  }
+  for (let p = 1; p <= blogListPagesCount; p++) {
+    const loc = p === 1 ? '/blog' : `/blog?page=${p}`;
+    const priority = p === 1 ? '0.8' : '0.6';
+    lines.push(urlNode(loc, priority, 'weekly'));
+  }
+  for (const { slug, updated_at } of blogSlugs) {
+    const lastmod = updated_at ? String(updated_at).slice(0, 10) : today;
+    lines.push(urlNode(`/blog/${slug}`, '0.7', 'monthly', lastmod));
+  }
+  lines.push('</urlset>');
+  return lines.join('\n');
 }
 
 async function generateSitemap() {
   const distDir = join(__dirname, '..', 'dist');
   const sitemapPath = join(distDir, 'sitemap.xml');
   let xml;
+
   try {
-    const response = await fetch('https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3');
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    xml = await response.text();
-    console.log('✅ Sitemap from function');
-  } catch (error) {
-    console.error('Sitemap fetch failed, using static:', error.message);
+    const { slugs, totalPages } = await fetchAllBlogSlugs();
+    xml = buildXml(slugs, totalPages);
+    console.log('✅ Sitemap built: static + blog list +', slugs.length, 'posts');
+  } catch (e) {
+    console.error('Build from API failed, using static fallback:', e.message);
     xml = getFallbackXml();
   }
-  const { mkdirSync } = await import('fs');
-  try { mkdirSync(distDir, { recursive: true }); } catch (_) {}
+
+  try {
+    mkdirSync(distDir, { recursive: true });
+  } catch (_) {}
   writeFileSync(sitemapPath, xml, 'utf-8');
   console.log('✅ Written dist/sitemap.xml');
 }
