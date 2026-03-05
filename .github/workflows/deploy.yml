@@ -31,19 +31,8 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Generate sitemap
+      - name: Generate sitemap to dist
         run: node scripts/generate-sitemap.js
-        continue-on-error: true
-
-      - name: Copy sitemap to dist
-        run: |
-          if [ -f public/sitemap.xml ]; then
-            cp public/sitemap.xml dist/sitemap.xml
-            echo "✅ Sitemap copied to dist"
-          else
-            echo "⚠️  Sitemap not found, writing minimal sitemap to dist"
-            echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url></urlset>' > dist/sitemap.xml
-          fi
 
       - name: Install Yandex Cloud CLI
         run: |

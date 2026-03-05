@@ -21,24 +21,8 @@ const staticPages = [
   { loc: '/showreel', priority: '0.7', changefreq: 'monthly' },
 ];
 
-async function generateSitemap() {
-  try {
-    // Получаем XML напрямую из функции sitemap
-    const response = await fetch('https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const xml = await response.text();
-    
-    const publicDir = join(__dirname, '..', 'public');
-    const sitemapPath = join(publicDir, 'sitemap.xml');
-    
-    writeFileSync(sitemapPath, xml, 'utf-8');
-    console.log(`✅ Sitemap generated from function`);
-  } catch (error) {
-    console.error('Error fetching sitemap from function:', error);
-    // Fallback: генерируем статический sitemap без статей блога
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+function getFallbackXml() {
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages.map(page => `  <url>
     <loc>${baseUrl}${page.loc}</loc>
@@ -47,13 +31,25 @@ ${staticPages.map(page => `  <url>
     <priority>${page.priority}</priority>
   </url>`).join('\n')}
 </urlset>`;
+}
 
-    const publicDir = join(__dirname, '..', 'public');
-    const sitemapPath = join(publicDir, 'sitemap.xml');
-    
-    writeFileSync(sitemapPath, xml, 'utf-8');
-    console.log(`⚠️  Sitemap generated without blog posts (fallback)`);
+async function generateSitemap() {
+  const distDir = join(__dirname, '..', 'dist');
+  const sitemapPath = join(distDir, 'sitemap.xml');
+  let xml;
+  try {
+    const response = await fetch('https://functions.yandexcloud.net/d4e970s0n7por7g0cpc3');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    xml = await response.text();
+    console.log('✅ Sitemap from function');
+  } catch (error) {
+    console.error('Sitemap fetch failed, using static:', error.message);
+    xml = getFallbackXml();
   }
+  const { mkdirSync } = await import('fs');
+  try { mkdirSync(distDir, { recursive: true }); } catch (_) {}
+  writeFileSync(sitemapPath, xml, 'utf-8');
+  console.log('✅ Written dist/sitemap.xml');
 }
 
 generateSitemap();
