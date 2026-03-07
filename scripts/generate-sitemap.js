@@ -13,6 +13,7 @@ const staticPages = [
   { loc: '/', priority: '1.0', changefreq: 'weekly' },
   { loc: '/acting', priority: '0.9', changefreq: 'weekly' },
   { loc: '/oratory', priority: '0.9', changefreq: 'weekly' },
+  { loc: '/realtors', priority: '0.8', changefreq: 'monthly' },
   { loc: '/acting-cards', priority: '0.9', changefreq: 'weekly' },
   { loc: '/teacher', priority: '0.8', changefreq: 'monthly' },
   { loc: '/team', priority: '0.7', changefreq: 'monthly' },

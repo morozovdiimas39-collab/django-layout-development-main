@@ -10,6 +10,7 @@ const routeMap: Record<string, string> = {
   '': 'Главная',
   'acting': 'Актёрское мастерство',
   'oratory': 'Ораторское искусство',
+  'realtors': 'Ораторское мастерство для риелторов',
   'showreel': 'Визитки',
   'team': 'Команда',
   'reviews': 'Отзывы',
