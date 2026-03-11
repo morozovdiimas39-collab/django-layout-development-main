@@ -19,7 +19,7 @@ function phoneToDigits(masked: string): string {
 
 interface PhoneFormProps {
   source: string;
-  course?: 'acting' | 'oratory';
+  course?: 'acting' | 'oratory' | 'showreel' | 'acting-cards';
   triggerText?: string;
   triggerVariant?: 'default' | 'outline' | 'ghost';
   triggerSize?: 'default' | 'sm' | 'lg';

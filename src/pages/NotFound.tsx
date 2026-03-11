@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 const NotFound = () => {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
 
   useEffect(() => {
     console.error(

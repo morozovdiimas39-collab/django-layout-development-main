@@ -53,6 +53,7 @@ export interface FAQ {
   question: string;
   answer: string;
   order_num: number;
+  category?: string;
 }
 
 export interface GalleryImage {
@@ -60,6 +61,11 @@ export interface GalleryImage {
   url: string;
   caption?: string;
   order_num: number;
+  // Дополнительные поля, которые приходят из API в разных разделах
+  image_url?: string;
+  title?: string;
+  description?: string;
+  category?: string;
 }
 
 export interface BlogPost {

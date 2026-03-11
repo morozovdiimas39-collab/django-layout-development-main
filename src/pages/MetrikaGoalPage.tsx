@@ -9,11 +9,11 @@ declare global {
 }
 
 export default function MetrikaGoalPage() {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState('⏳ Отправка цели...');
   
-  const goal = searchParams.get('goal') || 'trial';
-  const clientId = searchParams.get('client_id') || '';
+  const goal = searchParams?.get('goal') || 'trial';
+  const clientId = searchParams?.get('client_id') || '';
 
   useEffect(() => {
     console.log('Sending Metrika goal:', goal, 'Client ID:', clientId);

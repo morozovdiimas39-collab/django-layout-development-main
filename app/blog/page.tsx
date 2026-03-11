@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import BlogPage from '@/pages/BlogPage';
 
 const SITE_BASE = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
@@ -28,5 +29,9 @@ export async function generateMetadata(props: { searchParams: Promise<{ page?: s
 }
 
 export default function Page() {
-  return <BlogPage />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Загрузка...</div>}>
+      <BlogPage />
+    </Suspense>
+  );
 }

@@ -31,7 +31,7 @@ const SITE_BASE = "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai";
 export default function BlogPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+  const page = Math.max(1, parseInt(searchParams?.get("page") || "1", 10) || 1);
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [total, setTotal] = useState(0);

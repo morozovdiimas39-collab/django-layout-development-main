@@ -58,10 +58,15 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const defaultContent: ContentContextType = {
+  content: {},
+  isLoading: false,
+  getContent: (_key, defaultValue = '') => defaultValue,
+  updateContent: () => {},
+  refetch: async () => {},
+};
+
 export function useContent() {
   const context = useContext(ContentContext);
-  if (!context) {
-    throw new Error('useContent must be used within ContentProvider');
-  }
-  return context;
+  return context ?? defaultContent;
 }

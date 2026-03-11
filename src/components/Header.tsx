@@ -24,7 +24,7 @@ export default function Header() {
   const [youtube, setYoutube] = useState('https://youtube.com/');
   const [telegram, setTelegram] = useState('https://t.me/');
   const [whatsapp, setWhatsapp] = useState('https://wa.me/');
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
 
   useEffect(() => {
     api.content.getAll().then((data) => {

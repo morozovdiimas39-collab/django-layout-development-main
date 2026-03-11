@@ -8,11 +8,13 @@ interface IconProps extends LucideProps {
 }
 
 const Icon: React.FC<IconProps> = ({ name, fallback = 'CircleAlert', ...props }) => {
-  const IconComponent = (LucideIcons as Record<string, React.FC<LucideProps>>)[name];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const icons = LucideIcons as unknown as Record<string, React.ComponentType<any>>;
+  const IconComponent = icons[name];
 
   if (!IconComponent) {
     // Если иконка не найдена, используем fallback иконку
-    const FallbackIcon = (LucideIcons as Record<string, React.FC<LucideProps>>)[fallback];
+    const FallbackIcon = icons[fallback];
 
     // Если даже fallback не найден, возвращаем пустой span
     if (!FallbackIcon) {

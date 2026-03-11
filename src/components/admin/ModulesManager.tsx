@@ -57,7 +57,7 @@ export default function ModulesManager({
                 <SelectTrigger className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent modal={false}>
+                <SelectContent>
                   <SelectItem value="acting">Актерское мастерство</SelectItem>
                   <SelectItem value="oratory">Ораторское искусство</SelectItem>
                 </SelectContent>
@@ -180,7 +180,7 @@ export default function ModulesManager({
               <SelectTrigger className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent modal={false}>
+              <SelectContent>
                 <SelectItem value="acting">Актерское мастерство</SelectItem>
                 <SelectItem value="oratory">Ораторское искусство</SelectItem>
               </SelectContent>
