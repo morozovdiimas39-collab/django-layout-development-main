@@ -22,7 +22,7 @@ const routeMap: Record<string, string> = {
 };
 
 export default function Breadcrumbs() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
   const pathnames = pathname.split('/').filter((x) => x);
 
   const breadcrumbs: BreadcrumbItem[] = [
