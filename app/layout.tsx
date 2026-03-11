@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     url: '/',
   },
   robots: 'index, follow',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
