@@ -7,8 +7,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [],
-  webpack: (config) => {
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tabs',
+    ],
+  },
+  webpack: (config, { dev }) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src');
+    if (!dev) {
+      config.optimization = { ...config.optimization, moduleIds: 'deterministic' };
+    }
     return config;
   },
 };
