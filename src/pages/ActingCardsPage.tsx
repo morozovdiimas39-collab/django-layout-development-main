@@ -1,5 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -16,9 +17,6 @@ import GallerySection from "@/components/acting/GallerySection";
 import ReviewsSection from "@/components/acting/ReviewsSection";
 import BlogSection from "@/components/acting/BlogSection";
 import ContactSection from "@/components/acting/ContactSection";
-
-'use client';
-import { useRouter } from "next/navigation";
 
 export default function ActingCardsPage() {
   const router = useRouter();
