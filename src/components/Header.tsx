@@ -1,9 +1,11 @@
+'use client';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Icon from '@/components/ui/icon';
 import PhoneForm from './PhoneForm';
-import { useLocation } from 'react-router-dom';
 import { api } from '@/lib/api';
 import {
   NavigationMenu,
@@ -22,7 +24,7 @@ export default function Header() {
   const [youtube, setYoutube] = useState('https://youtube.com/');
   const [telegram, setTelegram] = useState('https://t.me/');
   const [whatsapp, setWhatsapp] = useState('https://wa.me/');
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     api.content.getAll().then((data) => {
@@ -52,24 +54,24 @@ export default function Header() {
   return (
     <header className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
-        <a href="/" className="flex items-center hover:opacity-80 transition">
+        <Link href="/" className="flex items-center hover:opacity-80 transition">
           <img 
             src="https://i.1.creatium.io/disk2/c6/65/76/a52e2f86d1891f143cdb23e60a4460b61f/184x67/w_logo_text.svg" 
             alt="Логотип школы актёрского мастерства Казбека Меретукова" 
             className="h-8 sm:h-10 md:h-12"
             loading="eager"
           />
-        </a>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-          <a
+          <Link
             href="/"
             className={`text-sm lg:text-base hover:text-primary transition ${
-              location.pathname === '/' ? 'text-primary font-semibold' : ''
+              pathname === '/' ? 'text-primary font-semibold' : ''
             }`}
           >
             Главная
-          </a>
+          </Link>
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -81,17 +83,17 @@ export default function Header() {
                     {courseItems.map((course) => (
                       <li key={course.href}>
                         <NavigationMenuLink asChild>
-                          <a
+                          <Link
                             href={course.href}
                             className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${
-                              location.pathname === course.href ? 'bg-accent text-accent-foreground font-semibold' : ''
+                              pathname === course.href ? 'bg-accent text-accent-foreground font-semibold' : ''
                             }`}
                           >
                             <div className="text-sm font-medium leading-none">{course.label}</div>
                             <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
                               {course.description}
                             </p>
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                     ))}
@@ -101,15 +103,15 @@ export default function Header() {
             </NavigationMenuList>
           </NavigationMenu>
           {menuItems.slice(1).map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={`text-sm lg:text-base hover:text-primary transition ${
-                location.pathname === item.href ? 'text-primary font-semibold' : ''
+                pathname === item.href ? 'text-primary font-semibold' : ''
               }`}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -135,15 +137,15 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px]">
               <nav className="flex flex-col gap-4 mt-8">
-                <a
+                <Link
                   href="/"
                   onClick={() => setOpen(false)}
                   className={`text-lg hover:text-primary transition p-3 rounded-lg hover:bg-muted ${
-                    location.pathname === '/' ? 'text-primary font-semibold bg-muted' : ''
+                    pathname === '/' ? 'text-primary font-semibold bg-muted' : ''
                   }`}
                 >
                   Главная
-                </a>
+                </Link>
                 <div>
                   <button
                     onClick={() => setCoursesOpen(!coursesOpen)}
@@ -155,31 +157,31 @@ export default function Header() {
                   {coursesOpen && (
                     <div className="ml-4 mt-2 flex flex-col gap-2">
                       {courseItems.map((course) => (
-                        <a
+                        <Link
                           key={course.href}
                           href={course.href}
                           onClick={() => setOpen(false)}
                           className={`text-base hover:text-primary transition p-3 rounded-lg hover:bg-muted ${
-                            location.pathname === course.href ? 'text-primary font-semibold bg-muted' : ''
+                            pathname === course.href ? 'text-primary font-semibold bg-muted' : ''
                           }`}
                         >
                           {course.label}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   )}
                 </div>
                 {menuItems.slice(1).map((item) => (
-                  <a
+                  <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className={`text-lg hover:text-primary transition p-3 rounded-lg hover:bg-muted ${
-                      location.pathname === item.href ? 'text-primary font-semibold bg-muted' : ''
+                      pathname === item.href ? 'text-primary font-semibold bg-muted' : ''
                     }`}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 ))}
                 <div className="mt-4 pt-4 border-t border-border">
                   <PhoneForm 

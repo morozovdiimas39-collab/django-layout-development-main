@@ -43,7 +43,7 @@ export default function TemplateDialog({
               id="title"
               value={template.title}
               onChange={(e) => onChange({ ...template, title: e.target.value })}
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
           </div>
 
@@ -54,7 +54,7 @@ export default function TemplateDialog({
               value={template.content}
               onChange={(e) => onChange({ ...template, content: e.target.value })}
               rows={8}
-              className="mt-1 font-mono text-sm"
+              className="mt-1 font-mono text-sm text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
             <p className="text-xs text-gray-500 mt-1">
               Доступные переменные: {'{name}'}, {'{course}'}
@@ -69,7 +69,7 @@ export default function TemplateDialog({
               min="0"
               value={template.delay_days}
               onChange={(e) => onChange({ ...template, delay_days: parseInt(e.target.value) })}
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
           </div>
 
@@ -80,7 +80,7 @@ export default function TemplateDialog({
               value={template.file_url || ''}
               onChange={(e) => onChange({ ...template, file_url: e.target.value || null })}
               placeholder="https://example.com/file.pdf"
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
             <p className="text-xs text-gray-500 mt-1">
               Введите прямую ссылку на файл. Файл должен быть доступен по URL без авторизации.
@@ -105,7 +105,7 @@ export default function TemplateDialog({
                 value={template.file_name || ''}
                 onChange={(e) => onChange({ ...template, file_name: e.target.value || null })}
                 placeholder="document.pdf"
-                className="mt-1"
+                className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
                 disabled={!template.file_url}
               />
             </div>
@@ -116,7 +116,7 @@ export default function TemplateDialog({
                 value={template.file_type || ''}
                 onChange={(e) => onChange({ ...template, file_type: e.target.value || null })}
                 placeholder="image, video, pdf"
-                className="mt-1"
+                className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
                 disabled={!template.file_url}
               />
             </div>
@@ -140,7 +140,7 @@ export default function TemplateDialog({
             <Button
               onClick={onSave}
               disabled={loading}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Icon name="Save" className="mr-2" size={16} />
               Сохранить изменения
@@ -148,7 +148,7 @@ export default function TemplateDialog({
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100"
               disabled={loading}
             >
               Отмена

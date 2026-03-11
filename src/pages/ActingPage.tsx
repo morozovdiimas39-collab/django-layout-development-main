@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -32,7 +32,7 @@ import {
 import SchemaMarkup from "@/components/SchemaMarkup";
 
 export default function ActingPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [modules, setModules] = useState<CourseModule[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [faq, setFAQ] = useState<FAQ[]>([]);
@@ -84,50 +84,6 @@ export default function ActingPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Курсы актёрского мастерства в Москве от режиссёра Казбека Меретукова |
-          Актёрская школа
-        </title>
-        <meta
-          name="description"
-          content="Профессиональные курсы актёрского мастерства от режиссёра телесериалов. Победитель ТЕФИ-2012. Обучение актёрскому мастерству, работа на камеру, съёмка короткометражного фильма. Пробное занятие бесплатно."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting"
-        />
-        <meta
-          property="og:title"
-          content="Курсы актёрского мастерства в Москве от режиссёра Казбека Меретукова"
-        />
-        <meta
-          property="og:description"
-          content="Профессиональные курсы актёрского мастерства от режиссёра телесериалов. Победитель ТЕФИ-2012. Обучение актёрскому мастерству, работа на камеру, съёмка короткометражного фильма. Пробное занятие бесплатно."
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/b34e4f5d-452d-44bb-bedb-a00378237a0c.jpg"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Курсы актёрского мастерства в Москве от режиссёра Казбека Меретукова"
-        />
-        <meta
-          name="twitter:description"
-          content="Профессиональные курсы актёрского мастерства от режиссёра телесериалов. Обучение актёрскому мастерству, работа на камеру."
-        />
-        <meta
-          name="twitter:image"
-          content="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/b34e4f5d-452d-44bb-bedb-a00378237a0c.jpg"
-        />
-      </Helmet>
       <SchemaMarkup
         type="course"
         courseData={{
@@ -177,8 +133,8 @@ export default function ActingPage() {
         <CallToActionSection />
         <BlogSection
           blog={blog}
-          onNavigate={(slug) => navigate(`/blog/${slug}`)}
-          onNavigateToBlog={() => navigate("/blog")}
+          onNavigate={(slug) => router.push(`/blog/${slug}`)}
+          onNavigateToBlog={() => router.push("/blog")}
         />
         <SEOTextSection />
         <FAQSection faq={faq} />

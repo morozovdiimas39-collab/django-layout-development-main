@@ -1,4 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 
 interface BreadcrumbItem {
@@ -20,8 +22,8 @@ const routeMap: Record<string, string> = {
 };
 
 export default function Breadcrumbs() {
-  const location = useLocation();
-  const pathnames = location.pathname.split('/').filter((x) => x);
+  const pathname = usePathname();
+  const pathnames = pathname.split('/').filter((x) => x);
 
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Главная', path: '/' }
@@ -47,7 +49,7 @@ export default function Breadcrumbs() {
               {!isLast ? (
                 <>
                   <Link 
-                    to={crumb.path} 
+                    href={crumb.path} 
                     className="hover:text-foreground transition-colors"
                     itemProp="item"
                   >

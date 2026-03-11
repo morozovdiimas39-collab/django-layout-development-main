@@ -1,5 +1,5 @@
+'use client';
 import { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -21,11 +21,6 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Настройки Telegram бота - Казбек Меретуков</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
-
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-muted">
         <Header />
 

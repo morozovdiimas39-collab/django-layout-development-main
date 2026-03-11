@@ -1,5 +1,5 @@
+'use client';
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -101,33 +101,6 @@ export default function TeacherPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Казбек Меретуков - Режиссёр и преподаватель актёрского мастерства |
-          ТЕФИ-2012
-        </title>
-        <meta
-          name="description"
-          content="Казбек Меретуков - режиссёр-постановщик федеральных телесериалов, победитель премии ТЕФИ-2012, преподаватель актёрского мастерства. Опыт работы более 25 лет, более 500 учеников."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/teacher"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/teacher"
-        />
-        <meta
-          property="og:title"
-          content="Казбек Меретуков - Режиссёр и преподаватель"
-        />
-        <meta
-          property="og:description"
-          content="Режиссёр федеральных телесериалов, победитель ТЕФИ-2012"
-        />
-        <meta name="author" content="Казбек Меретуков" />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[

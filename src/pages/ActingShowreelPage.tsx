@@ -1,6 +1,5 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -15,7 +14,6 @@ import { api, SiteContent, Review, FAQ, GalleryImage } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
 
 export default function ActingShowreelPage() {
-  const navigate = useNavigate();
   const [content, setContent] = useState<Record<string, string>>({});
   const [reviews, setReviews] = useState<Review[]>([]);
   const [faq, setFAQ] = useState<FAQ[]>([]);
@@ -50,28 +48,6 @@ export default function ActingShowreelPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Актерская визитка | Профессиональная видеовизитка для актеров от
-          режиссера Казбека Меретукова
-        </title>
-        <meta
-          name="description"
-          content="Создание профессиональной актерской визитки (showreel) под руководством режиссера-постановщика. Качественная съемка, монтаж, продюсирование. Ваш пропуск в кино и театр."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/showreel"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/showreel"
-        />
-        <meta
-          property="og:title"
-          content="Актерская визитка | Профессиональная видеовизитка"
-        />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[

@@ -207,10 +207,9 @@ export default function QueueTab({
                             </div>
                             <Button
                               size="sm"
-                              variant="outline"
                               onClick={() => onSendNow(msg.id)}
                               disabled={loading}
-                              className="text-green-600 hover:bg-green-50 shrink-0"
+                              className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
                             >
                               <Icon name="RefreshCw" size={14} className="mr-1" />
                               Переотправить
@@ -238,7 +237,7 @@ export default function QueueTab({
                           size="sm"
                           onClick={() => onSendNow(nextPending.id)}
                           disabled={loading}
-                          className="bg-green-600 hover:bg-green-700"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           <Icon name="Send" size={14} className="mr-1" />
                           Отправить

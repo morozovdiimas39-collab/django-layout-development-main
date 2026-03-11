@@ -1,0 +1,12 @@
+import type { Metadata } from 'next';
+import TeacherPage from '@/pages/TeacherPage';
+
+export const metadata: Metadata = {
+  title: 'О преподавателях | Казбек Меретуков — режиссёр, педагог',
+  description: 'Казбек Меретуков — режиссёр телесериалов, победитель ТЕФИ-2012. Преподаватель актёрского и ораторского мастерства в Москве.',
+  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/teacher' },
+};
+
+export default function Page() {
+  return <TeacherPage />;
+}

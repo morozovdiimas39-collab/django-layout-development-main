@@ -40,21 +40,144 @@ export default function ModulesManager({
   onStartEditing,
   onCancelEditing
 }: ModulesManagerProps) {
+  const actingModules = modules.filter(m => m.course_type === 'acting').sort((a, b) => (a.order_num ?? 0) - (b.order_num ?? 0));
+  const oratoryModules = modules.filter(m => m.course_type === 'oratory').sort((a, b) => (a.order_num ?? 0) - (b.order_num ?? 0));
+
+  const renderModuleCard = (module: CourseModule, canMoveUp: boolean, canMoveDown: boolean) => (
+    <div key={module.id}>
+      {editingModule?.id === module.id ? (
+        <Card className="border-slate-200 bg-slate-50/50">
+          <CardContent className="pt-6 space-y-3">
+            <div>
+              <Label className="text-slate-700">Тип курса</Label>
+              <Select
+                value={editingModule.course_type}
+                onValueChange={(value) => onEditingModuleChange('course_type', value)}
+              >
+                <SelectTrigger className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent modal={false}>
+                  <SelectItem value="acting">Актерское мастерство</SelectItem>
+                  <SelectItem value="oratory">Ораторское искусство</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-slate-700">Название</Label>
+              <Input
+                value={editingModule.title}
+                onChange={(e) => onEditingModuleChange('title', e.target.value)}
+                className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700">Описание</Label>
+              <Textarea
+                value={editingModule.description}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const lines = value.split('\n').map(line => {
+                    const trimmed = line.trim();
+                    if (trimmed && !trimmed.startsWith('-')) return '- ' + trimmed;
+                    return line;
+                  });
+                  onEditingModuleChange('description', lines.join('\n'));
+                }}
+                rows={3}
+                className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+              />
+              <p className="text-xs text-slate-500 mt-1">Каждая строка автоматически превратится в пункт списка</p>
+            </div>
+            <div>
+              <Label className="text-slate-700">Результат</Label>
+              <Textarea
+                value={editingModule.result}
+                onChange={(e) => onEditingModuleChange('result', e.target.value)}
+                rows={2}
+                className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700">URL изображения</Label>
+              <Input
+                value={editingModule.image_url}
+                onChange={(e) => onEditingModuleChange('image_url', e.target.value)}
+                className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={onUpdate} size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
+                Сохранить
+              </Button>
+              <Button onClick={onCancelEditing} variant="outline" size="sm" className="border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                Отмена
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-slate-200 bg-white">
+          <CardContent className="pt-6">
+            <div className="flex gap-4">
+              {module.image_url && (
+                <img src={module.image_url} alt={module.title} className="w-20 h-20 object-cover rounded-lg border border-slate-200" />
+              )}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-slate-900 mb-1">{module.title}</h3>
+                <p className="text-sm text-slate-600 mb-2 line-clamp-2">{module.description}</p>
+                {module.result && (
+                  <p className="text-xs text-slate-500 italic mb-3">Результат: {module.result}</p>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      onClick={() => onReorder(module.id, 'up')}
+                      disabled={!canMoveUp}
+                      title="Поднять выше"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Icon name="ChevronUp" size={14} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => onReorder(module.id, 'down')}
+                      disabled={!canMoveDown}
+                      title="Опустить ниже"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Icon name="ChevronDown" size={14} />
+                    </Button>
+                  </div>
+                  <Button size="sm" onClick={() => onStartEditing(module)} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Icon name="Edit" size={14} className="mr-1" />
+                    Изменить
+                  </Button>
+                  <Button variant="destructive" size="sm" onClick={() => onDelete(module.id)}>
+                    <Icon name="Trash2" size={14} />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="border-slate-200 bg-white">
         <CardHeader>
-          <CardTitle>Добавить модуль</CardTitle>
-          <CardDescription>Новый модуль курса</CardDescription>
+          <CardTitle className="text-slate-900">Добавить модуль</CardTitle>
+          <CardDescription className="text-slate-600">Новый модуль курса</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Тип курса</Label>
-            <Select
-              value={newModule.course_type}
-              onValueChange={(value) => onNewModuleChange('course_type', value)}
-            >
-              <SelectTrigger>
+            <Label className="text-slate-700">Тип курса</Label>
+            <Select value={newModule.course_type} onValueChange={(value) => onNewModuleChange('course_type', value)}>
+              <SelectTrigger className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent modal={false}>
@@ -64,211 +187,87 @@ export default function ModulesManager({
             </Select>
           </div>
           <div>
-            <Label>Название модуля</Label>
+            <Label className="text-slate-700">Название модуля</Label>
             <Input
               value={newModule.title}
               onChange={(e) => onNewModuleChange('title', e.target.value)}
               placeholder="Основы актерской техники"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label>Описание</Label>
+            <Label className="text-slate-700">Описание</Label>
             <Textarea
               value={newModule.description}
               onChange={(e) => {
                 const value = e.target.value;
                 const lines = value.split('\n').map(line => {
                   const trimmed = line.trim();
-                  if (trimmed && !trimmed.startsWith('-')) {
-                    return '- ' + trimmed;
-                  }
+                  if (trimmed && !trimmed.startsWith('-')) return '- ' + trimmed;
                   return line;
                 });
                 onNewModuleChange('description', lines.join('\n'));
               }}
               placeholder="Каждая строка автоматически станет пунктом списка..."
               rows={3}
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
-            <p className="text-xs text-muted-foreground mt-1">Каждая строка автоматически превратится в пункт списка</p>
+            <p className="text-xs text-slate-500 mt-1">Каждая строка автоматически превратится в пункт списка</p>
           </div>
           <div>
-            <Label>Результат</Label>
+            <Label className="text-slate-700">Результат</Label>
             <Textarea
               value={newModule.result}
               onChange={(e) => onNewModuleChange('result', e.target.value)}
               placeholder="Что студент получит после прохождения..."
               rows={2}
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label>URL изображения (опционально)</Label>
+            <Label className="text-slate-700">URL изображения (опционально)</Label>
             <Input
               value={newModule.image_url}
               onChange={(e) => onNewModuleChange('image_url', e.target.value)}
               placeholder="https://example.com/image.jpg"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
-          <Button onClick={onCreate} className="w-full">
+          <Button onClick={onCreate} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
             <Icon name="Plus" size={16} className="mr-2" />
             Добавить модуль
           </Button>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Модули курсов ({modules.length})</CardTitle>
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100">
+          <CardTitle className="text-slate-900">Актерское мастерство</CardTitle>
+          <CardDescription className="text-slate-600">{actingModules.length} модулей</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[...modules].sort((a, b) => {
-              if (a.course_type !== b.course_type) return a.course_type.localeCompare(b.course_type);
-              return (a.order_num ?? 0) - (b.order_num ?? 0);
-            }).map((module, index, arr) => {
-              const sameCourse = arr.filter(m => m.course_type === module.course_type);
-              const pos = sameCourse.findIndex(m => m.id === module.id);
-              const canMoveUp = pos > 0;
-              const canMoveDown = pos < sameCourse.length - 1 && pos >= 0;
-              return (
-              <div key={module.id}>
-                {editingModule?.id === module.id ? (
-                  <Card>
-                    <CardContent className="pt-6 space-y-3">
-                      <div>
-                        <Label>Тип курса</Label>
-                        <Select
-                          value={editingModule.course_type}
-                          onValueChange={(value) => onEditingModuleChange('course_type', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent modal={false}>
-                            <SelectItem value="acting">Актерское мастерство</SelectItem>
-                            <SelectItem value="oratory">Ораторское искусство</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Название</Label>
-                        <Input
-                          value={editingModule.title}
-                          onChange={(e) => onEditingModuleChange('title', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Описание</Label>
-                        <Textarea
-                          value={editingModule.description}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            const lines = value.split('\n').map(line => {
-                              const trimmed = line.trim();
-                              if (trimmed && !trimmed.startsWith('-')) {
-                                return '- ' + trimmed;
-                              }
-                              return line;
-                            });
-                            onEditingModuleChange('description', lines.join('\n'));
-                          }}
-                          rows={3}
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">Каждая строка автоматически превратится в пункт списка</p>
-                      </div>
-                      <div>
-                        <Label>Результат</Label>
-                        <Textarea
-                          value={editingModule.result}
-                          onChange={(e) => onEditingModuleChange('result', e.target.value)}
-                          rows={2}
-                        />
-                      </div>
-                      <div>
-                        <Label>URL изображения</Label>
-                        <Input
-                          value={editingModule.image_url}
-                          onChange={(e) => onEditingModuleChange('image_url', e.target.value)}
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button onClick={onUpdate} size="sm" className="flex-1">
-                          Сохранить
-                        </Button>
-                        <Button onClick={onCancelEditing} variant="outline" size="sm">
-                          Отмена
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="flex gap-4">
-                        {module.image_url && (
-                          <img
-                            src={module.image_url}
-                            alt={module.title}
-                            className="w-20 h-20 object-cover rounded"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                              {module.course_type === 'acting' ? 'Актерское' : 'Ораторское'}
-                            </span>
-                            <h3 className="font-semibold">{module.title}</h3>
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-2">{module.description}</p>
-                          {module.result && (
-                            <p className="text-xs text-muted-foreground italic mb-3">
-                              Результат: {module.result}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap items-center gap-2">
-                            <div className="flex gap-1">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => onReorder(module.id, 'up')}
-                                disabled={!canMoveUp}
-                                title="Поднять выше"
-                              >
-                                <Icon name="ChevronUp" size={14} />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => onReorder(module.id, 'down')}
-                                disabled={!canMoveDown}
-                                title="Опустить ниже"
-                              >
-                                <Icon name="ChevronDown" size={14} />
-                              </Button>
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => onStartEditing(module)}
-                            >
-                              <Icon name="Edit" size={14} className="mr-1" />
-                              Изменить
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => onDelete(module.id)}
-                            >
-                              <Icon name="Trash2" size={14} />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            );
-            })}
+        <CardContent className="pt-6">
+          <div className="space-y-3">
+            {actingModules.length === 0 ? (
+              <p className="text-sm text-slate-500 py-4">Модулей пока нет. Добавьте модуль выше, выбрав тип «Актерское мастерство».</p>
+            ) : (
+              actingModules.map((module, pos) => renderModuleCard(module, pos > 0, pos < actingModules.length - 1))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100">
+          <CardTitle className="text-slate-900">Ораторское искусство</CardTitle>
+          <CardDescription className="text-slate-600">{oratoryModules.length} модулей</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-3">
+            {oratoryModules.length === 0 ? (
+              <p className="text-sm text-slate-500 py-4">Модулей пока нет. Добавьте модуль выше, выбрав тип «Ораторское искусство».</p>
+            ) : (
+              oratoryModules.map((module, pos) => renderModuleCard(module, pos > 0, pos < oratoryModules.length - 1))
+            )}
           </div>
         </CardContent>
       </Card>

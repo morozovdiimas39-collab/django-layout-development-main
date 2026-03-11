@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 
 declare global {
   interface Window {

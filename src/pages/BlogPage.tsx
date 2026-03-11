@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -29,7 +29,8 @@ const BLOG_PER_PAGE = 12;
 const SITE_BASE = "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai";
 
 export default function BlogPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -60,12 +61,8 @@ export default function BlogPage() {
 
   const setPage = (p: number) => {
     const next = Math.max(1, Math.min(p, totalPages));
-    if (next === 1) {
-      searchParams.delete("page");
-    } else {
-      searchParams.set("page", String(next));
-    }
-    setSearchParams(searchParams, { replace: true });
+    const url = next === 1 ? "/blog" : `/blog?page=${next}`;
+    router.replace(url);
   };
   const pageSearch = (p: number) => (p <= 1 ? "" : `?page=${p}`);
 
@@ -86,15 +83,6 @@ export default function BlogPage() {
 
   return (
     <>
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={canonicalUrl} />
-        {prevUrl && <link rel="prev" href={prevUrl} />}
-        {nextUrl && <link rel="next" href={nextUrl} />}
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={page === 1 ? "Блог школы актёрского мастерства" : `Блог — страница ${page}`} />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[

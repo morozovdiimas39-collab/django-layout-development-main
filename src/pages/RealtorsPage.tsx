@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -21,7 +21,7 @@ import SchemaMarkup from "@/components/SchemaMarkup";
 const BASE_URL = "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai";
 
 export default function RealtorsPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [content, setContent] = useState<Record<string, string>>({});
   const [reviews, setReviews] = useState<Review[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
@@ -54,16 +54,6 @@ export default function RealtorsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Ораторское мастерство для риелторов | Курс в Москве</title>
-        <meta
-          name="description"
-          content="Курс ораторского мастерства для риелторов и агентов недвижимости. Презентации объектов, переговоры, холодные звонки. Обучение в Москве."
-        />
-        <link rel="canonical" href={`${BASE_URL}/realtors`} />
-        <meta property="og:url" content={`${BASE_URL}/realtors`} />
-        <meta property="og:title" content="Ораторское мастерство для риелторов" />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
@@ -89,8 +79,8 @@ export default function RealtorsPage() {
         <ReviewsSection reviews={reviews} />
         <BlogSection
           blog={blog}
-          onNavigate={(slug) => navigate(`/blog/${slug}`)}
-          onNavigateToBlog={() => navigate("/blog")}
+          onNavigate={(slug) => router.push(`/blog/${slug}`)}
+          onNavigateToBlog={() => router.push("/blog")}
         />
         <RealtorsCTASection />
         <Footer />

@@ -159,7 +159,7 @@ export default function WhatsAppManager({ token }: WhatsAppManagerProps) {
           onClick={handleProcessQueue} 
           disabled={loading}
           size="lg"
-          className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
         >
           <Icon name="Send" className="mr-2" size={18} />
           Отправить сейчас

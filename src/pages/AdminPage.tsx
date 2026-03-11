@@ -1,8 +1,10 @@
+'use client';
 import { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api, Lead, SiteContent, CourseModule, FAQ, Review, GalleryImage, BlogPost, TeamMember } from '@/lib/api';
+import { toast } from '@/components/ui/use-toast';
 import LoginForm from '@/components/admin/LoginForm';
 import AdminHeader from '@/components/admin/AdminHeader';
+import AdminSidebar, { type AdminSection } from '@/components/admin/AdminSidebar';
 import ContentManager from '@/components/admin/ContentManager';
 import GalleryManager from '@/components/admin/GalleryManager';
 import ReviewsManager from '@/components/admin/ReviewsManager';
@@ -11,13 +13,13 @@ import LeadsManager from '@/components/admin/LeadsManager';
 import ModulesManager from '@/components/admin/ModulesManager';
 import FAQManager from '@/components/admin/FAQManager';
 import TeamManager from '@/components/admin/TeamManager';
-import WhatsAppManager from '@/components/admin/WhatsAppManager';
 import { sampleArticles } from '@/lib/sample-articles';
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState<AdminSection>('leads');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [content, setContent] = useState<SiteContent[]>([]);
   const [editingKey, setEditingKey] = useState('');
@@ -116,11 +118,12 @@ export default function AdminPage() {
         setIsAuthenticated(true);
         localStorage.setItem('admin_token', response.token);
         await loadData(response.token);
+        toast({ title: 'Вход выполнен' });
       } else {
-        alert('Неверные учетные данные');
+        toast({ title: 'Неверные учётные данные', variant: 'destructive' });
       }
     } catch (error) {
-      alert('Ошибка входа');
+      toast({ title: 'Ошибка входа', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -148,18 +151,22 @@ export default function AdminPage() {
         (window as any).ym(104854671, 'reachGoal', metrikaGoals[status]);
       }
     } catch (error) {
-      alert('Ошибка обновления статуса');
+      toast({ title: 'Ошибка обновления статуса', variant: 'destructive' });
     }
   };
 
   const handleMarkAsTargeted = async (lead: Lead) => {
     if (!lead.ym_client_id) {
-      alert('У этого клиента нет ClientID из Метрики.\nЭто значит, что он не оставлял заявку через сайт или его данные не сохранились.');
+      toast({
+        title: 'Нет ClientID из Метрики',
+        description: 'Клиент не оставлял заявку через сайт или данные не сохранились.',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (!confirm(`Отправить целевую конверсию в Яндекс.Метрику?\n\nТелефон: ${lead.phone}\nКурс: ${lead.course || 'не указан'}\nClientID: ${lead.ym_client_id}`)) return;
-    
+
     try {
       const result = await api.metrika.sendConversion({
         client_id: lead.ym_client_id,
@@ -167,15 +174,26 @@ export default function AdminPage() {
         course: lead.course,
         datetime: new Date().toISOString()
       });
-      
+
       if (result.success) {
-        alert(`✅ Целевая конверсия отправлена в Яндекс.Метрику!\n\nID загрузки: ${result.upload_id}\nТелефон: ${result.phone}\nКурс: ${result.course || 'не указан'}\nClientID: ${result.client_id}\n\nТеперь в Метрике можно увидеть с какого источника пришёл этот клиент!`);
+        toast({
+          title: 'Целевая конверсия отправлена',
+          description: 'В Метрике можно увидеть источник клиента.',
+        });
       } else {
-        alert(`Ошибка отправки в Метрику:\n${result.error || 'Неизвестная ошибка'}\n\n${result.details || ''}`);
+        toast({
+          title: 'Ошибка отправки в Метрику',
+          description: result.error || result.details || 'Неизвестная ошибка',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error marking as targeted:', error);
-      alert('Ошибка отправки в Метрику. Проверьте, что добавлен YANDEX_METRIKA_TOKEN в секреты проекта.');
+      toast({
+        title: 'Ошибка отправки в Метрику',
+        description: 'Проверьте YANDEX_METRIKA_TOKEN в секретах проекта.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -187,10 +205,10 @@ export default function AdminPage() {
       await loadData(token);
       setEditingKey('');
       setEditingValue('');
-      alert('Контент обновлен');
+      toast({ title: 'Контент обновлён' });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      alert('Ошибка обновления контента: ' + msg);
+      toast({ title: 'Ошибка обновления контента', description: msg, variant: 'destructive' });
     }
   };
 
@@ -198,10 +216,10 @@ export default function AdminPage() {
     try {
       await api.content.update(key, value, token);
       await loadData(token);
-      alert('Поле добавлено');
+      toast({ title: 'Поле добавлено' });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      alert('Ошибка добавления контента: ' + msg);
+      toast({ title: 'Ошибка добавления контента', description: msg, variant: 'destructive' });
       throw error;
     }
   };
@@ -213,7 +231,7 @@ export default function AdminPage() {
 
   const handleCreateModule = async () => {
     if (!newModule.title || !newModule.description) {
-      alert('Заполните обязательные поля');
+      toast({ title: 'Заполните обязательные поля', variant: 'destructive' });
       return;
     }
     try {
@@ -226,9 +244,9 @@ export default function AdminPage() {
         result: '',
         image_url: ''
       });
-      alert('Модуль создан');
+      toast({ title: 'Модуль создан' });
     } catch (error) {
-      alert('Ошибка создания модуля');
+      toast({ title: 'Ошибка создания модуля', variant: 'destructive' });
     }
   };
 
@@ -238,9 +256,9 @@ export default function AdminPage() {
       await api.modules.update(editingModule, token);
       await loadData(token);
       setEditingModule(null);
-      alert('Модуль обновлен');
+      toast({ title: 'Модуль обновлён' });
     } catch (error) {
-      alert('Ошибка обновления модуля');
+      toast({ title: 'Ошибка обновления модуля', variant: 'destructive' });
     }
   };
 
@@ -249,9 +267,9 @@ export default function AdminPage() {
     try {
       await api.modules.delete(id, token);
       await loadData(token);
-      alert('Модуль удален');
+      toast({ title: 'Модуль удалён' });
     } catch (error) {
-      alert('Ошибка удаления модуля');
+      toast({ title: 'Ошибка удаления модуля', variant: 'destructive' });
     }
   };
 
@@ -260,22 +278,22 @@ export default function AdminPage() {
       await api.modules.reorder(id, direction, token);
       await loadData(token);
     } catch (error) {
-      alert('Ошибка смены порядка');
+      toast({ title: 'Ошибка смены порядка', variant: 'destructive' });
     }
   };
 
   const handleCreateFAQ = async () => {
     if (!newFAQ.question || !newFAQ.answer) {
-      alert('Заполните все поля');
+      toast({ title: 'Заполните все поля', variant: 'destructive' });
       return;
     }
     try {
       await api.gallery.createFAQ(newFAQ, token);
       await loadData(token);
       setNewFAQ({ question: '', answer: '' });
-      alert('FAQ создан');
+      toast({ title: 'FAQ создан' });
     } catch (error) {
-      alert('Ошибка создания FAQ');
+      toast({ title: 'Ошибка создания FAQ', variant: 'destructive' });
     }
   };
 
@@ -285,9 +303,9 @@ export default function AdminPage() {
       await api.gallery.updateFAQ(editingFAQ, token);
       await loadData(token);
       setEditingFAQ(null);
-      alert('FAQ обновлен');
+      toast({ title: 'FAQ обновлён' });
     } catch (error) {
-      alert('Ошибка обновления FAQ');
+      toast({ title: 'Ошибка обновления FAQ', variant: 'destructive' });
     }
   };
 
@@ -296,24 +314,24 @@ export default function AdminPage() {
     try {
       await api.gallery.deleteFAQ(id, token);
       await loadData(token);
-      alert('FAQ удален');
+      toast({ title: 'FAQ удалён' });
     } catch (error) {
-      alert('Ошибка удаления FAQ');
+      toast({ title: 'Ошибка удаления FAQ', variant: 'destructive' });
     }
   };
 
   const handleCreateTeamMember = async () => {
     if (!newTeamMember.name || !newTeamMember.role) {
-      alert('Заполните имя и должность');
+      toast({ title: 'Заполните имя и должность', variant: 'destructive' });
       return;
     }
     try {
       await api.gallery.createTeamMember(newTeamMember, token);
       await loadData(token);
       setNewTeamMember({ name: '', role: '', bio: '', photo_url: '' });
-      alert('Член команды добавлен');
+      toast({ title: 'Член команды добавлен' });
     } catch (error) {
-      alert('Ошибка создания');
+      toast({ title: 'Ошибка создания', variant: 'destructive' });
     }
   };
 
@@ -323,9 +341,9 @@ export default function AdminPage() {
       await api.gallery.updateTeamMember(editingTeamMember, token);
       await loadData(token);
       setEditingTeamMember(null);
-      alert('Данные обновлены');
+      toast({ title: 'Данные обновлены' });
     } catch (error) {
-      alert('Ошибка обновления');
+      toast({ title: 'Ошибка обновления', variant: 'destructive' });
     }
   };
 
@@ -334,24 +352,24 @@ export default function AdminPage() {
     try {
       await api.gallery.deleteTeamMember(id, token);
       await loadData(token);
-      alert('Удалено');
+      toast({ title: 'Удалено' });
     } catch (error) {
-      alert('Ошибка удаления');
+      toast({ title: 'Ошибка удаления', variant: 'destructive' });
     }
   };
 
   const handleCreateGalleryImage = async () => {
     if (!newGalleryImage.url) {
-      alert('Укажите URL изображения');
+      toast({ title: 'Укажите URL изображения', variant: 'destructive' });
       return;
     }
     try {
       await api.gallery.createImage(newGalleryImage, token);
       await loadData(token);
       setNewGalleryImage({ url: '', caption: '' });
-      alert('Изображение добавлено');
+      toast({ title: 'Изображение добавлено' });
     } catch (error) {
-      alert('Ошибка добавления изображения');
+      toast({ title: 'Ошибка добавления изображения', variant: 'destructive' });
     }
   };
 
@@ -361,9 +379,9 @@ export default function AdminPage() {
       await api.gallery.updateImage(editingGalleryImage, token);
       await loadData(token);
       setEditingGalleryImage(null);
-      alert('Изображение обновлено');
+      toast({ title: 'Изображение обновлено' });
     } catch (error) {
-      alert('Ошибка обновления изображения');
+      toast({ title: 'Ошибка обновления изображения', variant: 'destructive' });
     }
   };
 
@@ -372,25 +390,25 @@ export default function AdminPage() {
     try {
       await api.gallery.deleteImage(id, token);
       await loadData(token);
-      alert('Изображение удалено');
+      toast({ title: 'Изображение удалено' });
     } catch (error) {
-      alert('Ошибка удаления изображения');
+      toast({ title: 'Ошибка удаления изображения', variant: 'destructive' });
     }
   };
 
   const handleCreateReview = async () => {
     if (!newReview.name || !newReview.text) {
-      alert('Заполните имя и текст отзыва');
+      toast({ title: 'Заполните имя и текст отзыва', variant: 'destructive' });
       return;
     }
     try {
       await api.gallery.createReview(newReview, token);
       await loadData(token);
       setNewReview({ name: '', text: '', rating: 5 });
-      alert('Отзыв добавлен');
+      toast({ title: 'Отзыв добавлен' });
     } catch (error) {
       console.error('Error creating review:', error);
-      alert(`Ошибка добавления отзыва: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка добавления отзыва', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -400,10 +418,10 @@ export default function AdminPage() {
       await api.gallery.updateReview(editingReview, token);
       await loadData(token);
       setEditingReview(null);
-      alert('Отзыв обновлен');
+      toast({ title: 'Отзыв обновлён' });
     } catch (error) {
       console.error('Error updating review:', error);
-      alert(`Ошибка обновления отзыва: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка обновления отзыва', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -412,26 +430,26 @@ export default function AdminPage() {
     try {
       await api.gallery.deleteReview(id, token);
       await loadData(token);
-      alert('Отзыв удален');
+      toast({ title: 'Отзыв удалён' });
     } catch (error) {
       console.error('Error deleting review:', error);
-      alert(`Ошибка удаления отзыва: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка удаления отзыва', variant: 'destructive' });
     }
   };
 
   const handleCreateBlogPost = async () => {
     if (!newBlogPost.title || !newBlogPost.content) {
-      alert('Заполните заголовок и текст статьи');
+      toast({ title: 'Заполните заголовок и текст статьи', variant: 'destructive' });
       return;
     }
     try {
       await api.gallery.createBlogPost(newBlogPost, token);
       await loadData(token);
       setNewBlogPost({ title: '', excerpt: '', content: '', image_url: '' });
-      alert('Статья добавлена');
+      toast({ title: 'Статья добавлена' });
     } catch (error) {
       console.error('Error creating blog post:', error);
-      alert(`Ошибка добавления статьи: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка добавления статьи', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -441,10 +459,10 @@ export default function AdminPage() {
       await api.gallery.updateBlogPost(editingBlogPost, token);
       await loadData(token);
       setEditingBlogPost(null);
-      alert('Статья обновлена');
+      toast({ title: 'Статья обновлена' });
     } catch (error) {
       console.error('Error updating blog post:', error);
-      alert(`Ошибка обновления статьи: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка обновления статьи', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -453,10 +471,10 @@ export default function AdminPage() {
     try {
       await api.gallery.deleteBlogPost(id, token);
       await loadData(token);
-      alert('Статья удалена');
+      toast({ title: 'Статья удалена' });
     } catch (error) {
       console.error('Error deleting blog post:', error);
-      alert(`Ошибка удаления статьи: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка удаления статьи', variant: 'destructive' });
     }
   };
 
@@ -466,10 +484,10 @@ export default function AdminPage() {
         await api.gallery.createBlogPost(article, token);
       }
       await loadData(token);
-      alert('✅ Загружено 3 экспертных статьи по актёрскому мастерству!');
+      toast({ title: 'Загружено 3 экспертных статьи' });
     } catch (error) {
       console.error('Error loading sample articles:', error);
-      alert(`Ошибка загрузки статей: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка загрузки статей', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -477,10 +495,10 @@ export default function AdminPage() {
     try {
       const res = await api.gallery.generateBlogPost(token);
       await loadData(token);
-      alert(res?.ok ? `✅ Статья опубликована: ${res.title || ''}` : 'Статья добавлена');
+      toast({ title: res?.ok ? `Статья опубликована: ${res.title || ''}` : 'Статья добавлена' });
     } catch (error) {
       console.error('Error generating blog post:', error);
-      alert(`Ошибка: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast({ title: 'Ошибка', description: error instanceof Error ? error.message : 'Unknown error', variant: 'destructive' });
     }
   };
 
@@ -489,144 +507,123 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-slate-100">
       <AdminHeader onLogout={handleLogout} />
-      
-      <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="leads" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
-            <TabsTrigger value="leads">Заявки</TabsTrigger>
-            <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
-            <TabsTrigger value="content">Контент</TabsTrigger>
-            <TabsTrigger value="modules">Модули</TabsTrigger>
-            <TabsTrigger value="faq">FAQ</TabsTrigger>
-            <TabsTrigger value="gallery">Галерея</TabsTrigger>
-            <TabsTrigger value="reviews">Отзывы</TabsTrigger>
-            <TabsTrigger value="blog">Блог</TabsTrigger>
-            <TabsTrigger value="team">Команда</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="leads">
-            <LeadsManager 
-              leads={leads} 
-              onUpdateStatus={handleUpdateLeadStatus}
-              onMarkAsTargeted={handleMarkAsTargeted}
-            />
-          </TabsContent>
-
-          <TabsContent value="whatsapp">
-            <WhatsAppManager token={token} />
-          </TabsContent>
-
-          <TabsContent value="content">
-            <ContentManager
-              content={content}
-              editingKey={editingKey}
-              editingValue={editingValue}
-              onStartEditing={startEditingContent}
-              onValueChange={setEditingValue}
-              onUpdate={handleUpdateContent}
-              onCancel={() => {
-                setEditingKey('');
-                setEditingValue('');
-              }}
-              onAdd={handleAddContent}
-            />
-          </TabsContent>
-
-          <TabsContent value="modules">
-            <ModulesManager
-              modules={modules}
-              newModule={newModule}
-              editingModule={editingModule}
-              onNewModuleChange={(field, value) => setNewModule({ ...newModule, [field]: value })}
-              onEditingModuleChange={(field, value) => setEditingModule(editingModule ? { ...editingModule, [field]: value } : null)}
-              onCreate={handleCreateModule}
-              onUpdate={handleUpdateModule}
-              onDelete={handleDeleteModule}
-              onReorder={handleReorderModule}
-              onStartEditing={setEditingModule}
-              onCancelEditing={() => setEditingModule(null)}
-            />
-          </TabsContent>
-
-          <TabsContent value="faq">
-            <FAQManager
-              faqs={faqs}
-              newFAQ={newFAQ}
-              editingFAQ={editingFAQ}
-              onNewFAQChange={(field, value) => setNewFAQ({ ...newFAQ, [field]: value })}
-              onEditingFAQChange={(field, value) => setEditingFAQ(editingFAQ ? { ...editingFAQ, [field]: value } : null)}
-              onCreate={handleCreateFAQ}
-              onUpdate={handleUpdateFAQ}
-              onDelete={handleDeleteFAQ}
-              onStartEditing={setEditingFAQ}
-              onCancelEditing={() => setEditingFAQ(null)}
-            />
-          </TabsContent>
-
-          <TabsContent value="gallery">
-            <GalleryManager
-              gallery={gallery}
-              newGalleryImage={newGalleryImage}
-              editingGalleryImage={editingGalleryImage}
-              onNewImageChange={(field, value) => setNewGalleryImage({ ...newGalleryImage, [field]: value })}
-              onEditingImageChange={(field, value) => setEditingGalleryImage(editingGalleryImage ? { ...editingGalleryImage, [field]: value } : null)}
-              onCreate={handleCreateGalleryImage}
-              onUpdate={handleUpdateGalleryImage}
-              onDelete={handleDeleteGalleryImage}
-              onStartEditing={setEditingGalleryImage}
-              onCancelEditing={() => setEditingGalleryImage(null)}
-            />
-          </TabsContent>
-
-          <TabsContent value="reviews">
-            <ReviewsManager
-              reviews={reviews}
-              newReview={newReview}
-              editingReview={editingReview}
-              onNewReviewChange={(field, value) => setNewReview({ ...newReview, [field]: value })}
-              onEditingReviewChange={(field, value) => setEditingReview(editingReview ? { ...editingReview, [field]: value } : null)}
-              onCreate={handleCreateReview}
-              onUpdate={handleUpdateReview}
-              onDelete={handleDeleteReview}
-              onStartEditing={setEditingReview}
-              onCancelEditing={() => setEditingReview(null)}
-            />
-          </TabsContent>
-
-          <TabsContent value="blog">
-            <BlogManager
-              blog={blog}
-              onGenerate={handleGenerateBlogPost}
-              newBlogPost={newBlogPost}
-              editingBlogPost={editingBlogPost}
-              onNewPostChange={(field, value) => setNewBlogPost({ ...newBlogPost, [field]: value })}
-              onEditingPostChange={(field, value) => setEditingBlogPost(editingBlogPost ? { ...editingBlogPost, [field]: value } : null)}
-              onCreate={handleCreateBlogPost}
-              onUpdate={handleUpdateBlogPost}
-              onDelete={handleDeleteBlogPost}
-              onStartEditing={setEditingBlogPost}
-              onCancelEditing={() => setEditingBlogPost(null)}
-              onLoadSamples={handleLoadSampleArticles}
-            />
-          </TabsContent>
-
-          <TabsContent value="team">
-            <TeamManager
-              team={team}
-              editingMember={editingTeamMember}
-              newMember={newTeamMember}
-              onNewMemberChange={(field, value) => setNewTeamMember(prev => ({...prev, [field]: value}))}
-              onEditingMemberChange={(field, value) => setEditingTeamMember(prev => prev ? {...prev, [field]: value} : null)}
-              onCreate={handleCreateTeamMember}
-              onUpdate={handleUpdateTeamMember}
-              onDelete={handleDeleteTeamMember}
-              onStartEditing={setEditingTeamMember}
-              onCancelEditing={() => setEditingTeamMember(null)}
-            />
-          </TabsContent>
-        </Tabs>
+      <div className="flex flex-1 overflow-hidden">
+        <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+        <main className="flex-1 overflow-auto bg-white">
+          <div className="p-6 max-w-5xl">
+            {activeSection === 'leads' && (
+              <LeadsManager
+                leads={leads}
+                onUpdateStatus={handleUpdateLeadStatus}
+                onMarkAsTargeted={handleMarkAsTargeted}
+              />
+            )}
+            {activeSection === 'content' && (
+              <ContentManager
+                content={content}
+                editingKey={editingKey}
+                editingValue={editingValue}
+                onStartEditing={startEditingContent}
+                onValueChange={setEditingValue}
+                onUpdate={handleUpdateContent}
+                onCancel={() => {
+                  setEditingKey('');
+                  setEditingValue('');
+                }}
+                onAdd={handleAddContent}
+              />
+            )}
+            {activeSection === 'modules' && (
+              <ModulesManager
+                modules={modules}
+                newModule={newModule}
+                editingModule={editingModule}
+                onNewModuleChange={(field, value) => setNewModule({ ...newModule, [field]: value })}
+                onEditingModuleChange={(field, value) => setEditingModule(editingModule ? { ...editingModule, [field]: value } : null)}
+                onCreate={handleCreateModule}
+                onUpdate={handleUpdateModule}
+                onDelete={handleDeleteModule}
+                onReorder={handleReorderModule}
+                onStartEditing={setEditingModule}
+                onCancelEditing={() => setEditingModule(null)}
+              />
+            )}
+            {activeSection === 'faq' && (
+              <FAQManager
+                faqs={faqs}
+                newFAQ={newFAQ}
+                editingFAQ={editingFAQ}
+                onNewFAQChange={(field, value) => setNewFAQ({ ...newFAQ, [field]: value })}
+                onEditingFAQChange={(field, value) => setEditingFAQ(editingFAQ ? { ...editingFAQ, [field]: value } : null)}
+                onCreate={handleCreateFAQ}
+                onUpdate={handleUpdateFAQ}
+                onDelete={handleDeleteFAQ}
+                onStartEditing={setEditingFAQ}
+                onCancelEditing={() => setEditingFAQ(null)}
+              />
+            )}
+            {activeSection === 'gallery' && (
+              <GalleryManager
+                gallery={gallery}
+                newGalleryImage={newGalleryImage}
+                editingGalleryImage={editingGalleryImage}
+                onNewImageChange={(field, value) => setNewGalleryImage({ ...newGalleryImage, [field]: value })}
+                onEditingImageChange={(field, value) => setEditingGalleryImage(editingGalleryImage ? { ...editingGalleryImage, [field]: value } : null)}
+                onCreate={handleCreateGalleryImage}
+                onUpdate={handleUpdateGalleryImage}
+                onDelete={handleDeleteGalleryImage}
+                onStartEditing={setEditingGalleryImage}
+                onCancelEditing={() => setEditingGalleryImage(null)}
+              />
+            )}
+            {activeSection === 'reviews' && (
+              <ReviewsManager
+                reviews={reviews}
+                newReview={newReview}
+                editingReview={editingReview}
+                onNewReviewChange={(field, value) => setNewReview({ ...newReview, [field]: value })}
+                onEditingReviewChange={(field, value) => setEditingReview(editingReview ? { ...editingReview, [field]: value } : null)}
+                onCreate={handleCreateReview}
+                onUpdate={handleUpdateReview}
+                onDelete={handleDeleteReview}
+                onStartEditing={setEditingReview}
+                onCancelEditing={() => setEditingReview(null)}
+              />
+            )}
+            {activeSection === 'blog' && (
+              <BlogManager
+                blog={blog}
+                onGenerate={handleGenerateBlogPost}
+                newBlogPost={newBlogPost}
+                editingBlogPost={editingBlogPost}
+                onNewPostChange={(field, value) => setNewBlogPost({ ...newBlogPost, [field]: value })}
+                onEditingPostChange={(field, value) => setEditingBlogPost(editingBlogPost ? { ...editingBlogPost, [field]: value } : null)}
+                onCreate={handleCreateBlogPost}
+                onUpdate={handleUpdateBlogPost}
+                onDelete={handleDeleteBlogPost}
+                onStartEditing={setEditingBlogPost}
+                onCancelEditing={() => setEditingBlogPost(null)}
+                onLoadSamples={handleLoadSampleArticles}
+              />
+            )}
+            {activeSection === 'team' && (
+              <TeamManager
+                team={team}
+                editingMember={editingTeamMember}
+                newMember={newTeamMember}
+                onNewMemberChange={(field, value) => setNewTeamMember(prev => ({ ...prev, [field]: value }))}
+                onEditingMemberChange={(field, value) => setEditingTeamMember(prev => prev ? { ...prev, [field]: value } : null)}
+                onCreate={handleCreateTeamMember}
+                onUpdate={handleUpdateTeamMember}
+                onDelete={handleDeleteTeamMember}
+                onStartEditing={setEditingTeamMember}
+                onCancelEditing={() => setEditingTeamMember(null)}
+              />
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );

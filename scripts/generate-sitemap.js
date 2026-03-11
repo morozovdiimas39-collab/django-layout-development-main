@@ -94,8 +94,8 @@ function buildXml(blogSlugs, blogListPagesCount) {
 }
 
 async function generateSitemap() {
-  const distDir = join(__dirname, '..', 'dist');
-  const sitemapPath = join(distDir, 'sitemap.xml');
+  const publicDir = join(__dirname, '..', 'public');
+  const sitemapPath = join(publicDir, 'sitemap.xml');
   let xml;
 
   try {
@@ -108,10 +108,10 @@ async function generateSitemap() {
   }
 
   try {
-    mkdirSync(distDir, { recursive: true });
+    mkdirSync(publicDir, { recursive: true });
   } catch (_) {}
   writeFileSync(sitemapPath, xml, 'utf-8');
-  console.log('✅ Written dist/sitemap.xml');
+  console.log('✅ Written public/sitemap.xml');
 }
 
 generateSitemap();

@@ -31,7 +31,7 @@ export default function TemplatesTab({
       <div className="flex justify-end">
         <Button 
           onClick={onCreateTemplate}
-          className="bg-green-600 hover:bg-green-700"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           <Icon name="Plus" size={16} className="mr-2" />
           Создать шаблон
@@ -73,9 +73,9 @@ export default function TemplatesTab({
                   </div>
                   <div className="flex gap-2">
                     <Button
-                      variant="ghost"
                       size="sm"
                       onClick={() => onEditTemplate(template)}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       <Icon name="Edit" size={16} />
                     </Button>

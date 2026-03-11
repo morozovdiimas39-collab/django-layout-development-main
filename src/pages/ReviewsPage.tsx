@@ -1,5 +1,5 @@
+'use client';
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import Header from "@/components/Header";
@@ -43,27 +43,6 @@ export default function ReviewsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Отзывы учеников - Истории успеха | Школа актёрского мастерства
-        </title>
-        <meta
-          name="description"
-          content="Читайте отзывы наших учеников о курсах ораторского искусства и актёрского мастерства. Истории успеха реальных людей."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/reviews"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/reviews"
-        />
-        <meta
-          property="og:title"
-          content="Отзывы учеников школы актёрского мастерства"
-        />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[

@@ -1,5 +1,5 @@
+'use client';
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import Header from "@/components/Header";
@@ -55,25 +55,6 @@ export default function ContactsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Контакты - Свяжитесь с нами | Школа актёрского мастерства</title>
-        <meta
-          name="description"
-          content="Свяжитесь с нами удобным способом. Контактная информация школы актёрского мастерства: адрес, телефон, email и режим работы."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/contacts"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/contacts"
-        />
-        <meta
-          property="og:title"
-          content="Контакты школы актёрского мастерства"
-        />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[

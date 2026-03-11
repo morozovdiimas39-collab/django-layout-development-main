@@ -38,126 +38,134 @@ export default function TeamManager({
 }: TeamManagerProps) {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="border-slate-200 bg-white">
         <CardHeader>
-          <CardTitle>Добавить члена команды</CardTitle>
-          <CardDescription>Новый преподаватель или сотрудник</CardDescription>
+          <CardTitle className="text-slate-900">Добавить члена команды</CardTitle>
+          <CardDescription className="text-slate-600">Новый преподаватель или сотрудник</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>ФИО</Label>
+            <Label className="text-slate-700">ФИО</Label>
             <Input
               value={newMember.name}
               onChange={(e) => onNewMemberChange('name', e.target.value)}
               placeholder="Имя Фамилия"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label>Должность</Label>
+            <Label className="text-slate-700">Должность</Label>
             <Input
               value={newMember.role}
               onChange={(e) => onNewMemberChange('role', e.target.value)}
               placeholder="Преподаватель актерского мастерства"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label>О преподавателе</Label>
+            <Label className="text-slate-700">О преподавателе</Label>
             <Textarea
               value={newMember.bio}
               onChange={(e) => onNewMemberChange('bio', e.target.value)}
               placeholder="Образование, опыт работы, достижения..."
               rows={8}
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label>URL фотографии</Label>
+            <Label className="text-slate-700">URL фотографии</Label>
             <Input
               value={newMember.photo_url}
               onChange={(e) => onNewMemberChange('photo_url', e.target.value)}
               placeholder="https://example.com/photo.jpg"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
-          <Button onClick={onCreate} className="w-full">
+          <Button onClick={onCreate} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
             <Icon name="Plus" size={16} className="mr-2" />
             Добавить
           </Button>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Команда ({team.length})</CardTitle>
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100">
+          <CardTitle className="text-slate-900">Команда ({team.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {team.map((member) => (
               <div key={member.id}>
                 {editingMember?.id === member.id ? (
-                  <Card>
+                  <Card className="border-slate-200 bg-slate-50/50">
                     <CardContent className="pt-6 space-y-3">
                       <div>
-                        <Label>ФИО</Label>
+                        <Label className="text-slate-700">ФИО</Label>
                         <Input
                           value={editingMember.name}
                           onChange={(e) => onEditingMemberChange('name', e.target.value)}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div>
-                        <Label>Должность</Label>
+                        <Label className="text-slate-700">Должность</Label>
                         <Input
                           value={editingMember.role}
                           onChange={(e) => onEditingMemberChange('role', e.target.value)}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div>
-                        <Label>О преподавателе</Label>
+                        <Label className="text-slate-700">О преподавателе</Label>
                         <Textarea
                           value={editingMember.bio || ''}
                           onChange={(e) => onEditingMemberChange('bio', e.target.value)}
                           rows={8}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div>
-                        <Label>URL фотографии</Label>
+                        <Label className="text-slate-700">URL фотографии</Label>
                         <Input
                           value={editingMember.photo_url || ''}
                           onChange={(e) => onEditingMemberChange('photo_url', e.target.value)}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div className="flex gap-2">
-                        <Button onClick={onUpdate} size="sm" className="flex-1">
+                        <Button onClick={onUpdate} size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
                           Сохранить
                         </Button>
-                        <Button onClick={onCancelEditing} variant="outline" size="sm">
+                        <Button onClick={onCancelEditing} variant="outline" size="sm" className="border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
                           Отмена
                         </Button>
                       </div>
                     </CardContent>
                   </Card>
                 ) : (
-                  <Card>
+                  <Card className="border-slate-200 bg-white">
                     <CardContent className="pt-6">
                       <div className="flex gap-4">
                         {member.photo_url && (
                           <img
                             src={member.photo_url}
                             alt={member.name}
-                            className="w-20 h-20 object-cover rounded"
+                            className="w-20 h-20 object-cover rounded-lg border border-slate-200"
                           />
                         )}
                         <div className="flex-1">
-                          <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
-                          <p className="text-sm text-primary mb-2">{member.role}</p>
+                          <h3 className="font-semibold text-lg text-slate-900 mb-1">{member.name}</h3>
+                          <p className="text-sm text-slate-600 mb-2">{member.role}</p>
                           {member.bio && (
-                            <p className="text-xs text-muted-foreground mb-3 line-clamp-3">
+                            <p className="text-xs text-slate-500 mb-3 line-clamp-3">
                               {member.bio}
                             </p>
                           )}
                           <div className="flex gap-2">
                             <Button
-                              variant="outline"
                               size="sm"
                               onClick={() => onStartEditing(member)}
+                              className="bg-primary text-primary-foreground hover:bg-primary/90"
                             >
                               <Icon name="Edit" size={14} className="mr-1" />
                               Изменить

@@ -116,27 +116,27 @@ export default function ContentManager({
     if (items.length === 0) return null;
     
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100">
+          <CardTitle className="text-slate-900">{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start justify-between p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors"
+                className="flex items-start justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-primary">{getContentLabel(item.key)}</div>
-                  <div className="text-sm text-muted-foreground truncate">
+                  <div className="text-sm font-medium text-slate-800">{getContentLabel(item.key)}</div>
+                  <div className="text-sm text-slate-600 truncate">
                     {item.value}
                   </div>
                 </div>
                 <Button
-                  variant="ghost"
                   size="sm"
                   onClick={() => onStartEditing(item)}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Icon name="Edit" size={16} />
                 </Button>
@@ -150,10 +150,10 @@ export default function ContentManager({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Редактирование контента</CardTitle>
-          <CardDescription>
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100">
+          <CardTitle className="text-slate-900">Редактирование контента</CardTitle>
+          <CardDescription className="text-slate-600">
             {content.length === 0
               ? 'Пока нет ни одного поля. Добавьте первое в блоке «Добавить поле» ниже.'
               : 'Выберите элемент из списка и нажмите карандаш, затем измените значение выше.'}
@@ -161,28 +161,30 @@ export default function ContentManager({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Поле</Label>
+            <Label className="text-slate-700">Поле</Label>
             <Input
               value={editingKey ? getContentLabel(editingKey) : ''}
               disabled
               placeholder="Выберите элемент контента из списка ниже или добавьте новое"
+              className="border-slate-300 bg-slate-50"
             />
           </div>
           <div>
-            <Label>Значение</Label>
+            <Label className="text-slate-700">Значение</Label>
             <Input
               value={editingValue}
               onChange={(e) => onValueChange(e.target.value)}
               placeholder={editingKey ? 'Новое значение' : 'Сначала выберите поле из списка или добавьте новое'}
               disabled={!editingKey}
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div className="flex gap-2">
-            <Button onClick={onUpdate} className="flex-1" disabled={!editingKey}>
+            <Button onClick={onUpdate} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" disabled={!editingKey}>
               Обновить контент
             </Button>
             {editingKey && (
-              <Button onClick={onCancel} variant="outline">
+              <Button onClick={onCancel} variant="outline" className="border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
                 Отмена
               </Button>
             )}
@@ -191,16 +193,16 @@ export default function ContentManager({
       </Card>
 
       {onAdd && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Добавить поле</CardTitle>
-            <CardDescription>Создайте новую запись контента, если её ещё нет в списке</CardDescription>
+        <Card className="border-slate-200 bg-white">
+          <CardHeader className="border-b border-slate-100">
+            <CardTitle className="text-slate-900">Добавить поле</CardTitle>
+            <CardDescription className="text-slate-600">Создайте новую запись контента, если её ещё нет в списке</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Ключ поля</Label>
+              <Label className="text-slate-700">Ключ поля</Label>
               <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                 value={addKey}
                 onChange={(e) => setAddKey(e.target.value)}
               >
@@ -214,7 +216,7 @@ export default function ContentManager({
               </select>
               {addKey === '__other__' && (
                 <Input
-                  className="mt-2"
+                  className="mt-2 border-slate-300 bg-white"
                   value={addCustomKey}
                   onChange={(e) => setAddCustomKey(e.target.value)}
                   placeholder="Например: my_custom_key"
@@ -222,14 +224,15 @@ export default function ContentManager({
               )}
             </div>
             <div>
-              <Label>Значение</Label>
+              <Label className="text-slate-700">Значение</Label>
               <Input
                 value={addValue}
                 onChange={(e) => setAddValue(e.target.value)}
                 placeholder="Введите значение"
+                className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
               />
             </div>
-            <Button onClick={handleAdd} disabled={!effectiveAddKey || adding}>
+            <Button onClick={handleAdd} disabled={!effectiveAddKey || adding} className="bg-primary text-primary-foreground hover:bg-primary/90">
               {adding ? 'Сохранение...' : 'Добавить'}
             </Button>
           </CardContent>

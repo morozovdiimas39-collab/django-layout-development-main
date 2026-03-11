@@ -65,7 +65,7 @@ export default function CreateTemplateDialog({
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Например: Приветствие после регистрации"
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
           </div>
 
@@ -76,7 +76,7 @@ export default function CreateTemplateDialog({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="welcome_day_1"
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
             <p className="text-xs text-gray-500 mt-1">Используется для идентификации в системе</p>
           </div>
@@ -89,7 +89,7 @@ export default function CreateTemplateDialog({
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={8}
               placeholder="Привет, {name}! Спасибо за интерес к курсу {course}..."
-              className="mt-1 font-mono text-sm"
+              className="mt-1 font-mono text-sm text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
             <p className="text-xs text-gray-500 mt-1">
               Доступные переменные: {'{name}'}, {'{course}'}
@@ -105,7 +105,7 @@ export default function CreateTemplateDialog({
                 min="0"
                 value={formData.delay_days}
                 onChange={(e) => setFormData({ ...formData, delay_days: parseInt(e.target.value) || 0 })}
-                className="mt-1"
+                className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
               />
             </div>
 
@@ -115,7 +115,7 @@ export default function CreateTemplateDialog({
                 value={formData.course}
                 onValueChange={(value) => setFormData({ ...formData, course: value })}
               >
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300">
                   <SelectValue placeholder="Выберите курс" />
                 </SelectTrigger>
                 <SelectContent>
@@ -134,7 +134,7 @@ export default function CreateTemplateDialog({
               value={formData.file_url}
               onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
               placeholder="https://example.com/file.pdf"
-              className="mt-1"
+              className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
             />
             <p className="text-xs text-gray-500 mt-1">
               Введите прямую ссылку на файл (изображение, видео или PDF). Файл должен быть загружен на Яндекс.Диск, Google Drive или любой другой хостинг с публичным доступом.
@@ -149,7 +149,7 @@ export default function CreateTemplateDialog({
                 value={formData.file_name}
                 onChange={(e) => setFormData({ ...formData, file_name: e.target.value })}
                 placeholder="document.pdf"
-                className="mt-1"
+                className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300"
                 disabled={!formData.file_url}
               />
             </div>
@@ -160,7 +160,7 @@ export default function CreateTemplateDialog({
                 onValueChange={(value) => setFormData({ ...formData, file_type: value })}
                 disabled={!formData.file_url}
               >
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 text-slate-900 placeholder:text-slate-400 bg-white border-slate-300">
                   <SelectValue placeholder="Выберите тип" />
                 </SelectTrigger>
                 <SelectContent>
@@ -177,7 +177,7 @@ export default function CreateTemplateDialog({
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Icon name="Plus" className="mr-2" size={16} />
               Создать шаблон
@@ -185,7 +185,7 @@ export default function CreateTemplateDialog({
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100"
               disabled={loading}
             >
               Отмена

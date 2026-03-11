@@ -17,10 +17,11 @@ import ReviewsSection from "@/components/acting/ReviewsSection";
 import BlogSection from "@/components/acting/BlogSection";
 import ContactSection from "@/components/acting/ContactSection";
 
-import { useNavigate } from "react-router-dom";
+'use client';
+import { useRouter } from "next/navigation";
 
 export default function ActingCardsPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [content, setContent] = useState<Record<string, string>>({});
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -140,37 +141,6 @@ export default function ActingCardsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Актерские визитки с режиссером в Москве | Профессиональная съемка для
-          актеров
-        </title>
-        <meta
-          name="description"
-          content="Профессиональные актерские визитки с опытным режиссером. Съемка в 4К, работа над органикой и выразительностью. Эффективный инструмент для продвижения карьеры актера."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards"
-        />
-        <meta
-          property="og:title"
-          content="Актерские визитки с режиссером в Москве"
-        />
-        <meta
-          property="og:description"
-          content="Профессиональные актерские визитки с опытным режиссером. Съемка в 4К, работа над органикой и выразительностью."
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/b34e4f5d-452d-44bb-bedb-a00378237a0c.jpg"
-        />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
@@ -430,8 +400,8 @@ export default function ActingCardsPage() {
         <ReviewsSection reviews={reviews} />
         <BlogSection 
           blog={blog} 
-          onNavigate={(slug) => navigate(`/blog/${slug}`)}
-          onNavigateToBlog={() => navigate('/blog')}
+          onNavigate={(slug) => router.push(`/blog/${slug}`)}
+          onNavigateToBlog={() => router.push('/blog')}
         />
         <ContactSection />
 

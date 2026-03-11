@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -19,7 +19,7 @@ import { api, SiteContent, Review, GalleryImage, BlogPost } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
 
 export default function OratoryPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [content, setContent] = useState<Record<string, string>>({});
   const [reviews, setReviews] = useState<Review[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
@@ -54,28 +54,6 @@ export default function OratoryPage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Курсы ораторского искусства в Москве | Обучение риторике и публичным
-          выступлениям
-        </title>
-        <meta
-          name="description"
-          content="Профессиональные курсы ораторского искусства. Научитесь уверенно выступать на публике, управлять голосом, побеждать волнение. Обучение риторике от профессионалов."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/oratory"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/oratory"
-        />
-        <meta
-          property="og:title"
-          content="Курсы ораторского искусства в Москве"
-        />
-      </Helmet>
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
@@ -101,8 +79,8 @@ export default function OratoryPage() {
         <ReviewsSection reviews={reviews} />
         <BlogSection
           blog={blog}
-          onNavigate={(slug) => navigate(`/blog/${slug}`)}
-          onNavigateToBlog={() => navigate("/blog")}
+          onNavigate={(slug) => router.push(`/blog/${slug}`)}
+          onNavigateToBlog={() => router.push("/blog")}
         />
         <CTASection />
         <Footer />

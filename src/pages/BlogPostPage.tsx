@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -9,9 +9,12 @@ import Footer from "@/components/Footer";
 import { api, BlogPost } from "@/lib/api";
 import { useSEO, generateArticleSchema } from "@/hooks/useSEO";
 
-export default function BlogPostPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+type BlogPostPageProps = { slug?: string };
+
+export default function BlogPostPage(props: BlogPostPageProps) {
+  const params = useParams<{ slug: string }>();
+  const slug = props.slug ?? (params?.slug as string | undefined);
+  const router = useRouter();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,11 +30,11 @@ export default function BlogPostPage() {
       if (foundPost) {
         setPost(foundPost);
       } else {
-        navigate("/blog");
+        router.push("/blog");
       }
     } catch (error) {
       console.error("Error loading post:", error);
-      navigate("/blog");
+      router.push("/blog");
     } finally {
       setLoading(false);
     }
@@ -103,16 +106,6 @@ export default function BlogPostPage() {
 
   return (
     <>
-      <Helmet>
-        <meta
-          name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-        />
-        <meta
-          name="googlebot"
-          content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-        />
-      </Helmet>
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
@@ -120,7 +113,7 @@ export default function BlogPostPage() {
           <div className="container mx-auto px-4 max-w-4xl">
             <Button
               variant="ghost"
-              onClick={() => navigate("/blog")}
+              onClick={() => router.push("/blog")}
               className="mb-6 -ml-2"
             >
               <Icon name="ArrowLeft" size={18} className="mr-2" />

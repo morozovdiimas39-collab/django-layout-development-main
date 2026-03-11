@@ -1,6 +1,6 @@
+'use client';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SchemaMarkup from "@/components/SchemaMarkup";
@@ -26,7 +26,7 @@ import GallerySection from "@/components/acting/GallerySection";
 import ContactSection from "@/components/acting/ContactSection";
 
 export default function HomePage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [blog, setBlog] = useState<BlogPost[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -72,36 +72,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Школа актёрского и ораторского мастерства Казбека Меретукова в Москве
-        </title>
-        <meta
-          name="description"
-          content="Профессиональное обучение актёрскому и ораторскому мастерству от режиссёра телесериалов Казбека Меретукова. Победитель ТЕФИ-2012. Курсы для взрослых и детей. Пробное занятие бесплатно."
-        />
-        <link
-          rel="canonical"
-          href="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/"
-        />
-        <meta
-          property="og:url"
-          content="https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/"
-        />
-        <meta
-          property="og:title"
-          content="Школа Казбека Меретукова - актёрское и ораторское мастерство"
-        />
-        <meta
-          property="og:description"
-          content="Профессиональное обучение от режиссёра телесериалов. Победитель ТЕФИ-2012. Курсы актёрского и ораторского мастерства в Москве."
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/b34e4f5d-452d-44bb-bedb-a00378237a0c.jpg"
-        />
-      </Helmet>
       <SchemaMarkup
         type="localbusiness"
         organizationData={{
@@ -157,7 +127,7 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate("/teacher")}
+                  onClick={() => router.push("/teacher")}
                 >
                   О преподавателе
                 </Button>
@@ -295,7 +265,7 @@ export default function HomePage() {
                     <Button
                       size="lg"
                       variant="outline"
-                      onClick={() => navigate("/acting")}
+                      onClick={() => router.push("/acting")}
                     >
                       Подробнее о курсе
                     </Button>
@@ -419,7 +389,7 @@ export default function HomePage() {
                     <Button
                       size="lg"
                       variant="outline"
-                      onClick={() => navigate("/oratory")}
+                      onClick={() => router.push("/oratory")}
                     >
                       Подробнее о курсе
                     </Button>
@@ -529,7 +499,7 @@ export default function HomePage() {
                     <Button
                       size="lg"
                       variant="outline"
-                      onClick={() => navigate("/acting-cards")}
+                      onClick={() => router.push("/acting-cards")}
                     >
                       Подробнее о курсе
                     </Button>
@@ -644,8 +614,8 @@ export default function HomePage() {
         {/* Blog Section */}
         <BlogSection
           blog={blog}
-          onNavigate={(slug) => navigate(`/blog/${slug}`)}
-          onNavigateToBlog={() => navigate("/blog")}
+          onNavigate={(slug) => router.push(`/blog/${slug}`)}
+          onNavigateToBlog={() => router.push("/blog")}
         />
 
         {/* Contact Section */}
