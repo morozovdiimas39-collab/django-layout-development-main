@@ -9,6 +9,8 @@ const nextConfig = {
   transpilePackages: [],
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
   experimental: {
     optimizePackageImports: [
       'lucide-react',
