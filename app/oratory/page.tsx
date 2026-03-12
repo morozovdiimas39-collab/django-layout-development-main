@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import OratoryPage from '@/pages/OratoryPage';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Курсы ораторского искусства в Москве | Обучение риторике и публичным выступлениям',
   description: 'Профессиональные курсы ораторского искусства. Научитесь уверенно выступать на публике, управлять голосом, побеждать волнение. Обучение риторике от профессионалов.',
