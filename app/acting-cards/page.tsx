@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import ActingCardsPage from '@/pages/ActingCardsPage';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Актерские визитки | Профессиональная съемка с режиссером Казбеком Меретуковым',
   description: 'Профессиональная съемка актерских визиток под руководством режиссера. Качественная подготовка и съемка для поступления в театральные вузы и кастингов.',
