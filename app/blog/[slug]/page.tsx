@@ -26,6 +26,7 @@ export async function generateMetadata({
   if (!post) {
     return {
       title: 'Статья не найдена | Блог',
+      robots: { index: false, follow: false },
     };
   }
   const title = `${post.title} | Блог школы актёрского мастерства`;

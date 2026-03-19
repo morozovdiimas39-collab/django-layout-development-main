@@ -11,9 +11,9 @@ export const metadata: Metadata = {
     title: 'Курсы актёрского мастерства от режиссёра Казбека Меретукова',
     description: 'Профессиональное обучение актёрскому мастерству. Работа на камеру, съёмка фильма, пробное занятие бесплатно.',
     type: 'website',
-    url: '/',
+    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai',
   },
-  robots: 'index, follow',
+  robots: { index: true, follow: true },
   icons: {
     icon: '/favicon.svg',
   },
