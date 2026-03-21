@@ -4,9 +4,11 @@ import BlogPage from '@/pages/BlogPage';
 
 const SITE_BASE = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
 
-export async function generateMetadata(props: { searchParams: Promise<{ page?: string }> }): Promise<Metadata> {
-  const searchParams = await props.searchParams;
-  const page = Math.max(1, parseInt(searchParams?.page || '1', 10) || 1);
+export async function generateMetadata(props: { searchParams?: { page?: string | string[] } }): Promise<Metadata> {
+  const rawPage = Array.isArray(props.searchParams?.page)
+    ? props.searchParams?.page[0]
+    : props.searchParams?.page;
+  const page = Math.max(1, parseInt(rawPage || '1', 10) || 1);
 
   if (page > 1) {
     return {

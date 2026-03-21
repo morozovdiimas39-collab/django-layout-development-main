@@ -9,17 +9,27 @@ import { BlogPost } from "@/lib/api";
 import { useSEO, generateArticleSchema } from "@/hooks/useSEO";
 
 type BlogPostPageProps = {
-  slug: string;
-  initialPost: BlogPost;
+  slug?: string;
+  initialPost?: BlogPost;
 };
 
 export default function BlogPostPage({ slug, initialPost }: BlogPostPageProps) {
   const router = useRouter();
-  const post = initialPost;
+  const post = initialPost ?? null;
 
-  const fullUrl = post
-    ? `https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog/${post.slug}`
-    : "";
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Header />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <p className="text-muted-foreground">Статья не найдена</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const fullUrl = `https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog/${post.slug || slug || ''}`;
   const articleSchema = post
     ? generateArticleSchema({
         title: post.title,
