@@ -157,48 +157,60 @@ export default function SubscribePage() {
         <main className="pt-16">
 
           {/* ── HERO ─────────────────────────────────────────── */}
-          <section className="relative overflow-hidden py-16 sm:py-24 pb-28 sm:pb-36">
+          <section className="relative overflow-hidden py-14 sm:py-20 pb-28 sm:pb-36">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-background pointer-events-none" />
             <div className="absolute top-10 right-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-            {/* плавный fade вниз */}
             <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-b from-transparent to-background pointer-events-none z-10" />
 
             <div className="relative container mx-auto px-4">
-              <div className="max-w-3xl mx-auto text-center">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-6">
-                  <Icon name="Zap" size={14} />
-                  Бесплатно — подписка и контент
-                </span>
+              <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
 
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-5 leading-tight">
-                  Канал про актёрское и ораторское мастерство
-                </h1>
+                {/* Левая колонка — текст */}
+                <div className="flex-1 min-w-0">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-6">
+                    <Icon name="Zap" size={14} />
+                    Бесплатно — подписка и контент
+                  </span>
 
-                <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                  Практика без «воды»: упражнения для голоса и дикции, работа на камеру, разборы и приёмы — в Telegram или MAX.
-                </p>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
+                    Канал про актёрское и ораторское мастерство
+                  </h1>
 
-                <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
-                  <Button asChild size="lg" className="text-base px-8 h-12">
-                    <a href={telegramUrl} target="_blank" rel="noopener noreferrer">
-                      <svg className="mr-2 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-                      </svg>
-                      Подписаться в Telegram
-                    </a>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="text-base px-8 h-12">
-                    <a href={maxUrl} target="_blank" rel="noopener noreferrer">
-                      <Icon name="MessageSquare" size={20} className="mr-2 shrink-0" />
-                      Подписаться в MAX
-                    </a>
-                  </Button>
+                  <p className="text-lg text-muted-foreground mb-8">
+                    Практика без «воды»: упражнения для голоса и дикции, работа на камеру, разборы и приёмы — в Telegram или MAX.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <Button asChild size="lg" className="text-base px-8 h-12">
+                      <a href={telegramUrl} target="_blank" rel="noopener noreferrer">
+                        <svg className="mr-2 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                        </svg>
+                        Подписаться в Telegram
+                      </a>
+                    </Button>
+                    <Button asChild size="lg" variant="outline" className="text-base px-8 h-12">
+                      <a href={maxUrl} target="_blank" rel="noopener noreferrer">
+                        <Icon name="MessageSquare" size={20} className="mr-2 shrink-0" />
+                        Подписаться в MAX
+                      </a>
+                    </Button>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Отписаться можно в любой момент
+                  </p>
                 </div>
 
-                <p className="text-xs text-muted-foreground">
-                  Отписаться можно в любой момент
-                </p>
+                {/* Правая колонка — видео */}
+                <div className="w-full lg:w-[520px] shrink-0">
+                  <VideoSlot
+                    embedUrl={SUBSCRIBE_MEDIA.videoEmbedUrl}
+                    hint="Видео для первого экрана"
+                  />
+                </div>
+
               </div>
             </div>
           </section>
@@ -238,11 +250,6 @@ export default function SubscribePage() {
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* ── ВИДЕО ───────────────────────────────────────── */}
-          <section className="container mx-auto px-4 py-14">
-            <VideoSlot embedUrl={SUBSCRIBE_MEDIA.videoEmbedUrl} hint="Блок 2 — видео с занятия или о канале" />
           </section>
 
           {/* ── ДВА ФОТО ────────────────────────────────────── */}

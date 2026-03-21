@@ -1,12 +1,24 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import PhoneForm from '@/components/PhoneForm';
 import { api } from '@/lib/api';
 
-export default function ContactSection() {
-  const [phone, setPhone] = useState('+7 (999) 123-45-67');
-  const [address, setAddress] = useState('Москва');
-  const [workingHours, setWorkingHours] = useState('Ежедневно: 10:00 - 21:00');
+interface ContactSectionProps {
+  phone?: string;
+  address?: string;
+  workingHours?: string;
+}
+
+export default function ContactSection({
+  phone: initialPhone = '+7 (999) 123-45-67',
+  address: initialAddress = 'Москва',
+  workingHours: initialWorkingHours = 'Ежедневно: 10:00 - 21:00',
+}: ContactSectionProps) {
+  const [phone, setPhone] = useState(initialPhone);
+  const [address, setAddress] = useState(initialAddress);
+  const [workingHours, setWorkingHours] = useState(initialWorkingHours);
 
   useEffect(() => {
     api.content.getAll().then((data) => {

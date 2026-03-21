@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import InputMask from 'react-input-mask';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';

@@ -187,7 +187,7 @@ export default function HomePage() {
                         Пробное:{" "}
                         {content.trial_date
                           ? formatDate(content.trial_date)
-                          : "25 марта 2025"}
+                          : "25 марта 2026"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 bg-card px-3 py-2 rounded-lg text-sm">
@@ -200,7 +200,7 @@ export default function HomePage() {
                         Старт:{" "}
                         {content.course_start_date
                           ? formatDate(content.course_start_date)
-                          : "1 апреля 2025"}
+                          : "1 апреля 2026"}
                       </span>
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export default function HomePage() {
                         Пробное:{" "}
                         {content.oratory_trial_date
                           ? formatDate(content.oratory_trial_date)
-                          : "27 марта 2025"}
+                          : "27 марта 2026"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 bg-background px-3 py-2 rounded-lg text-sm">
@@ -324,7 +324,7 @@ export default function HomePage() {
                         Старт:{" "}
                         {content.oratory_course_start_date
                           ? formatDate(content.oratory_course_start_date)
-                          : "3 апреля 2025"}
+                          : "3 апреля 2026"}
                       </span>
                     </div>
                   </div>
@@ -435,7 +435,7 @@ export default function HomePage() {
                         Старт:{" "}
                         {content.acting_cards_start_date
                           ? formatDate(content.acting_cards_start_date)
-                          : "15 марта 2025"}
+                          : "15 марта 2026"}
                       </span>
                     </div>
                   </div>

@@ -1,28 +1,28 @@
-import Icon from '@/components/ui/icon';
-import Image from '@/components/ui/image';
-import { TeamMember } from '@/lib/api';
-import EditableContent from '@/components/EditableContent';
-
 interface AboutSectionProps {
   content: Record<string, string>;
-  team: TeamMember[];
 }
 
-export default function AboutSection({ content, team }: AboutSectionProps) {
+export default function AboutSection({ content }: AboutSectionProps) {
   const kazbekPhoto = "https://st.business-key.com/i/files/45470/2024/02/1707986927.jpg";
-  const kazbekName = "Казбек Меретуков";
+  const kazbekName = content.acting_about_name || "Казбек Меретуков";
   const kazbekInfo = [
     {
-      title: "Режиссёр-постановщик телесериалов",
-      text: "Режиссёр-постановщик на сериальных проектах разных форматов и жанров, которые получили признание на каналах России, Украины, Белоруссии, Израиля. Снял проекты: «След», «Дело врачей», «До суда», «Маруся», «Наши соседи», «Обручальное кольцо», «Принцесса цирка»."
+      title: content.acting_about_title_0 || "Режиссёр-постановщик телесериалов",
+      text:
+        content.acting_about_text_0 ||
+        "Режиссёр-постановщик на сериальных проектах разных форматов и жанров, которые получили признание на каналах России, Украины, Белоруссии, Израиля. Снял проекты: «След», «Дело врачей», «До суда», «Маруся», «Наши соседи», «Обручальное кольцо», «Принцесса цирка»."
     },
     {
-      title: "Образование и квалификация",
-      text: "ГИТИС. Режиссура драмы. Окончил с отличием. ВГИК. Высшие режиссерские курсы повышения квалификации по специальности кинорежиссура. Прошел курс «Роль режиссера в производстве телесериалов» в кинокомпании АМЕДИА."
+      title: content.acting_about_title_1 || "Образование и квалификация",
+      text:
+        content.acting_about_text_1 ||
+        "ГИТИС. Режиссура драмы. Окончил с отличием. ВГИК. Высшие режиссерские курсы повышения квалификации по специальности кинорежиссура. Прошел курс «Роль режиссера в производстве телесериалов» в кинокомпании АМЕДИА."
     },
     {
-      title: "Художественный руководитель центра",
-      text: "Художественный руководитель центра подготовки актеров кино. Теленовелла «Обручальное кольцо» — победитель премии ТЕФИ-2012 в номинации «Телевизионный художественный сериал – телероман»."
+      title: content.acting_about_title_2 || "Художественный руководитель центра",
+      text:
+        content.acting_about_text_2 ||
+        "Художественный руководитель центра подготовки актеров кино. Теленовелла «Обручальное кольцо» — победитель премии ТЕФИ-2012 в номинации «Телевизионный художественный сериал – телероман»."
     }
   ];
 
@@ -49,39 +49,15 @@ export default function AboutSection({ content, team }: AboutSectionProps) {
           
           <div className="space-y-6">
             <div>
-              <EditableContent
-                contentKey="acting_about_name"
-                defaultValue={kazbekName}
-                type="text"
-                page="acting"
-                section="about"
-                as="h3"
-                className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
-              />
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{kazbekName}</h3>
               <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
             </div>
             
             <div className="space-y-6">
               {kazbekInfo.map((item, index) => (
                 <div key={index} className="space-y-2">
-                  <EditableContent
-                    contentKey={`acting_about_title_${index}`}
-                    defaultValue={item.title}
-                    type="text"
-                    page="acting"
-                    section="about"
-                    as="h4"
-                    className="text-lg md:text-xl font-semibold text-primary"
-                  />
-                  <EditableContent
-                    contentKey={`acting_about_text_${index}`}
-                    defaultValue={item.text}
-                    type="textarea"
-                    page="acting"
-                    section="about"
-                    as="p"
-                    className="text-base leading-relaxed text-foreground/90"
-                  />
+                  <h4 className="text-lg md:text-xl font-semibold text-primary">{item.title}</h4>
+                  <p className="text-base leading-relaxed text-foreground/90">{item.text}</p>
                 </div>
               ))}
             </div>

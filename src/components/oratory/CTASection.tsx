@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import PhoneForm from '@/components/PhoneForm';

@@ -1,44 +1,21 @@
 'use client';
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { api, BlogPost } from "@/lib/api";
+import { BlogPost } from "@/lib/api";
 import { useSEO, generateArticleSchema } from "@/hooks/useSEO";
 
-type BlogPostPageProps = { slug?: string };
+type BlogPostPageProps = {
+  slug: string;
+  initialPost: BlogPost;
+};
 
-export default function BlogPostPage(props: BlogPostPageProps) {
-  const params = useParams<{ slug: string }>();
-  const slug = props.slug ?? (params?.slug as string | undefined);
+export default function BlogPostPage({ slug, initialPost }: BlogPostPageProps) {
   const router = useRouter();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadPost();
-  }, [slug]);
-
-  const loadPost = async () => {
-    if (!slug) return;
-    try {
-      setLoading(true);
-      const foundPost = await api.gallery.getBlogPost(slug);
-      if (foundPost) {
-        setPost(foundPost);
-      } else {
-        router.push("/blog");
-      }
-    } catch (error) {
-      console.error("Error loading post:", error);
-      router.push("/blog");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const post = initialPost;
 
   const fullUrl = post
     ? `https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog/${post.slug}`
@@ -82,27 +59,6 @@ export default function BlogPostPage(props: BlogPostPageProps) {
         }
       : undefined,
   });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground">
-        <Header />
-        <div className="container mx-auto px-4 py-32 text-center">
-          <Icon
-            name="Loader"
-            className="animate-spin mx-auto mb-4 text-primary"
-            size={48}
-          />
-          <p className="text-muted-foreground">Загрузка статьи...</p>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!post) {
-    return null;
-  }
 
   return (
     <>

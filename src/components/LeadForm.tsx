@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import InputMask from 'react-input-mask';
 import { Button } from '@/components/ui/button';

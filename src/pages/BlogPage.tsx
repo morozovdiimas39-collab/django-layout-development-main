@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -144,9 +145,17 @@ export default function BlogPage() {
             ) : (
               <>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                  {posts.map((post) => (
-                    <a key={post.id} href={`/blog/${post.slug}`}>
-                      <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden h-full">
+                  {posts.map((post) => {
+                    // Keep a stable fallback path even if slug is temporarily missing in API payload.
+                    // This is resolved server-side in app/blog/[slug]/page.tsx via id-N pattern.
+                    const postPath = post.slug ? `/blog/${post.slug}` : `/blog/id-${post.id}`;
+                    return (
+                    <Card key={post.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden h-full">
+                      <Link
+                        href={postPath}
+                        className="block h-full"
+                        aria-label={`Открыть статью: ${post.title}`}
+                      >
                         {(post.cover_image_url || post.image_url) && (
                           <div className="aspect-video overflow-hidden">
                             <img
@@ -185,9 +194,10 @@ export default function BlogPage() {
                             <Icon name="ArrowRight" size={16} />
                           </span>
                         </CardContent>
-                      </Card>
-                    </a>
-                  ))}
+                      </Link>
+                    </Card>
+                    );
+                  })}
                 </div>
 
                 {totalPages > 1 && (

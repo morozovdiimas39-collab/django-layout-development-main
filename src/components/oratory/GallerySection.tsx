@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import Image from '@/components/ui/image';

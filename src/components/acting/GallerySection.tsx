@@ -1,10 +1,11 @@
+'use client';
+
 import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { GalleryImage } from '@/lib/api';
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 

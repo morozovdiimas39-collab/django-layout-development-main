@@ -1,16 +1,33 @@
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import Image from '@/components/ui/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BlogPost } from '@/lib/api';
 
 interface BlogSectionProps {
   blog: BlogPost[];
-  onNavigate: (slug: string) => void;
-  onNavigateToBlog: () => void;
+  onNavigate?: (slug: string) => void;
+  onNavigateToBlog?: () => void;
 }
 
 export default function BlogSection({ blog, onNavigate, onNavigateToBlog }: BlogSectionProps) {
+  const router = useRouter();
+
+  const getPostPath = (post: BlogPost) => (post.slug ? `/blog/${post.slug}` : `/blog/id-${post.id}`);
+
+  const openPost = (post: BlogPost) => {
+    const path = getPostPath(post);
+    if (onNavigate) {
+      onNavigate(post.slug || `id-${post.id}`);
+      return;
+    }
+    router.push(path);
+  };
+
   return (
     <section id="blog" className="py-12 px-4 md:py-20 md:px-4 bg-card">
       <div className="container mx-auto">
@@ -22,7 +39,7 @@ export default function BlogSection({ blog, onNavigate, onNavigateToBlog }: Blog
                 <Card 
                   key={post.id} 
                   className="group hover:shadow-xl transition cursor-pointer flex flex-col"
-                  onClick={() => onNavigate(post.slug || '')}
+                  onClick={() => openPost(post)}
                 >
                   {post.image_url && (
                     <div className="aspect-video overflow-hidden">
@@ -38,24 +55,35 @@ export default function BlogSection({ blog, onNavigate, onNavigateToBlog }: Blog
                     <CardDescription>{post.excerpt}</CardDescription>
                   </CardHeader>
                   <CardContent className="mt-auto">
-                    <Button variant="ghost" className="w-full group-hover:bg-primary/10 transition">
-                      Читать статью
-                      <Icon name="ArrowRight" size={16} className="ml-2" />
+                    <Button asChild variant="ghost" className="w-full group-hover:bg-primary/10 transition">
+                      <Link href={getPostPath(post)}>
+                        Читать статью
+                        <Icon name="ArrowRight" size={16} className="ml-2" />
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
               ))}
             </div>
             <div className="text-center">
-              <Button 
-                onClick={onNavigateToBlog} 
-                size="lg"
-                variant="outline"
-                className="group"
-              >
-                Больше статей
-                <Icon name="BookOpen" size={20} className="ml-2 group-hover:translate-x-1 transition" />
-              </Button>
+              {onNavigateToBlog ? (
+                <Button
+                  onClick={onNavigateToBlog}
+                  size="lg"
+                  variant="outline"
+                  className="group"
+                >
+                  Больше статей
+                  <Icon name="BookOpen" size={20} className="ml-2 group-hover:translate-x-1 transition" />
+                </Button>
+              ) : (
+                <Button asChild size="lg" variant="outline" className="group">
+                  <Link href="/blog">
+                    Больше статей
+                    <Icon name="BookOpen" size={20} className="ml-2 group-hover:translate-x-1 transition" />
+                  </Link>
+                </Button>
+              )}
             </div>
           </>
         ) : (
