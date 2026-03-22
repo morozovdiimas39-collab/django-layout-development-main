@@ -6,7 +6,8 @@ export const API_URLS = {
   gallery: 'https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71',
   whatsapp: 'https://functions.yandexcloud.net/d4e3ua2afh8p6196fe3n',
   whatsappSender: 'https://functions.yandexcloud.net/d4ekf1kqhsodfoojvu00',
-  metrikaConversion: 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c'
+  metrikaConversion: 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c',
+  analyzeNote: 'https://functions.yandexcloud.net/d4edf6r0o36gh78pctr0',
 };
 
 export interface SiteContent {

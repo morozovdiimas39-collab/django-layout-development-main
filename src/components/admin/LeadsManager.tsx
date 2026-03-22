@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
-import { Lead, api } from '@/lib/api';
+import { Lead, api, API_URLS } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 
 interface LeadsManagerProps {
@@ -206,7 +206,7 @@ function LeadDetailPanel({
     setAiLoading(true);
     setAiSuggestion(null);
     try {
-      const res = await fetch('/api/analyze-note', {
+      const res = await fetch(API_URLS.analyzeNote, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: text }),

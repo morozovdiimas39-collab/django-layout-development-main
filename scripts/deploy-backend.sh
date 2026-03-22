@@ -23,4 +23,13 @@ yc serverless function version create \
   --execution-timeout=60 \
   --source-path=backend/auto-blog
 
+echo "Deploying analyze-note..."
+yc serverless function version create \
+  --function-name=analyze-note \
+  --runtime=python312 \
+  --entrypoint=handler \
+  --memory=128m \
+  --execution-timeout=30 \
+  --source-path=backend/analyze-note
+
 echo "Done."
