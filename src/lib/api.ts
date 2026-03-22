@@ -46,6 +46,7 @@ export interface Lead {
   utm_term?: string;
   yclid?: string;
   gclid?: string;
+  referrer?: string;
 }
 
 export interface Review {

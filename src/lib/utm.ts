@@ -6,6 +6,7 @@ export interface UTMParams {
   utm_term?: string;
   yclid?: string;
   gclid?: string;
+  referrer?: string;
 }
 
 export function getUTMParams(): UTMParams {
@@ -28,9 +29,15 @@ export function getUTMParams(): UTMParams {
 
 export function saveUTMToStorage() {
   if (typeof window === 'undefined') return;
-  
+
   const utm = getUTMParams();
-  
+
+  // Сохраняем referrer только при первом заходе (не перезаписываем)
+  if (!localStorage.getItem('utm_referrer')) {
+    const ref = document.referrer ?? '';
+    if (ref) localStorage.setItem('utm_referrer', ref);
+  }
+
   if (Object.keys(utm).length > 0) {
     localStorage.setItem('utm_params', JSON.stringify(utm));
     localStorage.setItem('utm_timestamp', Date.now().toString());
@@ -39,22 +46,27 @@ export function saveUTMToStorage() {
 
 export function getStoredUTM(): UTMParams {
   if (typeof window === 'undefined') return {};
-  
+
   const stored = localStorage.getItem('utm_params');
   const timestamp = localStorage.getItem('utm_timestamp');
-  
-  if (!stored || !timestamp) return {};
-  
-  const age = Date.now() - parseInt(timestamp);
-  const maxAge = 30 * 24 * 60 * 60 * 1000;
-  
-  if (age > maxAge) {
-    localStorage.removeItem('utm_params');
-    localStorage.removeItem('utm_timestamp');
-    return {};
+  const referrer = localStorage.getItem('utm_referrer') ?? '';
+
+  let utm: UTMParams = {};
+
+  if (stored && timestamp) {
+    const age = Date.now() - parseInt(timestamp);
+    const maxAge = 30 * 24 * 60 * 60 * 1000;
+    if (age > maxAge) {
+      localStorage.removeItem('utm_params');
+      localStorage.removeItem('utm_timestamp');
+    } else {
+      utm = JSON.parse(stored);
+    }
   }
-  
-  return JSON.parse(stored);
+
+  if (referrer) utm.referrer = referrer;
+
+  return utm;
 }
 
 export function getYandexClientID(): Promise<string | null> {
