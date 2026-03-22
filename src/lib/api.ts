@@ -37,6 +37,14 @@ export interface Lead {
   ym_client_id?: string;
   created_at: string;
   updated_at: string;
+  // UTM
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+  yclid?: string;
+  gclid?: string;
 }
 
 export interface Review {
@@ -177,11 +185,16 @@ export const api = {
     updateStatus: async (id: number, status: string, token: string) => {
       const response = await fetch(API_URLS.leads, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Auth-Token': token
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
         body: JSON.stringify({ id, status })
+      });
+      return response.json();
+    },
+    updateName: async (id: number, name: string, token: string) => {
+      const response = await fetch(API_URLS.leads, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
+        body: JSON.stringify({ id, name })
       });
       return response.json();
     }

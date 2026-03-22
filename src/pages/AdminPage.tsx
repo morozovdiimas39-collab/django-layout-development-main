@@ -512,12 +512,13 @@ export default function AdminPage() {
       <div className="flex flex-1 overflow-hidden">
         <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
         <main className="flex-1 overflow-auto bg-white">
-          <div className="p-6 max-w-5xl">
+          <div className={`p-6 ${activeSection === 'leads' ? 'w-full' : 'max-w-5xl'}`}>
             {activeSection === 'leads' && (
               <LeadsManager
                 leads={leads}
                 onUpdateStatus={handleUpdateLeadStatus}
                 onMarkAsTargeted={handleMarkAsTargeted}
+                token={token}
               />
             )}
             {activeSection === 'content' && (
