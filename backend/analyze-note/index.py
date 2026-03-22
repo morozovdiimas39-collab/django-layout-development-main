@@ -35,34 +35,42 @@ STATUSES = {
 
 
 def make_prompt(note: str, today: str) -> str:
-    return f"""Ты — ассистент менеджера CRM. Проанализируй заметку и верни JSON.
+    year = datetime.now(timezone.utc).year
+    return f"""Ты — ассистент менеджера CRM школы актёрского и ораторского мастерства.
+Менеджер написал заметку о клиенте. Твоя задача — распознать намерение и вернуть JSON.
 
-Статусы воронки:
-- "new" — новый лид
-- "thinking" — думает / не решил
-- "trial" — договорились на пробное занятие
-- "enrolled" — записался / оплатил курс
-- "called_target" — целевой, но пока не записался
-- "irrelevant" — нецелевой
+Текущая дата: {today}, год {year}.
 
-Правила:
-1. Если упоминается дата/время для звонка, встречи, напоминания — action: "create_task", заполни task.deadline в ISO 8601 (год {datetime.now(timezone.utc).year} если не указан, время 10:00 если не указано).
-2. Если ясно что клиент записался / оплатил / подтвердил участие — action: "change_status", status: "enrolled".
-3. Если клиент согласился на пробное — action: "change_status", status: "trial".
-4. Если клиент думает / перезвонит сам / взял паузу — action: "change_status", status: "thinking".
-5. Если оба условия — action: "both", заполни и task, и status.
-6. Иначе — action: "none".
+СТАТУСЫ ВОРОНКИ (используй только эти значения):
+- "new" — новый необработанный лид
+- "thinking" — клиент думает, сомневается, попросил время
+- "trial" — договорились о пробном занятии
+- "enrolled" — клиент записался, оплатил, подтвердил участие
+- "called_target" — целевой клиент, интерес есть, но не записался
+- "irrelevant" — нецелевой, не интересно, не та аудитория
 
-Текущая дата: {today}.
+ПРАВИЛА ОПРЕДЕЛЕНИЯ action:
+- Есть конкретная дата/время/срок для звонка/напоминания → action: "create_task"
+- Ясно что статус клиента изменился → action: "change_status"  
+- И то и другое → action: "both"
+- Просто информация, нет явных действий → action: "none"
 
-Заметка: "{note}"
+ПРИМЕРЫ:
+- "попросил перезвонить 16 ноября" → create_task, deadline: "{year}-11-16T10:00:00"
+- "записался на курс" → change_status, status: "enrolled"
+- "думает, перезвонит через неделю" → change_status, status: "thinking"
+- "договорились на пробное в пятницу" → both, status: "trial" + task с датой пятницы
+- "не берёт трубку" → action: "none"
+- "нецелевой, не то" → change_status, status: "irrelevant"
 
-Верни ТОЛЬКО валидный JSON без markdown:
+Заметка менеджера: "{note}"
+
+Верни ТОЛЬКО валидный JSON, без markdown, без пояснений:
 {{
-  "action": "...",
-  "task": {{"text": "...", "deadline": "..."}},
-  "status": "...",
-  "summary": "..."
+  "action": "none|create_task|change_status|both",
+  "task": {{"text": "краткое название задачи", "deadline": "ISO 8601 дата"}},
+  "status": "статус из списка выше",
+  "summary": "одно предложение — что ты понял из заметки"
 }}"""
 
 
@@ -107,8 +115,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             timeout=15,
         )
         raw = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+        print(f"[analyze-note] Gemini raw: {raw}")
         clean = raw.replace("```json", "").replace("```", "").strip()
         result = json.loads(clean)
+        print(f"[analyze-note] result: {result}")
         return {"statusCode": 200, "headers": headers, "body": json.dumps(result)}
     except Exception as e:
         return {"statusCode": 200, "headers": headers,

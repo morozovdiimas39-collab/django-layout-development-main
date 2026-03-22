@@ -5,6 +5,7 @@ import Icon from '@/components/ui/icon';
 
 export type AdminSection =
   | 'leads'
+  | 'analytics'
   | 'content'
   | 'modules'
   | 'faq'
@@ -14,14 +15,15 @@ export type AdminSection =
   | 'team';
 
 const SECTIONS: { id: AdminSection; label: string; icon: string }[] = [
-  { id: 'leads', label: 'Заявки', icon: 'Inbox' },
-  { id: 'content', label: 'Контент', icon: 'FileText' },
-  { id: 'modules', label: 'Модули', icon: 'Layers' },
-  { id: 'faq', label: 'FAQ', icon: 'HelpCircle' },
-  { id: 'gallery', label: 'Галерея', icon: 'Image' },
-  { id: 'reviews', label: 'Отзывы', icon: 'Star' },
-  { id: 'blog', label: 'Блог', icon: 'BookOpen' },
-  { id: 'team', label: 'Команда', icon: 'Users' },
+  { id: 'leads',     label: 'Заявки',     icon: 'Inbox'       },
+  { id: 'analytics', label: 'Аналитика',  icon: 'BarChart2'   },
+  { id: 'content',   label: 'Контент',    icon: 'FileText'    },
+  { id: 'modules',   label: 'Модули',     icon: 'Layers'      },
+  { id: 'faq',       label: 'FAQ',        icon: 'HelpCircle'  },
+  { id: 'gallery',   label: 'Галерея',    icon: 'Image'       },
+  { id: 'reviews',   label: 'Отзывы',     icon: 'Star'        },
+  { id: 'blog',      label: 'Блог',       icon: 'BookOpen'    },
+  { id: 'team',      label: 'Команда',    icon: 'Users'       },
 ];
 
 interface AdminSidebarProps {
