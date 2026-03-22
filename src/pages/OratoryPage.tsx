@@ -67,6 +67,7 @@ export default function OratoryPage() {
         <HeroSection
           trialDate={content.oratory_trial_date || ""}
           courseStartDate={content.oratory_course_start_date || ""}
+          telegramHref={content.oratory_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
         />
         <SkillsSection />
         <ForWhomSection />

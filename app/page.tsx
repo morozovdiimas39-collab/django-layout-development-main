@@ -221,6 +221,8 @@ export default async function Page() {
                     trialDate={content.trial_date}
                     maxSeats={12}
                     title="Запись на курс актёрского мастерства"
+                    telegramHref={content.acting_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
+                    telegramText="Канал по актёрскому мастерству"
                   />
                 </div>
               </div>
@@ -276,6 +278,8 @@ export default async function Page() {
                     trialDate={content.oratory_trial_date}
                     maxSeats={12}
                     title="Запись на курс ораторского мастерства"
+                    telegramHref={content.oratory_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
+                    telegramText="Канал по ораторскому мастерству"
                   />
                 </div>
               </div>
@@ -328,6 +332,8 @@ export default async function Page() {
                     maxSeats={8}
                     triggerText="Записаться"
                     title="Запись на съёмку актёрской визитки"
+                    telegramHref={content.acting_cards_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
+                    telegramText="Канал по актёрской визитке"
                   />
                 </div>
               </div>
