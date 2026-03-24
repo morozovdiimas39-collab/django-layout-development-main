@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
-import { getStoredUTM, getYandexClientID } from '@/lib/utm';
+import { getStoredUTM, getYandexClientID, getJourney } from '@/lib/utm';
 
 /** Номер из маски в цифры 7XXXXXXXXXX для API */
 function phoneToDigits(masked: string): string {
@@ -67,7 +67,7 @@ export default function PhoneForm({
 
     setLoading(true);
     try {
-      const utm = getStoredUTM();
+      const utm = { ...getStoredUTM(), utm_journey: getJourney() };
       const clientId = await getYandexClientID();
 
       await api.leads.create({ 

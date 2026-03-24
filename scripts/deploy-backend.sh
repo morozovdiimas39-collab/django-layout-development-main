@@ -32,4 +32,13 @@ yc serverless function version create \
   --execution-timeout=30 \
   --source-path=backend/analyze-note
 
+echo "Deploying admin-bot-studio..."
+yc serverless function version create \
+  --function-name=admin-bot-studio \
+  --runtime=python312 \
+  --entrypoint=handler \
+  --memory=256m \
+  --execution-timeout=60 \
+  --source-path=backend/admin-bot-studio
+
 echo "Done."

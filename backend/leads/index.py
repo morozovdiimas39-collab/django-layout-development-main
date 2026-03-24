@@ -4,7 +4,7 @@ import urllib.parse
 from typing import Dict, Any
 from datetime import datetime
 import psycopg2
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, Json
 import urllib.request
 
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
@@ -120,7 +120,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             source = body_data.get('source', 'website')
             course = body_data.get('course')
             
-            utm = body_data.get('utm', {})
+            utm = body_data.get('utm', {}) or {}
             utm_source = utm.get('utm_source')
             utm_medium = utm.get('utm_medium')
             utm_campaign = utm.get('utm_campaign')
@@ -129,6 +129,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             yclid = utm.get('yclid')
             gclid = utm.get('gclid')
             ym_client_id = body_data.get('ym_client_id')
+            referrer = utm.get('referrer')
+            utm_journey = utm.get('utm_journey')
+            if utm_journey is not None and not isinstance(utm_journey, list):
+                if isinstance(utm_journey, str):
+                    try:
+                        utm_journey = json.loads(utm_journey)
+                    except Exception:
+                        utm_journey = None
+                else:
+                    utm_journey = None
             
             if not phone:
                 return {
@@ -138,13 +148,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                """INSERT INTO leads (name, phone, source, course, status, 
-                   utm_source, utm_medium, utm_campaign, utm_content, utm_term, 
-                   yclid, gclid, ym_client_id) 
-                   VALUES (%s, %s, %s, %s, 'new', %s, %s, %s, %s, %s, %s, %s, %s) 
+                """INSERT INTO leads (name, phone, source, course, status,
+                   utm_source, utm_medium, utm_campaign, utm_content, utm_term,
+                   yclid, gclid, ym_client_id, referrer, utm_journey)
+                   VALUES (%s, %s, %s, %s, 'new', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                    RETURNING *""",
-                (name, phone, source, course, utm_source, utm_medium, utm_campaign, 
-                 utm_content, utm_term, yclid, gclid, ym_client_id)
+                (name, phone, source, course, utm_source, utm_medium, utm_campaign,
+                 utm_content, utm_term, yclid, gclid, ym_client_id, referrer,
+                 Json(utm_journey) if utm_journey else None)
             )
             lead = cur.fetchone()
             conn.commit()

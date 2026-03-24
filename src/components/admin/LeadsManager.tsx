@@ -380,6 +380,31 @@ function LeadDetailPanel({
             </div>
           )}
 
+          {/* Сквозная аналитика: цепочка касаний */}
+          {Array.isArray((lead as any).utm_journey) && (lead as any).utm_journey.length > 0 && (
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block flex items-center gap-1.5">
+                <Icon name="GitBranch" size={12} />
+                Цепочка касаний ({(lead as any).utm_journey.length})
+              </label>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {(lead as any).utm_journey.map((tp: Record<string, string>, i: number) => (
+                  <div key={i} className="relative pl-4 border-l-2 border-blue-400 bg-slate-50 rounded-r-lg py-2 pr-2">
+                    <span className="absolute -left-1.5 top-3 w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-white" />
+                    <p className="text-[10px] text-slate-400 font-mono">{tp.at ? formatDate(tp.at) : '—'}</p>
+                    <p className="text-xs font-medium text-slate-800 break-all">{tp.path || '—'}</p>
+                    <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1 text-[10px] text-slate-500">
+                      {tp.utm_source && <span>src: {tp.utm_source}</span>}
+                      {tp.utm_medium && <span>med: {tp.utm_medium}</span>}
+                      {tp.utm_campaign && <span>cmp: {tp.utm_campaign}</span>}
+                      {tp.referrer && <span className="text-blue-600 break-all">ref: {tp.referrer}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* telegram */}
           <a
             href={`https://t.me/+${lead.phone.replace(/\D/g,'')}`}

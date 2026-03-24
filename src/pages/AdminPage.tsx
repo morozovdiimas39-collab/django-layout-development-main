@@ -11,6 +11,7 @@ import ReviewsManager from '@/components/admin/ReviewsManager';
 import BlogManager from '@/components/admin/BlogManager';
 import LeadsManager from '@/components/admin/LeadsManager';
 import AnalyticsManager from '@/components/admin/AnalyticsManager';
+import ChatBotStudioManager from '@/components/admin/ChatBotStudioManager';
 import ModulesManager from '@/components/admin/ModulesManager';
 import FAQManager from '@/components/admin/FAQManager';
 import TeamManager from '@/components/admin/TeamManager';
@@ -513,7 +514,7 @@ export default function AdminPage() {
       <div className="flex flex-1 overflow-hidden">
         <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
         <main className="flex-1 overflow-auto bg-white">
-          <div className={`p-6 ${activeSection === 'leads' || activeSection === 'analytics' ? 'w-full max-w-6xl' : 'max-w-5xl'}`}>
+          <div className={`p-6 ${activeSection === 'leads' || activeSection === 'analytics' || activeSection === 'chatbots' ? 'w-full max-w-6xl' : 'max-w-5xl'}`}>
             {activeSection === 'leads' && (
               <LeadsManager
                 leads={leads}
@@ -524,6 +525,9 @@ export default function AdminPage() {
             )}
             {activeSection === 'analytics' && (
               <AnalyticsManager leads={leads} />
+            )}
+            {activeSection === 'chatbots' && (
+              <ChatBotStudioManager token={token} />
             )}
             {activeSection === 'content' && (
               <ContentManager

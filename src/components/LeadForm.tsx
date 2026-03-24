@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { api } from '@/lib/api';
-import { getStoredUTM, getYandexClientID } from '@/lib/utm';
+import { getStoredUTM, getYandexClientID, getJourney } from '@/lib/utm';
 
 function phoneToDigits(masked: string): string {
   const digits = masked.replace(/\D/g, '');
@@ -54,7 +54,7 @@ export default function LeadForm({
     setLoading(true);
 
     try {
-      const utm = getStoredUTM();
+      const utm = { ...getStoredUTM(), utm_journey: getJourney() };
       const clientId = await getYandexClientID();
 
       await api.leads.create({ 

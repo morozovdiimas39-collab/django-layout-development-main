@@ -44,6 +44,7 @@ MIGRATIONS = [
     "V0024__add_status_to_leads.sql",
     "V0025__add_source_and_missing_leads_columns.sql",
     "V0026__ensure_blog_posts.sql",
+    "V0027__add_utm_journey_and_referrer_to_leads.sql",
 ]
 
 

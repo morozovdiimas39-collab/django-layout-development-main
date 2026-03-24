@@ -20,6 +20,7 @@ const staticPages = [
   { loc: '/reviews', priority: '0.7', changefreq: 'weekly' },
   { loc: '/contacts', priority: '0.6', changefreq: 'monthly' },
   { loc: '/showreel', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/subscribe', priority: '0.5', changefreq: 'monthly' },
 ];
 
 function escapeXml(s) {
@@ -72,7 +73,7 @@ async function fetchAllBlogSlugs() {
   return { slugs, totalPages };
 }
 
-function buildXml(blogSlugs, blogListPagesCount) {
+function buildXml(blogSlugs) {
   const lines = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -80,11 +81,7 @@ function buildXml(blogSlugs, blogListPagesCount) {
   for (const p of staticPages) {
     lines.push(urlNode(p.loc, p.priority, p.changefreq));
   }
-  for (let p = 1; p <= blogListPagesCount; p++) {
-    const loc = p === 1 ? '/blog' : `/blog?page=${p}`;
-    const priority = p === 1 ? '0.8' : '0.6';
-    lines.push(urlNode(loc, priority, 'weekly'));
-  }
+  lines.push(urlNode('/blog', '0.8', 'weekly'));
   for (const { slug, updated_at } of blogSlugs) {
     const lastmod = updated_at ? String(updated_at).slice(0, 10) : today;
     lines.push(urlNode(`/blog/${slug}`, '0.7', 'monthly', lastmod));
@@ -99,9 +96,9 @@ async function generateSitemap() {
   let xml;
 
   try {
-    const { slugs, totalPages } = await fetchAllBlogSlugs();
-    xml = buildXml(slugs, totalPages);
-    console.log('✅ Sitemap built: static + blog list +', slugs.length, 'posts');
+    const { slugs } = await fetchAllBlogSlugs();
+    xml = buildXml(slugs);
+    console.log('✅ Sitemap built: static + /blog +', slugs.length, 'posts');
   } catch (e) {
     console.error('Build from API failed, using static fallback:', e.message);
     xml = getFallbackXml();

@@ -6,6 +6,7 @@ import Icon from '@/components/ui/icon';
 export type AdminSection =
   | 'leads'
   | 'analytics'
+  | 'chatbots'
   | 'content'
   | 'modules'
   | 'faq'
@@ -17,6 +18,7 @@ export type AdminSection =
 const SECTIONS: { id: AdminSection; label: string; icon: string }[] = [
   { id: 'leads',     label: 'Заявки',     icon: 'Inbox'       },
   { id: 'analytics', label: 'Аналитика',  icon: 'BarChart2'   },
+  { id: 'chatbots',  label: 'Боты',       icon: 'Bot'         },
   { id: 'content',   label: 'Контент',    icon: 'FileText'    },
   { id: 'modules',   label: 'Модули',     icon: 'Layers'      },
   { id: 'faq',       label: 'FAQ',        icon: 'HelpCircle'  },

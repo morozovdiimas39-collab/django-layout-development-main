@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SettingsPage from '@/pages/SettingsPage';
 
 export const metadata: Metadata = {
-  title: 'Настройки Telegram бота - Казбек Меретуков',
+  title: { absolute: 'Настройки Telegram-бота' },
   robots: 'noindex, nofollow',
 };
 

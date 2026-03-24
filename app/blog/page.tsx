@@ -12,21 +12,24 @@ export async function generateMetadata(props: { searchParams?: { page?: string |
 
   if (page > 1) {
     return {
-      title: `Блог — страница ${page} | Школа актёрского мастерства`,
+      title: `Блог, страница ${page}`,
       robots: { index: false, follow: true },
+      alternates: { canonical: `${SITE_BASE}/blog` },
     };
   }
 
+  const desc =
+    'Материалы и новости школы: ораторика, актёрское мастерство, истории учеников.';
   return {
-    title: 'Блог школы — полезные материалы и новости | Школа актёрского мастерства',
-    description: 'Читайте полезные материалы, новости и истории успеха наших учеников. Советы по развитию ораторских навыков и актёрского мастерства.',
+    title: 'Блог школы',
+    description: desc,
     alternates: {
       canonical: `${SITE_BASE}/blog`,
     },
     openGraph: {
       url: `${SITE_BASE}/blog`,
-      title: 'Блог школы актёрского мастерства',
-      description: 'Полезные материалы, новости и истории успеха учеников школы Казбека Меретукова.',
+      title: 'Блог школы',
+      description: desc,
       type: 'website',
     },
   };

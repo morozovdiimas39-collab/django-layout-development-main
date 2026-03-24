@@ -4,8 +4,9 @@ import ActingCardsPage from '@/pages/ActingCardsPage';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Актёрская визитка — съёмка с режиссёром в Москве | Казбек Меретуков',
-  description: 'Профессиональная съёмка актёрской видеовизитки: подготовка с режиссёром, 4K-съёмка, монтаж. Пропуск на кастинги в кино и сериалы. Ближайшие даты съёмок.',
+  title: 'Актёрская видеовизитка',
+  description:
+    'Съёмка актёрской визитки с режиссёром: подготовка, 4K, монтаж. Материал для кастингов в кино и сериалы.',
   alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards' },
   openGraph: {
     url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards',

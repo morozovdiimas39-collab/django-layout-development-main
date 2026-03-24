@@ -8,6 +8,8 @@ export const API_URLS = {
   whatsappSender: 'https://functions.yandexcloud.net/d4ekf1kqhsodfoojvu00',
   metrikaConversion: 'https://functions.yandexcloud.net/d4e1l3lvret5b8ora95c',
   analyzeNote: 'https://functions.yandexcloud.net/d4edf6r0o36gh78pctr0',
+  /** Конструктор ботов в админке (создай функцию admin-bot-studio и подставь URL) */
+  botStudio: 'https://functions.yandexcloud.net/REPLACE_ADMIN_BOT_STUDIO',
 };
 
 export interface SiteContent {
@@ -47,6 +49,16 @@ export interface Lead {
   yclid?: string;
   gclid?: string;
   referrer?: string;
+  utm_journey?: Array<{
+    at: string;
+    path?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+    referrer?: string;
+  }>;
 }
 
 export interface Review {

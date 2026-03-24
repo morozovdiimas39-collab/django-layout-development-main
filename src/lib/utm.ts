@@ -9,6 +9,85 @@ export interface UTMParams {
   referrer?: string;
 }
 
+/** Одно касание в сквозной аналитике */
+export interface Touchpoint extends UTMParams {
+  at: string;
+  path: string;
+}
+
+const JOURNEY_KEY = 'utm_touch_journey';
+const MAX_TOUCHPOINTS = 25;
+
+let _lastFp = '';
+let _lastFpAt = 0;
+
+function fingerprint(tp: Pick<Touchpoint, 'path' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_term' | 'yclid' | 'gclid' | 'referrer'>) {
+  return [tp.path, tp.utm_source, tp.utm_medium, tp.utm_campaign, tp.utm_term, tp.yclid, tp.gclid, tp.referrer].join('|');
+}
+
+/** Накопить касание (вызывается при смене страницы) */
+export function recordTouchpoint() {
+  if (typeof window === 'undefined') return;
+
+  saveUTMToStorage();
+
+  const fromUrl = getUTMParams();
+  const storedRaw = localStorage.getItem('utm_params');
+  let stored: UTMParams = {};
+  if (storedRaw) {
+    try { stored = JSON.parse(storedRaw); } catch { /* */ }
+  }
+  const merged: UTMParams = { ...stored, ...fromUrl };
+  const refExt = document.referrer || '';
+  const refPersist = localStorage.getItem('utm_referrer') || '';
+  const referrer = refExt || refPersist || undefined;
+
+  const path = window.location.pathname + window.location.search;
+
+  const tp: Touchpoint = {
+    at: new Date().toISOString(),
+    path,
+    utm_source: merged.utm_source,
+    utm_medium: merged.utm_medium,
+    utm_campaign: merged.utm_campaign,
+    utm_content: merged.utm_content,
+    utm_term: merged.utm_term,
+    yclid: merged.yclid,
+    gclid: merged.gclid,
+    referrer,
+  };
+
+  const fp = fingerprint(tp);
+  if (fp === _lastFp && Date.now() - _lastFpAt < 1500) return;
+  _lastFp = fp;
+  _lastFpAt = Date.now();
+
+  let journey: Touchpoint[] = [];
+  try {
+    journey = JSON.parse(localStorage.getItem(JOURNEY_KEY) ?? '[]');
+    if (!Array.isArray(journey)) journey = [];
+  } catch {
+    journey = [];
+  }
+
+  const last = journey[journey.length - 1];
+  if (last && fingerprint(last) === fp) return;
+
+  journey.push(tp);
+  while (journey.length > MAX_TOUCHPOINTS) journey.shift();
+  localStorage.setItem(JOURNEY_KEY, JSON.stringify(journey));
+}
+
+export function getJourney(): Touchpoint[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const j = JSON.parse(localStorage.getItem(JOURNEY_KEY) ?? '[]');
+    return Array.isArray(j) ? j : [];
+  } catch {
+    return [];
+  }
+}
+
 export function getUTMParams(): UTMParams {
   if (typeof window === 'undefined') return {};
   
@@ -59,6 +138,8 @@ export function getStoredUTM(): UTMParams {
     if (age > maxAge) {
       localStorage.removeItem('utm_params');
       localStorage.removeItem('utm_timestamp');
+      localStorage.removeItem('utm_referrer');
+      localStorage.removeItem(JOURNEY_KEY);
     } else {
       utm = JSON.parse(stored);
     }

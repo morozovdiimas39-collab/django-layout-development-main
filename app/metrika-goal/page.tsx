@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import MetrikaGoalPage from '@/pages/MetrikaGoalPage';
 
 export const metadata: Metadata = {
+  title: { absolute: 'Цель Метрики' },
   robots: { index: false, follow: false },
 };
 

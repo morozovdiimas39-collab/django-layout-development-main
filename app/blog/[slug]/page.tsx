@@ -67,12 +67,18 @@ export async function generateMetadata({
   const post = await getBlogPost(slug);
   if (!post) {
     return {
-      title: 'Статья не найдена | Блог',
+      title: { absolute: 'Статья не найдена' },
+      description: 'Такой записи в блоге нет. Откройте раздел «Блог» или главную страницу.',
       robots: { index: false, follow: false },
     };
   }
-  const title = `${post.title} | Блог школы актёрского мастерства`;
-  const description = post.excerpt || post.content?.substring(0, 160) || '';
+  const title = post.title;
+  const rawDesc = post.excerpt || post.content?.substring(0, 160) || '';
+  const trimmed = rawDesc.trim();
+  const clipped = trimmed.length > 155 ? `${trimmed.slice(0, 152)}…` : trimmed;
+  const description =
+    clipped ||
+    `Статья «${title}» — блог школы Казбека Меретукова.`.slice(0, 160);
   const url = `${SITE_BASE}/blog/${post.slug || slug}`;
 
   return {

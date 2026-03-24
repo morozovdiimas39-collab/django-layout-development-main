@@ -4,12 +4,15 @@ import OratoryPage from '@/pages/OratoryPage';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Курсы ораторского искусства в Москве | Обучение риторике и публичным выступлениям',
-  description: 'Профессиональные курсы ораторского искусства. Научитесь уверенно выступать на публике, управлять голосом, побеждать волнение. Обучение риторике от профессионалов.',
+  title: 'Курсы ораторского мастерства',
+  description:
+    'Уверенные публичные выступления, голос и дикция, работа со страхом сцены. Курсы в Москве.',
   alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/oratory' },
   openGraph: {
     url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/oratory',
-    title: 'Курсы ораторского искусства в Москве',
+    title: 'Курсы ораторского мастерства',
+    description:
+      'Уверенные публичные выступления, голос и дикция, работа со страхом сцены. Курсы в Москве.',
     type: 'website',
   },
 };

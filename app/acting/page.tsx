@@ -23,8 +23,9 @@ import JsonLd from '@/components/JsonLd';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Курс актёрского мастерства в Москве — обучение у режиссёра телесериалов',
-  description: 'Курс актёрского мастерства от режиссёра Казбека Меретукова (ТЕФИ-2012): работа на камеру, съёмка короткометражного фильма, самопробы для кастингов. Пробное занятие бесплатно.',
+  title: 'Курс актёрского мастерства',
+  description:
+    'Работа на камеру, короткометражный фильм, самопробы для кастингов. Режиссёр Казбек Меретуков, ТЕФИ-2012. Пробное бесплатно.',
   alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting' },
   openGraph: {
     url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting',
