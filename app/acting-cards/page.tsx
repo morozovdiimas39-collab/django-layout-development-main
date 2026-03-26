@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   title: 'Актёрская видеовизитка',
   description:
     'Съёмка актёрской визитки с режиссёром: подготовка, 4K, монтаж. Материал для кастингов в кино и сериалы.',
-  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards' },
+  alternates: { canonical: 'https://kazbek-meretukov.ru/acting-cards' },
   openGraph: {
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards',
+    url: 'https://kazbek-meretukov.ru/acting-cards',
     title: 'Актёрская визитка — съёмка с режиссёром в Москве',
     description: 'Подготовка и съёмка актёрской визитки под руководством режиссёра Казбека Меретукова. 4K, монтаж, готовый материал для кастингов.',
     type: 'website',

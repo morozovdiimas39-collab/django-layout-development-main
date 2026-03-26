@@ -27,7 +27,7 @@ import { formatDate } from "@/lib/dates";
 import SchemaMarkup from "@/components/SchemaMarkup";
 
 const BLOG_PER_PAGE = 12;
-const SITE_BASE = "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai";
+const SITE_BASE = "https://kazbek-meretukov.ru";
 
 export default function BlogPage() {
   const searchParams = useSearchParams();

@@ -136,8 +136,8 @@ export default function SubscribePage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная",    url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Подписаться", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/subscribe" },
+          { name: "Главная",    url: "https://kazbek-meretukov.ru/" },
+          { name: "Подписаться", url: "https://kazbek-meretukov.ru/subscribe" },
         ]}
       />
       <SchemaMarkup
@@ -145,7 +145,7 @@ export default function SubscribePage() {
         pageData={{
           name: "Подписаться — Telegram или MAX",
           description: "Подпишитесь на канал: упражнения для голоса и дикции, приёмы актёрского и ораторского мастерства, разборы и анонсы школы.",
-          url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/subscribe",
+          url: "https://kazbek-meretukov.ru/subscribe",
           inLanguage: "ru-RU",
           image: ogImage,
         }}

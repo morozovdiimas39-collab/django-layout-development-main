@@ -58,8 +58,8 @@ export default function ContactsPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Контакты", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/contacts" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Контакты", url: "https://kazbek-meretukov.ru/contacts" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

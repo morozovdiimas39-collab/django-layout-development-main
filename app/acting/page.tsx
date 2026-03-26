@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   title: 'Курс актёрского мастерства',
   description:
     'Работа на камеру, короткометражный фильм, самопробы для кастингов. Режиссёр Казбек Меретуков, ТЕФИ-2012. Пробное бесплатно.',
-  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting' },
+  alternates: { canonical: 'https://kazbek-meretukov.ru/acting' },
   openGraph: {
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting',
+    url: 'https://kazbek-meretukov.ru/acting',
     title: 'Курс актёрского мастерства — режиссёр Казбек Меретуков',
     description: 'Работа на камеру, съёмка фильма, самопробы для кастингов. Режиссёр телесериалов, победитель ТЕФИ-2012.',
     type: 'website',
@@ -106,9 +106,9 @@ export default async function Page() {
     provider: {
       '@type': 'Organization',
       name: 'Школа актёрского мастерства Казбека Меретукова',
-      sameAs: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai',
+      sameAs: 'https://kazbek-meretukov.ru',
     },
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai',
+    url: 'https://kazbek-meretukov.ru',
   };
 
   const reviewsSchema = {
@@ -147,8 +147,8 @@ export default async function Page() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/' },
-      { '@type': 'ListItem', position: 2, name: 'Актёрское мастерство', item: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting' },
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://kazbek-meretukov.ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Актёрское мастерство', item: 'https://kazbek-meretukov.ru/acting' },
     ],
   };
 

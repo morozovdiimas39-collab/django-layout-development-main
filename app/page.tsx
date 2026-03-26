@@ -15,7 +15,7 @@ import CourseButtons from '@/components/home/CourseButtons';
 import { formatDate } from '@/lib/dates';
 import type { Review, BlogPost, TeamMember, GalleryImage } from '@/lib/api';
 
-const BASE = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const BASE = 'https://kazbek-meretukov.ru';
 const CONTENT_URL = 'https://functions.yandexcloud.net/d4eqrbaalbc7nhcuj3qq';
 const GALLERY_URL = 'https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71';
 

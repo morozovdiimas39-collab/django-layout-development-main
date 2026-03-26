@@ -46,8 +46,8 @@ export default function ReviewsPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Отзывы", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/reviews" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Отзывы", url: "https://kazbek-meretukov.ru/reviews" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

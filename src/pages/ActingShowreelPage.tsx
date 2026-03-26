@@ -51,8 +51,8 @@ export default function ActingShowreelPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Актёрская визитка", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/showreel" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Актёрская визитка", url: "https://kazbek-meretukov.ru/showreel" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

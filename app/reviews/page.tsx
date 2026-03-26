@@ -4,9 +4,9 @@ import ReviewsPage from '@/pages/ReviewsPage';
 export const metadata: Metadata = {
   title: 'Отзывы учеников',
   description: 'Отзывы о курсах актёрского и ораторского мастерства школы Казбека Меретукова.',
-  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/reviews' },
+  alternates: { canonical: 'https://kazbek-meretukov.ru/reviews' },
   openGraph: {
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/reviews',
+    url: 'https://kazbek-meretukov.ru/reviews',
     title: 'Отзывы учеников — школа Казбека Меретукова',
     description: 'Реальные отзывы о курсах актёрского и ораторского мастерства. Что говорят выпускники школы.',
     type: 'website',

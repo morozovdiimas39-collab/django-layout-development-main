@@ -26,7 +26,7 @@ def handler(event: dict, context) -> dict:
         }
     
     # Базовый домен
-    base_url = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai'
+    base_url = 'https://kazbek-meretukov.ru'
     
     # Статические страницы
     static_pages = [

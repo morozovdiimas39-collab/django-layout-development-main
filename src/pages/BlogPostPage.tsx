@@ -29,7 +29,7 @@ export default function BlogPostPage({ slug, initialPost }: BlogPostPageProps) {
     );
   }
 
-  const fullUrl = `https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog/${post.slug || slug || ''}`;
+  const fullUrl = `https://kazbek-meretukov.ru/blog/${post.slug || slug || ''}`;
   const articleSchema = post
     ? generateArticleSchema({
         title: post.title,
@@ -57,7 +57,7 @@ export default function BlogPostPage({ slug, initialPost }: BlogPostPageProps) {
     ogDescription: post ? post.excerpt || post.content.substring(0, 160) : "",
     ogImage: post?.image_url,
     ogType: "article",
-    canonicalUrl: fullUrl || "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/blog",
+    canonicalUrl: fullUrl || "https://kazbek-meretukov.ru/blog",
     structuredData: articleSchema || undefined,
     article: post
       ? {

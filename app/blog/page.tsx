@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import BlogPage from '@/pages/BlogPage';
 
-const SITE_BASE = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const SITE_BASE = 'https://kazbek-meretukov.ru';
 
 export async function generateMetadata(props: { searchParams?: { page?: string | string[] } }): Promise<Metadata> {
   const rawPage = Array.isArray(props.searchParams?.page)

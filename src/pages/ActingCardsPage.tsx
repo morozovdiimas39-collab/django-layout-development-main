@@ -145,11 +145,11 @@ export default function ActingCardsPage() {
         breadcrumbs={[
           {
             name: "Главная",
-            url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/",
+            url: "https://kazbek-meretukov.ru/",
           },
           {
             name: "Актерские визитки",
-            url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting-cards",
+            url: "https://kazbek-meretukov.ru/acting-cards",
           },
         ]}
       />

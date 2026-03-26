@@ -205,7 +205,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     print("[auto-blog] start")
     gemini_key = os.environ.get("GEMINI_API_KEY")
     db_url = os.environ.get("DATABASE_URL")
-    site_url = os.environ.get("SITE_URL", "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai")
+    site_url = os.environ.get("SITE_URL", "https://kazbek-meretukov.ru")
 
     if not gemini_key or not db_url:
         return {

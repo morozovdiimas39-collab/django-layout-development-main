@@ -57,8 +57,8 @@ export default function OratoryPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Ораторское искусство", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/oratory" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Ораторское искусство", url: "https://kazbek-meretukov.ru/oratory" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

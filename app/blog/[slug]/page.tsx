@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import BlogPostPage from '@/pages/BlogPostPage';
 import { API_URLS, type BlogPost } from '@/lib/api';
 
-const SITE_BASE = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const SITE_BASE = 'https://kazbek-meretukov.ru';
 
 function normalizeSlug(value: string): string {
   return decodeURIComponent(value).trim().replace(/^\/+|\/+$/g, '').toLowerCase();

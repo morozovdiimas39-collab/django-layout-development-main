@@ -104,8 +104,8 @@ export default function TeacherPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Преподаватель", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/teacher" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Преподаватель", url: "https://kazbek-meretukov.ru/teacher" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

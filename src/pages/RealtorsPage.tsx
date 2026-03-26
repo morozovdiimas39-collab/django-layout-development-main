@@ -18,7 +18,7 @@ import BlogSection from "@/components/oratory/BlogSection";
 import { api, SiteContent, Review, GalleryImage, BlogPost } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
 
-const BASE_URL = "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai";
+const BASE_URL = "https://kazbek-meretukov.ru";
 
 export default function RealtorsPage() {
   const router = useRouter();

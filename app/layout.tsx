@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   description:
     'Курсы актёрского и ораторского мастерства в Москве. Режиссёр телесериалов, ТЕФИ-2012. Пробное занятие бесплатно.',
-  metadataBase: new URL('https://xn----7sbdfnbalzedv3az5aq.xn--p1ai'),
+  metadataBase: new URL('https://kazbek-meretukov.ru'),
   verification: {
     google: 'BtRs8O8Q13Po4g2b28dZWMlMHxbLAvBgZnbcGzdQsHg',
     yandex: '7ed7aae3cee9983e',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: 'Школа Казбека Меретукова — актёрское мастерство',
     description: 'Обучение актёрскому и ораторскому мастерству в Москве. Пробное занятие бесплатно.',
     type: 'website',
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai',
+    url: 'https://kazbek-meretukov.ru',
   },
   robots: { index: true, follow: true },
   icons: {

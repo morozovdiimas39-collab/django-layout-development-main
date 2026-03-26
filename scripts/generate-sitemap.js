@@ -5,7 +5,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const BASE_URL = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+const BASE_URL = 'https://kazbek-meretukov.ru';
 const GALLERY_URL = process.env.GALLERY_URL || 'https://functions.yandexcloud.net/d4efvkeujnc7nmk8at71';
 const today = new Date().toISOString().split('T')[0];
 

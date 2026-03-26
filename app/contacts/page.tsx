@@ -4,9 +4,9 @@ import ContactsPage from '@/pages/ContactsPage';
 export const metadata: Metadata = {
   title: 'Контакты',
   description: 'Адрес, телефон и форма записи на курсы школы Казбека Меретукова в Москве.',
-  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/contacts' },
+  alternates: { canonical: 'https://kazbek-meretukov.ru/contacts' },
   openGraph: {
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/contacts',
+    url: 'https://kazbek-meretukov.ru/contacts',
     title: 'Контакты — школа Казбека Меретукова',
     description: 'Адрес, телефон и форма для записи на курсы актёрского и ораторского мастерства в Москве.',
     type: 'website',

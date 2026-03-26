@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai';
+export const SITE_URL = 'https://kazbek-meretukov.ru';
 
 export const toAbsoluteUrl = (path: string): string => {
   if (!path) return '';

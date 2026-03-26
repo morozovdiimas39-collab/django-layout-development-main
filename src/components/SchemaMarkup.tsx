@@ -61,7 +61,7 @@ export default function SchemaMarkup({
       "provider": {
         "@type": "Organization",
         "name": courseData.provider,
-        "sameAs": "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai"
+        "sameAs": "https://kazbek-meretukov.ru"
       },
       "url": courseData.url,
       ...(courseData.price && {
@@ -95,7 +95,7 @@ export default function SchemaMarkup({
       "logo": organizationData.logo,
       "image": organizationData.logo,
       "sameAs": [
-        "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai"
+        "https://kazbek-meretukov.ru"
       ]
     };
 

@@ -91,7 +91,7 @@ export default function ActingPage() {
           description:
             "Профессиональное обучение актёрскому мастерству от режиссёра телесериалов. Работа на камеру, съёмка короткометражного фильма, практические упражнения.",
           provider: "Школа актёрского мастерства Казбека Меретукова",
-          url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai",
+          url: "https://kazbek-meretukov.ru",
         }}
       />
       <SchemaMarkup
@@ -112,8 +112,8 @@ export default function ActingPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Актёрское мастерство", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/acting" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Актёрское мастерство", url: "https://kazbek-meretukov.ru/acting" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

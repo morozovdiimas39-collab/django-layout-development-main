@@ -33,8 +33,8 @@ export default function TeamPage() {
       <SchemaMarkup
         type="breadcrumbs"
         breadcrumbs={[
-          { name: "Главная", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/" },
-          { name: "Команда", url: "https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/team" }
+          { name: "Главная", url: "https://kazbek-meretukov.ru/" },
+          { name: "Команда", url: "https://kazbek-meretukov.ru/team" }
         ]}
       />
       <div className="min-h-screen bg-background text-foreground">

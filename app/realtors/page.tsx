@@ -5,9 +5,9 @@ export const metadata: Metadata = {
   title: 'Ораторское мастерство для риелторов',
   description:
     'Курс для риелторов: презентации объектов, переговоры, холодные звонки. Москва.',
-  alternates: { canonical: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/realtors' },
+  alternates: { canonical: 'https://kazbek-meretukov.ru/realtors' },
   openGraph: {
-    url: 'https://xn----7sbdfnbalzedv3az5aq.xn--p1ai/realtors',
+    url: 'https://kazbek-meretukov.ru/realtors',
     title: 'Ораторское мастерство для риелторов',
     description:
       'Курс для риелторов: презентации объектов, переговоры, холодные звонки. Москва.',
