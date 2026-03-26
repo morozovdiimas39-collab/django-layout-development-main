@@ -77,20 +77,37 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 items = cur.fetchall()
                 result = [dict(row) for row in items]
             elif resource == 'blog':
+                headers_get = event.get('headers') or {}
+                if not isinstance(headers_get, dict):
+                    headers_get = {}
+                auth_token_get = headers_get.get('X-Auth-Token') or headers_get.get('x-auth-token')
+                if not auth_token_get:
+                    for hk, hv in headers_get.items():
+                        if hk and str(hk).lower() == 'x-auth-token' and hv:
+                            auth_token_get = hv
+                            break
+                is_admin_get = bool(auth_token_get)
+                pub_filter = '' if is_admin_get else ' WHERE COALESCE(published, false) = true'
                 blog_slug = params.get('slug')
                 if blog_slug:
-                    cur.execute("SELECT * FROM blog_posts WHERE slug = %s", (blog_slug,))
+                    if is_admin_get:
+                        cur.execute("SELECT * FROM blog_posts WHERE slug = %s", (blog_slug,))
+                    else:
+                        cur.execute(
+                            "SELECT * FROM blog_posts WHERE slug = %s AND COALESCE(published, false) = true",
+                            (blog_slug,),
+                        )
                     row = cur.fetchone()
                     result = [dict(row)] if row else []
                 else:
                     page = max(1, int(params.get('page', 1)))
                     per_page = min(100, max(1, int(params.get('per_page', 20))))
                     offset = (page - 1) * per_page
-                    cur.execute("SELECT COUNT(*) FROM blog_posts")
+                    cur.execute(f"SELECT COUNT(*) AS count FROM blog_posts{pub_filter}")
                     total = cur.fetchone()['count']
                     cur.execute(
-                        "SELECT * FROM blog_posts ORDER BY created_at DESC LIMIT %s OFFSET %s",
-                        (per_page, offset)
+                        f"SELECT * FROM blog_posts{pub_filter} ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                        (per_page, offset),
                     )
                     items = cur.fetchall()
                     result = {

@@ -95,7 +95,7 @@ export default function AdminPage() {
         api.gallery.getFAQ(),
         api.gallery.getImages(),
         api.gallery.getReviews(),
-        api.gallery.getBlog(1, 500),
+        api.gallery.getBlog(1, 500, authToken),
         api.gallery.getTeam()
       ]);
       setLeads(leadsData);

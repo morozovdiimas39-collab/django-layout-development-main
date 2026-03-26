@@ -40,12 +40,11 @@ def handler(event: dict, context) -> dict:
         {'loc': '/reviews', 'priority': '0.7', 'changefreq': 'weekly'},
         {'loc': '/contacts', 'priority': '0.6', 'changefreq': 'monthly'},
         {'loc': '/showreel', 'priority': '0.7', 'changefreq': 'monthly'},
+        {'loc': '/subscribe', 'priority': '0.5', 'changefreq': 'monthly'},
     ]
     
-    # Получаем статьи блога и страницы пагинации из БД
+    # Статьи блога только published (страницы ?page=2+ в sitemap не включаем — в мета они noindex)
     blog_posts = []
-    blog_list_pages = []  # /blog, /blog?page=2, ...
-    per_page = 12
     try:
         dsn = os.environ.get('DATABASE_URL')
         if not dsn:
@@ -55,20 +54,14 @@ def handler(event: dict, context) -> dict:
             cur = conn.cursor()
             search_path = os.environ.get("DB_SEARCH_PATH", "t_p90119217_django_layout_develo, public")
             cur.execute(f"SET search_path TO {search_path}")
-            cur.execute("SELECT COUNT(*) FROM blog_posts")
-            total_posts = cur.fetchone()[0]
-            total_pages = (total_posts + per_page - 1) // per_page if total_posts else 1
-            for p in range(1, total_pages + 1):
-                loc = '/blog' if p == 1 else f'/blog?page={p}'
-                blog_list_pages.append({'loc': loc, 'priority': '0.8' if p == 1 else '0.6', 'changefreq': 'weekly'})
             cur.execute("""
                 SELECT slug, updated_at, created_at 
                 FROM blog_posts 
-                WHERE published = true
+                WHERE COALESCE(published, false) = true
                 ORDER BY COALESCE(updated_at, created_at) DESC
             """)
             rows = cur.fetchall()
-            print(f"[sitemap] Found {len(rows)} published blog posts, {total_pages} list pages")
+            print(f"[sitemap] Found {len(rows)} published blog posts")
             for row in rows:
                 slug, updated_at, created_at = row
                 if not slug:
@@ -109,15 +102,14 @@ def handler(event: dict, context) -> dict:
         xml_lines.append(f'    <priority>{page["priority"]}</priority>')
         xml_lines.append('  </url>')
 
-    # Страницы пагинации блога (/blog, /blog?page=2, ...)
-    for page in blog_list_pages:
-        loc = escape(f'{base_url}{page["loc"]}')
-        xml_lines.append('  <url>')
-        xml_lines.append(f'    <loc>{loc}</loc>')
-        xml_lines.append(f'    <lastmod>{today}</lastmod>')
-        xml_lines.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
-        xml_lines.append(f'    <priority>{page["priority"]}</priority>')
-        xml_lines.append('  </url>')
+    # Список блога (одна страница /blog)
+    loc_blog = escape(f'{base_url}/blog')
+    xml_lines.append('  <url>')
+    xml_lines.append(f'    <loc>{loc_blog}</loc>')
+    xml_lines.append(f'    <lastmod>{today}</lastmod>')
+    xml_lines.append('    <changefreq>weekly</changefreq>')
+    xml_lines.append('    <priority>0.8</priority>')
+    xml_lines.append('  </url>')
 
     # Статьи блога
     for post in blog_posts:

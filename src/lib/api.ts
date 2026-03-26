@@ -410,9 +410,11 @@ export const api = {
       if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Ошибка ${response.status}`);
       return data;
     },
-    getBlog: async (page = 1, per_page = 20): Promise<BlogPaginated> => {
+    getBlog: async (page = 1, per_page = 20, token?: string): Promise<BlogPaginated> => {
       const params = new URLSearchParams({ resource: 'blog', page: String(page), per_page: String(per_page) });
-      const response = await fetch(`${API_URLS.gallery}?${params}`);
+      const response = await fetch(`${API_URLS.gallery}?${params}`, {
+        headers: token ? { 'X-Auth-Token': token } : undefined,
+      });
       const data = await response.json();
       if (data && typeof data === 'object' && Array.isArray(data.items)) {
         return {
@@ -425,8 +427,10 @@ export const api = {
       }
       return { items: [], total: 0, page: 1, per_page, total_pages: 0 };
     },
-    getBlogPost: async (slug: string): Promise<BlogPost | null> => {
-      const response = await fetch(`${API_URLS.gallery}?resource=blog&slug=${encodeURIComponent(slug)}`);
+    getBlogPost: async (slug: string, token?: string): Promise<BlogPost | null> => {
+      const response = await fetch(`${API_URLS.gallery}?resource=blog&slug=${encodeURIComponent(slug)}`, {
+        headers: token ? { 'X-Auth-Token': token } : undefined,
+      });
       const data = await response.json();
       return Array.isArray(data) && data[0] ? data[0] : null;
     },
