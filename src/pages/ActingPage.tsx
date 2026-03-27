@@ -30,6 +30,7 @@ import {
   TeamMember,
 } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
+import CoursePricingSection from "@/components/CoursePricingSection";
 
 export default function ActingPage() {
   const router = useRouter();
@@ -129,6 +130,12 @@ export default function ActingPage() {
         <AboutSection content={content} />
         <GallerySection gallery={gallery} />
         <ReviewsSection reviews={reviews} />
+        <CoursePricingSection
+          variant="acting"
+          courseStartDate={content.course_start_date || ''}
+          contactPhone={content.phone || ''}
+          address={content.address || ''}
+        />
         <TeamSection team={team} />
         <CallToActionSection />
         <BlogSection

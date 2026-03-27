@@ -15,6 +15,7 @@ import ReviewsSection from "@/components/oratory/ReviewsSection";
 import BlogSection from "@/components/oratory/BlogSection";
 import LeadFormSection from "@/components/oratory/LeadFormSection";
 import CTASection from "@/components/oratory/CTASection";
+import CoursePricingSection from "@/components/CoursePricingSection";
 import { api, SiteContent, Review, GalleryImage, BlogPost } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
 
@@ -76,8 +77,14 @@ export default function OratoryPage() {
         <ProgramSection />
         <ResultsSection />
         <LeadFormSection />
-        <GallerySection gallery={gallery} />
         <ReviewsSection reviews={reviews} />
+        <CoursePricingSection
+          variant="oratory"
+          courseStartDate={content.oratory_course_start_date || ''}
+          contactPhone={content.phone || ''}
+          address={content.address || ''}
+        />
+        <GallerySection gallery={gallery} />
         <BlogSection
           blog={blog}
           onNavigate={(slug) => router.push(`/blog/${slug}`)}

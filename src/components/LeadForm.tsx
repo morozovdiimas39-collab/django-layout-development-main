@@ -30,6 +30,8 @@ interface LeadFormProps {
   description?: string;
   buttonText?: string;
   telegramHref?: string;
+  /** Без тяжёлой обводки карточки — для встраивания в секции (например, блок цен) */
+  layout?: 'default' | 'embedded';
 }
 
 export default function LeadForm({ 
@@ -38,8 +40,11 @@ export default function LeadForm({
   title = "Запись на пробное занятие",
   description = "Оставьте номер телефона, и мы свяжемся с вами",
   buttonText = "Записаться",
-  telegramHref = 'https://t.me/kaz9999',
+  telegramHref,
+  layout = 'default',
 }: LeadFormProps) {
+  const resolvedTelegram =
+    layout === 'embedded' ? undefined : telegramHref ?? 'https://t.me/kaz9999';
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -83,6 +88,15 @@ export default function LeadForm({
   };
 
   if (submitted) {
+    if (layout === 'embedded') {
+      return (
+        <div className="rounded-xl border border-primary/30 bg-primary/10 p-5 text-center">
+          <Icon name="CheckCircle" className="text-primary mx-auto mb-2" size={28} />
+          <h3 className="font-bold">Заявка отправлена</h3>
+          <p className="text-sm text-muted-foreground mt-1">Свяжемся с вами в ближайшее время</p>
+        </div>
+      );
+    }
     return (
       <div className="bg-gradient-to-br from-primary/20 to-primary/10 border-2 border-primary/40 rounded-xl md:rounded-2xl lg:rounded-3xl p-6 sm:p-8 text-center backdrop-blur-sm">
         <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
@@ -92,9 +106,9 @@ export default function LeadForm({
         <p className="text-muted-foreground text-base sm:text-lg mb-5">
           Мы свяжемся с вами в ближайшее время
         </p>
-        {telegramHref && (
+        {resolvedTelegram && (
           <a
-            href={telegramHref}
+            href={resolvedTelegram}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 justify-center w-full rounded-xl px-6 py-3 text-base font-semibold text-white transition-colors"
@@ -110,14 +124,14 @@ export default function LeadForm({
     );
   }
 
-  return (
-    <div className="bg-card/90 backdrop-blur-md border-2 border-primary/20 rounded-xl md:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl hover:border-primary/40 transition-all duration-300">
+  const formInner = (
+    <>
       {title && <h3 className="text-lg sm:text-xl font-bold mb-2">{title}</h3>}
       {description && <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">{description}</p>}
-      
-      <form onSubmit={handleSubmit} className="space-y-5">
+
+      <form onSubmit={handleSubmit} className={layout === 'embedded' ? 'space-y-4' : 'space-y-5'}>
         <div>
-          <Label htmlFor={`phone-${source}`} className="text-sm sm:text-base font-semibold mb-2 block">
+          <Label htmlFor={`phone-${source}`} className="text-sm font-semibold mb-2 block">
             Номер телефона
           </Label>
           <InputMask
@@ -133,16 +147,24 @@ export default function LeadForm({
                 type="tel"
                 placeholder="+7 (___) ___-__-__"
                 required
-                className="h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors"
+                className={
+                  layout === 'embedded'
+                    ? 'h-11 text-sm border border-primary/25 bg-background focus-visible:ring-primary/40'
+                    : 'h-11 sm:h-12 text-sm sm:text-base border-2 border-primary/20 focus:border-primary/60 transition-colors'
+                }
               />
             )}
           </InputMask>
         </div>
-        
-        <Button 
-          type="submit" 
-          disabled={loading} 
-          className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className={
+            layout === 'embedded'
+              ? 'w-full h-11 text-sm font-semibold'
+              : 'w-full h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300'
+          }
           size="lg"
         >
           {loading ? (
@@ -157,9 +179,9 @@ export default function LeadForm({
             </>
           )}
         </Button>
-        {telegramHref && (
+        {resolvedTelegram && (
           <a
-            href={telegramHref}
+            href={resolvedTelegram}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full rounded-lg px-5 py-3 text-base font-semibold text-white transition-colors bg-[#2CA5E0] hover:bg-[#1a96cc]"
@@ -169,6 +191,16 @@ export default function LeadForm({
           </a>
         )}
       </form>
+    </>
+  );
+
+  if (layout === 'embedded') {
+    return <div className="space-y-1">{formInner}</div>;
+  }
+
+  return (
+    <div className="bg-card/90 backdrop-blur-md border-2 border-primary/20 rounded-xl md:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl hover:border-primary/40 transition-all duration-300">
+      {formInner}
     </div>
   );
 }
