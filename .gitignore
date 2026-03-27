@@ -13,6 +13,9 @@ dist
 dist-ssr
 *.local
 
+# Прод-порт под nginx — только на сервере (см. .env.production.example)
+.env.production
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

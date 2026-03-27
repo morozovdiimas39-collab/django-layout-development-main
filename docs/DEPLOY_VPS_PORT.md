@@ -1,40 +1,56 @@
 # Деплой на VPS и порт nginx
 
-## Почему был 502
+## 502 = несовпадение портов
 
-Nginx для `kazbek-meretukov.ru` (часто генерируется панелью деплоя) проксирует на **фиксированный порт**, например `127.0.0.1:3497`. Если Next запущен на другом порту (например 3045), nginx получает **502 Bad Gateway**.
+Nginx шлёт запросы на **`proxy_pass`**, например `http://127.0.0.1:3045`.  
+Next должен слушать **тот же** порт.
 
-Это **не настраивается из React/Next-кода** — только совпадением порта приложения и `proxy_pass` в nginx.
+В репозитории **нет одного «правильного» числа** для всех серверов — порт задаётся **на VPS**.
 
-## Что сделано в репозитории
+Команда **`npm run start`** вызывает **`scripts/start-production.sh`**: он читает **`PORT`** из **`.env.production`** и запускает `next start -p …` (так порт не «теряется», как бывает при одном только `.env`).
 
-- Скрипт **`npm run start`** запускает прод-сервер на **`127.0.0.1:3497`**, чтобы совпасть с типичным шаблоном nginx панели.
-- Файл **`ecosystem.config.cjs`** — пример для PM2 с тем же портом.
+## Как задать порт
 
-## Что сделать на сервере один раз
-
-1. **Все** `server` для этого сайта (латинский домен и punycode, если оба ведут на один инстанс) должны иметь **одинаковый** `proxy_pass`, например:
-
-   ```nginx
-   proxy_pass http://127.0.0.1:3497;
-   ```
-
-2. После **каждого** `git pull` / деплоя (обязательно, иначе останется старый `next-server` на другом порту → **502**):
+1. На сервере в корне проекта создай **`.env.production`** (в git не коммитится):
 
    ```bash
-   cd /var/www/kazbek-meretukov_ru
+   cp .env.production.example .env.production
+   nano .env.production
+   ```
+
+2. Поставь **ровно тот порт**, что в nginx:
+
+   ```env
+   PORT=3045
+   ```
+
+   (вместо `3045` — своё число из `proxy_pass`.)
+
+3. Узнать порт в nginx:
+
+   ```bash
+   sudo grep -r proxy_pass /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null
+   ```
+
+4. Деплой:
+
+   ```bash
    bash scripts/vps-deploy-restart.sh
    ```
 
-   Либо вручную то же самое: `npm ci` → `npm run build` → `pm2 delete kazbek-meretukov` → `pm2 start ecosystem.config.cjs` → `pm2 save`.
+Скрипт читает `PORT` из `.env.production` и проверяет, что этот порт слушается.
 
-   Скрипт в конце проверяет, что **3497** реально слушается.
+## Запуск без PM2
 
-3. Если панель **каждый деплой перезаписывает** nginx и снова ставит «не тот» порт — в настройках сайта в панели задайте тот же порт **3497**, либо отключите автогенерацию nginx и держите конфиг вручную.
+```bash
+NODE_ENV=production npm run start
+```
+
+Next подхватит `.env.production` и `PORT`.
 
 ## Проверка
 
 ```bash
-ss -tlnp | grep 3497
-curl -sI http://127.0.0.1:3497 | head -3
+grep PORT .env.production
+curl -sI "http://127.0.0.1:$(grep -E '^PORT=' .env.production | cut -d= -f2 | tr -d '\r')/" | head -3
 ```
