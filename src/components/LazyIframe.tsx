@@ -12,7 +12,7 @@ export type LazyIframeProps = {
   allow?: string;
   allowFullScreen?: boolean;
   frameBorder?: number;
-  /** IntersectionObserver rootMargin — подгрузка чуть до появления в зоне видимости */
+  /** IntersectionObserver rootMargin; 0 — не тянуть Vimeo/карту заранее (лучше для LCP/PSI) */
   rootMargin?: string;
 };
 
@@ -24,7 +24,7 @@ export default function LazyIframe({
   allow,
   allowFullScreen = true,
   frameBorder,
-  rootMargin = '280px 0px',
+  rootMargin = '0px',
 }: LazyIframeProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
@@ -58,7 +58,7 @@ export default function LazyIframe({
           {...(frameBorder !== undefined ? { frameBorder } : {})}
         />
       ) : (
-        <div className="absolute inset-0 bg-muted/40 animate-pulse" aria-hidden />
+        <div className="absolute inset-0 bg-muted/40" aria-hidden />
       )}
     </div>
   );

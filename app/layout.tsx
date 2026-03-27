@@ -52,8 +52,10 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${inter.variable} ${montserrat.variable}`}>
       <head>
-        <link rel="preconnect" href="https://functions.yandexcloud.net" crossOrigin="anonymous" />
+        {/* Логотип в шапке — реальный ранний запрос; API Yandex Cloud грузится после гидрации, preconnect к нему даёт «неиспользуемое подключение» в PSI */}
+        <link rel="preconnect" href="https://i.1.creatium.io" />
         <link rel="dns-prefetch" href="https://maps.yastatic.net" />
+        <link rel="dns-prefetch" href="https://mc.yandex.ru" />
       </head>
       <body>
         <Providers>{children}</Providers>

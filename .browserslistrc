@@ -1,6 +1,6 @@
-# Меньше полифиллов в клиентском бандле (Baseline / современные браузеры)
-last 2 Chrome versions
-last 2 Firefox versions
-last 2 Safari versions
-last 2 Edge versions
+# Цели SWC/полифиллов: современные движки → меньше лишнего в чанках (PSI «устаревший JS»)
+Chrome >= 111
+Firefox >= 111
+Safari >= 16.4
+Edge >= 111
 not dead
