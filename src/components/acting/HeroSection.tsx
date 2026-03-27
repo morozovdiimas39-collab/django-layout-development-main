@@ -4,7 +4,7 @@ import PhoneForm from '@/components/PhoneForm';
 import { formatDate } from '@/lib/dates';
 import SeatsCounter from '@/components/ui/seats-counter';
 
-const DEFAULT_HERO_TITLE = 'Курсы актёрского мастерства в Москве за 3 месяца!';
+const DEFAULT_HERO_TITLE = 'Курс актёрского мастерства в Москве от 3000 руб! 3 месяца';
 const DEFAULT_HERO_SUBTITLE = 'Запишитесь на пробное занятие по актерскому мастерству';
 const DEFAULT_HERO_DESCRIPTION =
   'Профессиональное обучение от режиссера Казбека Меретукова. Преодолейте страх камеры, обретите уверенность и снимите свое настоящее кино с прослушиванием!';
@@ -27,7 +27,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
       <div className="absolute inset-0">
         <Image
           src="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/0c090e0f-2880-4f27-8c3e-d4c43afc5fda.jpg"
-          alt="Курсы актёрского мастерства в Москве - обучение от режиссёра Казбека Меретукова"
+          alt="Курс актёрского мастерства в Москве — обучение от режиссёра Казбека Меретукова"
           className="w-full h-full object-cover"
           eager={true}
         />
