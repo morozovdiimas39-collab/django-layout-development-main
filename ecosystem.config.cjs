@@ -1,6 +1,6 @@
 /**
- * PM2: `npm run start` → Next читает PORT из .env.production (на сервере) или из окружения.
- * Обязательно на VPS: файл .env.production с PORT=<как в nginx proxy_pass>
+ * PM2 на VPS: порт должен совпадать с proxy_pass в nginx (у AnyaGPT для kazbek часто 3497).
+ * Запуск: из каталога деплоя после build — pm2 start ecosystem.config.cjs
  */
 module.exports = {
   apps: [
