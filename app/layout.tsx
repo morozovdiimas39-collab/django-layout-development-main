@@ -1,7 +1,24 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
+
+const inter = Inter({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500', '600'],
+  display: 'swap',
+  variable: '--font-inter',
+  adjustFontFallback: true,
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-montserrat',
+  adjustFontFallback: true,
+});
 
 export const metadata: Metadata = {
   title: {
@@ -33,7 +50,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={`${inter.variable} ${montserrat.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://functions.yandexcloud.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://maps.yastatic.net" />
+      </head>
       <body>
         <Providers>{children}</Providers>
         <noscript>
@@ -47,7 +68,7 @@ export default function RootLayout({
         </noscript>
         <Script
           id="yandex-metrika"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(m,e,t,r,i,k,a){

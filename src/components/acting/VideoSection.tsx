@@ -1,3 +1,5 @@
+import LazyIframe from '@/components/LazyIframe';
+
 interface VideoSectionProps {
   content: Record<string, string>;
 }
@@ -16,14 +18,14 @@ export default function VideoSection({ content }: VideoSectionProps) {
           </p>
         </div>
         
-        <div className="aspect-video w-full md:max-w-4xl md:mx-auto md:rounded-xl overflow-hidden shadow-2xl">
-          <iframe
+        <div className="relative aspect-video w-full md:max-w-4xl md:mx-auto md:rounded-xl overflow-hidden shadow-2xl">
+          <LazyIframe
             src="https://player.vimeo.com/video/997327815?h=da8107aa0b"
-            className="w-full h-full"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-            allowFullScreen
             title="Видео о курсе"
-          ></iframe>
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+            wrapperClassName="absolute inset-0"
+            className="h-full w-full border-0"
+          />
         </div>
       </div>
     </section>

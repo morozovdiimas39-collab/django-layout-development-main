@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/icon';
+import LazyIframe from '@/components/LazyIframe';
 
 interface FilmSectionProps {
   content: Record<string, string>;
@@ -20,14 +21,14 @@ export default function FilmSection({ content }: FilmSectionProps) {
             Это не мечта — это реальность нашего курса! По завершении обучения вы не просто получите сертификат. 
             Вы станете <span className="text-primary font-semibold">главным героем собственного короткометражного фильма</span>.
           </p>
-          <div className="aspect-video w-full md:max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl">
-            <iframe
+          <div className="relative aspect-video w-full md:max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+            <LazyIframe
               src="https://player.vimeo.com/video/997328344?h=0d19d04d2a"
-              className="w-full h-full"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-              allowFullScreen
               title="Снимите свое кино"
-            ></iframe>
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              wrapperClassName="absolute inset-0"
+              className="h-full w-full border-0"
+            />
           </div>
         </div>
       </div>

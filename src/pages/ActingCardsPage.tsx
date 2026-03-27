@@ -18,6 +18,7 @@ import GallerySection from "@/components/acting/GallerySection";
 import ReviewsSection from "@/components/acting/ReviewsSection";
 import BlogSection from "@/components/acting/BlogSection";
 import ContactSection from "@/components/acting/ContactSection";
+import LazyIframe from "@/components/LazyIframe";
 
 export default function ActingCardsPage() {
   const router = useRouter();
@@ -260,13 +261,14 @@ export default function ActingCardsPage() {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl">
-                <iframe
+                <LazyIframe
                   src="https://player.vimeo.com/video/997321722?badge=0&autopause=0&player_id=0&app_id=58479"
-                  className="absolute inset-0 w-full h-full"
-                  frameBorder="0"
-                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
                   title="Актерские визитки"
-                ></iframe>
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                  frameBorder={0}
+                  wrapperClassName="absolute inset-0"
+                  className="h-full w-full border-0"
+                />
               </div>
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">

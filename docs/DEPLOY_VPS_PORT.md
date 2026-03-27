@@ -19,14 +19,16 @@ Nginx для `kazbek-meretukov.ru` (часто генерируется пане
    proxy_pass http://127.0.0.1:3497;
    ```
 
-2. После `git pull` / деплоя:
+2. После **каждого** `git pull` / деплоя (обязательно, иначе останется старый `next-server` на другом порту → **502**):
 
    ```bash
-   npm ci
-   npm run build
-   pm2 restart kazbek-meretukov
-   # или: pm2 start ecosystem.config.cjs
+   cd /var/www/kazbek-meretukov_ru
+   bash scripts/vps-deploy-restart.sh
    ```
+
+   Либо вручную то же самое: `npm ci` → `npm run build` → `pm2 delete kazbek-meretukov` → `pm2 start ecosystem.config.cjs` → `pm2 save`.
+
+   Скрипт в конце проверяет, что **3497** реально слушается.
 
 3. Если панель **каждый деплой перезаписывает** nginx и снова ставит «не тот» порт — в настройках сайта в панели задайте тот же порт **3497**, либо отключите автогенерацию nginx и держите конфиг вручную.
 

@@ -2,7 +2,11 @@ import Icon from '@/components/ui/icon';
 import Image from '@/components/ui/image';
 import PhoneForm from '@/components/PhoneForm';
 import SeatsCounter from '@/components/ui/seats-counter';
-import EditableContent from '@/components/EditableContent';
+
+const DEFAULT_HERO_TITLE = 'Курс ораторского мастерства в Москве от 3000 руб!';
+const DEFAULT_HERO_SUBTITLE = 'Запишитесь на пробное занятие по ораторскому мастерству';
+const DEFAULT_HERO_DESCRIPTION =
+  'Профессиональный курс публичных выступлений от эксперта Ольги Штерц. Научитесь выступать уверенно, убедительно и харизматично. Проводите презентации, вдохновляйте аудиторию и становитесь лидером мнений!';
 
 const TelegramIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
@@ -16,7 +20,11 @@ interface HeroSectionProps {
   telegramHref?: string;
 }
 
-export default function HeroSection({ trialDate, courseStartDate, telegramHref }: HeroSectionProps) {
+export default function HeroSection({
+  trialDate,
+  courseStartDate,
+  telegramHref,
+}: HeroSectionProps) {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -40,33 +48,15 @@ export default function HeroSection({ trialDate, courseStartDate, telegramHref }
             <Icon name="Sparkles" size={16} className="md:w-5 md:h-5" />
             Курс с Ольгой Штерц
           </div>
-          <EditableContent
-            contentKey="oratory_hero_title"
-            defaultValue="Курсы ораторского мастерства в Москве за 2 месяца!"
-            type="text"
-            page="oratory"
-            section="hero"
-            as="h1"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight"
-          />
-          <EditableContent
-            contentKey="oratory_hero_subtitle"
-            defaultValue="Запишитесь на пробное занятие по ораторскому мастерству"
-            type="text"
-            page="oratory"
-            section="hero"
-            as="p"
-            className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-3 md:mb-4"
-          />
-          <EditableContent
-            contentKey="oratory_hero_description"
-            defaultValue="Профессиональный курс публичных выступлений от эксперта Ольги Штерц. Научитесь выступать уверенно, убедительно и харизматично. Проводите презентации, вдохновляйте аудиторию и становитесь лидером мнений!"
-            type="textarea"
-            page="oratory"
-            section="hero"
-            as="p"
-            className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 md:mb-8"
-          />
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight">
+            {DEFAULT_HERO_TITLE}
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-3 md:mb-4">
+            {DEFAULT_HERO_SUBTITLE}
+          </p>
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 md:mb-8 whitespace-pre-line">
+            {DEFAULT_HERO_DESCRIPTION}
+          </p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-8">
             {trialDate && (
               <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-2 rounded-lg text-sm md:text-base">

@@ -30,6 +30,7 @@ import TeamSection from "@/components/acting/TeamSection";
 import BlogSection from "@/components/acting/BlogSection";
 import GallerySection from "@/components/acting/GallerySection";
 import ContactSection from "@/components/acting/ContactSection";
+import LazyIframe from "@/components/LazyIframe";
 
 export default function HomePage() {
   const router = useRouter();
@@ -162,13 +163,13 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col lg:flex-row gap-8 items-start">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
-                  <iframe
-                    className="w-full aspect-video"
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
+                  <LazyIframe
                     src="https://player.vimeo.com/video/997327815?badge=0&autopause=0&player_id=0&app_id=58479"
                     title="Курс актёрского мастерства"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                    allowFullScreen
+                    wrapperClassName="absolute inset-0"
+                    className="h-full w-full border-0"
                   />
                 </div>
 
@@ -300,13 +301,13 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col lg:flex-row-reverse gap-8 items-start">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
-                  <iframe
-                    className="w-full aspect-video"
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
+                  <LazyIframe
                     src="https://player.vimeo.com/video/997324695?badge=0&autopause=0&player_id=0&app_id=58479"
                     title="Курс ораторского мастерства"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                    allowFullScreen
+                    wrapperClassName="absolute inset-0"
+                    className="h-full w-full border-0"
                   />
                 </div>
 
@@ -437,13 +438,13 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col lg:flex-row gap-8 items-start">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
-                  <iframe
-                    className="w-full aspect-video"
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black w-full lg:w-[480px] flex-shrink-0">
+                  <LazyIframe
                     src="https://player.vimeo.com/video/997321722?badge=0&autopause=0&player_id=0&app_id=58479"
                     title="Актёрская визитка"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                    allowFullScreen
+                    wrapperClassName="absolute inset-0"
+                    className="h-full w-full border-0"
                   />
                 </div>
 

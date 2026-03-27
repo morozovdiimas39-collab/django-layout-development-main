@@ -58,8 +58,11 @@ export default function Header() {
           <img 
             src="https://i.1.creatium.io/disk2/c6/65/76/a52e2f86d1891f143cdb23e60a4460b61f/184x67/w_logo_text.svg" 
             alt="Логотип школы актёрского мастерства Казбека Меретукова" 
-            className="h-8 sm:h-10 md:h-12"
+            width={184}
+            height={67}
+            className="h-8 sm:h-10 md:h-12 w-auto"
             loading="eager"
+            fetchPriority="high"
           />
         </Link>
 
@@ -80,23 +83,32 @@ export default function Header() {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[300px] gap-2 p-3">
-                    {courseItems.map((course) => (
+                    {courseItems.map((course) => {
+                      const active = pathname === course.href;
+                      return (
                       <li key={course.href}>
                         <NavigationMenuLink asChild>
                           <Link
                             href={course.href}
-                            className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${
-                              pathname === course.href ? 'bg-accent text-accent-foreground font-semibold' : ''
+                            className={`group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${
+                              active ? 'bg-accent text-accent-foreground font-semibold' : ''
                             }`}
                           >
                             <div className="text-sm font-medium leading-none">{course.label}</div>
-                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
+                            <p
+                              className={`line-clamp-2 text-xs leading-snug mt-1 ${
+                                active
+                                  ? 'text-accent-foreground/90'
+                                  : 'text-muted-foreground group-hover:text-accent-foreground/90'
+                              }`}
+                            >
                               {course.description}
                             </p>
                           </Link>
                         </NavigationMenuLink>
                       </li>
-                    ))}
+                    );
+                    })}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>

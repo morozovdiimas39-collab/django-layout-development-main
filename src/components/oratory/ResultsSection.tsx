@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/icon';
+import LazyIframe from '@/components/LazyIframe';
 
 export default function ResultsSection() {
   return (
@@ -76,14 +77,14 @@ export default function ResultsSection() {
           </div>
         </div>
 
-        <div className="aspect-video w-full md:max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
-          <iframe
+        <div className="relative aspect-video w-full md:max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+          <LazyIframe
             src="https://player.vimeo.com/video/997324695?h=b0c5654470"
-            className="w-full h-full"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            allowFullScreen
             title="Результаты курса ораторского искусства"
-          ></iframe>
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+            wrapperClassName="absolute inset-0"
+            className="h-full w-full border-0"
+          />
         </div>
       </div>
     </section>

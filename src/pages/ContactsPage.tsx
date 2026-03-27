@@ -8,6 +8,7 @@ import PhoneForm from "@/components/PhoneForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { api, SiteContent } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
+import LazyIframe from "@/components/LazyIframe";
 
 export default function ContactsPage() {
   const [content, setContent] = useState<Record<string, string>>({});
@@ -151,13 +152,14 @@ export default function ContactsPage() {
                     Мы на карте
                   </h2>
 
-                  <div className="aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden shadow-xl">
-                    <iframe
-                      src="https://yandex.ru/map-widget/v1/?um=constructor%3A09c1aac3e1943f51198d94201d94d3d89db9eabc6caae19fa171fc991556a8ae&amp;source=constructorLink"
-                      className="w-full h-full"
-                      frameBorder="0"
+                  <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden shadow-xl">
+                    <LazyIframe
+                      src="https://yandex.ru/map-widget/v1/?um=constructor%3A09c1aac3e1943f51198d94201d94d3d89db9eabc6caae19fa171fc991556a8ae&source=constructorLink"
                       title="Карта расположения школы"
-                    ></iframe>
+                      frameBorder={0}
+                      wrapperClassName="absolute inset-0 h-full w-full min-h-[240px] lg:min-h-0"
+                      className="h-full w-full border-0"
+                    />
                   </div>
                 </div>
               </div>

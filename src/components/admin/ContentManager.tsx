@@ -14,9 +14,7 @@ export const ALL_CONTENT_KEYS = [
   'instagram_url', 'youtube_url', 'telegram_url', 'whatsapp_url',
   'trial_date', 'course_start_date', 'oratory_trial_date', 'oratory_course_start_date', 'acting_cards_start_date',
   'hero_video_url', 'final_video_url', 'map_embed', 'kazbek_bio', 'olga_bio',
-  'acting_hero_title', 'acting_hero_subtitle', 'acting_hero_description',
   'acting_about_name', 'acting_about_title_0', 'acting_about_title_1', 'acting_about_text_0', 'acting_about_text_1',
-  'oratory_hero_title', 'oratory_hero_subtitle', 'oratory_hero_description',
   'footer_title', 'footer_description',
 ] as const;
 
@@ -51,17 +49,11 @@ const getContentLabel = (key: string): string => {
     'map_embed': 'Карта (embed)',
     'kazbek_bio': 'Био Казбека',
     'olga_bio': 'Био Ольги',
-    'acting_hero_title': 'Актерское — заголовок героя',
-    'acting_hero_subtitle': 'Актерское — подзаголовок',
-    'acting_hero_description': 'Актерское — описание',
     'acting_about_name': 'Актерское — имя блока О нас',
     'acting_about_title_0': 'Актерское — заголовок блока 1',
     'acting_about_title_1': 'Актерское — заголовок блока 2',
     'acting_about_text_0': 'Актерское — текст блока 1',
     'acting_about_text_1': 'Актерское — текст блока 2',
-    'oratory_hero_title': 'Ораторское — заголовок героя',
-    'oratory_hero_subtitle': 'Ораторское — подзаголовок',
-    'oratory_hero_description': 'Ораторское — описание',
     'footer_title': 'Футер — заголовок',
     'footer_description': 'Футер — описание',
   };
