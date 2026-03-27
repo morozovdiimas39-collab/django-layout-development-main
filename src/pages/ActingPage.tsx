@@ -16,7 +16,6 @@ import ReviewsSection from "@/components/acting/ReviewsSection";
 import TeamSection from "@/components/acting/TeamSection";
 import CallToActionSection from "@/components/acting/CallToActionSection";
 import BlogSection from "@/components/acting/BlogSection";
-import SEOTextSection from "@/components/acting/SEOTextSection";
 import FAQSection from "@/components/acting/FAQSection";
 import ContactSection from "@/components/acting/ContactSection";
 import {
@@ -143,7 +142,6 @@ export default function ActingPage() {
           onNavigate={(slug) => router.push(`/blog/${slug}`)}
           onNavigateToBlog={() => router.push("/blog")}
         />
-        <SEOTextSection />
         <FAQSection faq={faq} />
         <ContactSection />
         <Footer />

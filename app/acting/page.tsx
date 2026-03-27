@@ -14,7 +14,6 @@ import ReviewsSection from '@/components/acting/ReviewsSection';
 import TeamSection from '@/components/acting/TeamSection';
 import CallToActionSection from '@/components/acting/CallToActionSection';
 import BlogSection from '@/components/acting/BlogSection';
-import SEOTextSection from '@/components/acting/SEOTextSection';
 import FAQSection from '@/components/acting/FAQSection';
 import ContactSection from '@/components/acting/ContactSection';
 import CoursePricingSection from '@/components/CoursePricingSection';
@@ -181,7 +180,6 @@ export default async function Page() {
         <TeamSection team={team} />
         <CallToActionSection />
         <BlogSection blog={blog} />
-        <SEOTextSection />
         <FAQSection faq={faq} />
         <ContactSection />
         <Footer />
