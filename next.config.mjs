@@ -22,6 +22,19 @@ const nextConfig = {
       '@radix-ui/react-tabs',
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   webpack: (config, { dev }) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src');
     if (!dev) {
