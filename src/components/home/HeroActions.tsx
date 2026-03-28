@@ -25,7 +25,7 @@ export default function HeroActions() {
         </Button>
       </div>
       <a
-        href="https://t.me/kaz9999"
+        href="https://t.me/meretukovbot"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[320px] rounded-lg px-5 py-3 text-base font-semibold text-white transition-colors bg-[#2CA5E0] hover:bg-[#1a96cc]"

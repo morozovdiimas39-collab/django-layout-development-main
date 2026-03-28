@@ -20,7 +20,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ content }: HeroSectionProps) {
-  const telegramHref = content.acting_telegram_url || content.telegram_url || 'https://t.me/kaz9999';
+  const telegramHref = content.acting_telegram_url || content.telegram_url || 'https://t.me/meretukovbot';
 
   return (
     <section className="pt-20 pb-32 px-4 md:pt-32 md:pb-40 md:px-4 relative overflow-hidden min-h-[85vh] md:min-h-[90vh] flex items-center">

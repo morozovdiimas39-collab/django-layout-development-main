@@ -48,7 +48,7 @@ export default function PhoneForm({
   title,
   description,
   seatsCounter,
-  telegramHref = 'https://t.me/kaz9999',
+  telegramHref = 'https://t.me/meretukovbot',
 }: PhoneFormProps) {
   const defaultTitle = title !== undefined ? title : 'Записаться на курс';
   const defaultDescription = description !== undefined ? description : 'Оставьте свой номер телефона, и мы свяжемся с вами в ближайшее время';

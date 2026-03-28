@@ -200,7 +200,7 @@ export default function ActingCardsPage() {
                   triggerSize="lg"
                   title="Запись на съемку актерской визитки"
                   description="Оставьте номер телефона, и мы свяжемся с вами"
-                  telegramHref={content.acting_cards_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
+                  telegramHref={content.acting_cards_telegram_url || content.telegram_url || 'https://t.me/meretukovbot'}
                   seatsCounter={content.acting_cards_start_date && (
                     <SeatsCounter 
                       trialDate={content.acting_cards_start_date} 
@@ -212,7 +212,7 @@ export default function ActingCardsPage() {
               </div>
               <div className="mt-3">
                 <a
-                  href={content.acting_cards_telegram_url || content.telegram_url || 'https://t.me/kaz9999'}
+                  href={content.acting_cards_telegram_url || content.telegram_url || 'https://t.me/meretukovbot'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full rounded-lg px-5 py-3 text-base font-semibold text-white transition-colors bg-[#2CA5E0] hover:bg-[#1a96cc]"

@@ -18,6 +18,7 @@ const routeMap: Record<string, string> = {
   'reviews': 'Отзывы',
   'blog': 'Блог',
   'contacts': 'Контакты',
+  'subscribe': 'Подписаться',
   'admin': 'Администрирование'
 };
 

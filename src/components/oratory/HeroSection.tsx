@@ -79,7 +79,7 @@ export default function HeroSection({
               triggerSize="lg"
               title="Запись на пробное занятие"
               description="Оставьте номер телефона, и мы пригласим вас на пробное занятие по ораторскому мастерству"
-              telegramHref={telegramHref || 'https://t.me/kaz9999'}
+              telegramHref={telegramHref || 'https://t.me/meretukovbot'}
               seatsCounter={trialDate && (
                 <SeatsCounter 
                   trialDate={trialDate} 
@@ -89,7 +89,7 @@ export default function HeroSection({
               )}
             />
             <a
-              href={telegramHref || 'https://t.me/kaz9999'}
+              href={telegramHref || 'https://t.me/meretukovbot'}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full rounded-lg px-5 py-3 text-base font-semibold text-white transition-colors bg-[#2CA5E0] hover:bg-[#1a96cc]"

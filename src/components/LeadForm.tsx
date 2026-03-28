@@ -44,7 +44,7 @@ export default function LeadForm({
   layout = 'default',
 }: LeadFormProps) {
   const resolvedTelegram =
-    layout === 'embedded' ? undefined : telegramHref ?? 'https://t.me/kaz9999';
+    layout === 'embedded' ? undefined : telegramHref ?? 'https://t.me/meretukovbot';
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);

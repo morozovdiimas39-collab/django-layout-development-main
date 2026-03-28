@@ -259,7 +259,7 @@ export default function HomePage() {
                       triggerSize="lg"
                       title="Запись на курс актёрского мастерства"
                       description="Оставьте номер телефона, и мы свяжемся с вами"
-                      telegramHref={content.telegram_url || 'https://t.me/kaz9999'}
+                      telegramHref={content.telegram_url || 'https://t.me/meretukovbot'}
                       seatsCounter={
                         content.trial_date && (
                           <SeatsCounter
@@ -279,7 +279,7 @@ export default function HomePage() {
                     </Button>
                   </div>
                   <a
-                    href={content.telegram_url || 'https://t.me/kaz9999'}
+                    href={content.telegram_url || 'https://t.me/meretukovbot'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors mt-1"
@@ -396,7 +396,7 @@ export default function HomePage() {
                       triggerVariant="default"
                       title="Запись на курс ораторского мастерства"
                       description="Оставьте номер телефона, и мы свяжемся с вами"
-                      telegramHref={content.telegram_url || 'https://t.me/kaz9999'}
+                      telegramHref={content.telegram_url || 'https://t.me/meretukovbot'}
                       seatsCounter={
                         content.oratory_trial_date && (
                           <SeatsCounter
@@ -416,7 +416,7 @@ export default function HomePage() {
                     </Button>
                   </div>
                   <a
-                    href={content.telegram_url || 'https://t.me/kaz9999'}
+                    href={content.telegram_url || 'https://t.me/meretukovbot'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors mt-1"
@@ -519,7 +519,7 @@ export default function HomePage() {
                       triggerSize="lg"
                       title="Запись на съёмку актёрской визитки"
                       description="Оставьте номер телефона, и мы свяжемся с вами"
-                      telegramHref={content.telegram_url || 'https://t.me/kaz9999'}
+                      telegramHref={content.telegram_url || 'https://t.me/meretukovbot'}
                       seatsCounter={
                         content.acting_cards_start_date && (
                           <SeatsCounter
@@ -539,7 +539,7 @@ export default function HomePage() {
                     </Button>
                   </div>
                   <a
-                    href={content.telegram_url || 'https://t.me/kaz9999'}
+                    href={content.telegram_url || 'https://t.me/meretukovbot'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors mt-1"
