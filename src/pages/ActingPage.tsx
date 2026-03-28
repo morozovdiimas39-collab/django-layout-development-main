@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,6 +30,11 @@ import {
 } from "@/lib/api";
 import SchemaMarkup from "@/components/SchemaMarkup";
 import CoursePricingSection from "@/components/CoursePricingSection";
+import {
+  ACTING_FAQ_SECTION_INTRO,
+  ACTING_FAQ_SECTION_TITLE,
+  mergeActingSeoFaqWithApi,
+} from "@/lib/acting-faq-merge";
 
 export default function ActingPage() {
   const router = useRouter();
@@ -82,6 +87,8 @@ export default function ActingPage() {
     }
   };
 
+  const actingFaq = useMemo(() => mergeActingSeoFaqWithApi(faq), [faq]);
+
   return (
     <>
       <SchemaMarkup
@@ -104,7 +111,7 @@ export default function ActingPage() {
       />
       <SchemaMarkup
         type="faq"
-        faqItems={faq.map((f) => ({
+        faqItems={actingFaq.map((f) => ({
           question: f.question,
           answer: f.answer,
         }))}
@@ -142,7 +149,11 @@ export default function ActingPage() {
           onNavigate={(slug) => router.push(`/blog/${slug}`)}
           onNavigateToBlog={() => router.push("/blog")}
         />
-        <FAQSection faq={faq} />
+        <FAQSection
+          faq={actingFaq}
+          title={ACTING_FAQ_SECTION_TITLE}
+          intro={ACTING_FAQ_SECTION_INTRO}
+        />
         <ContactSection />
         <Footer />
       </div>

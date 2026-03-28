@@ -19,18 +19,28 @@ import ContactSection from '@/components/acting/ContactSection';
 import CoursePricingSection from '@/components/CoursePricingSection';
 import { API_URLS, type BlogPost, type CourseModule, type FAQ, type GalleryImage, type Review, type SiteContent, type TeamMember } from '@/lib/api';
 import JsonLd from '@/components/JsonLd';
+import {
+  ACTING_FAQ_SECTION_INTRO,
+  ACTING_FAQ_SECTION_TITLE,
+  mergeActingSeoFaqWithApi,
+} from '@/lib/acting-faq-merge';
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Курс актёрского мастерства',
+  title: {
+    absolute:
+      'Курс актёрского мастерства в Москве от 3000 руб | Режиссёр Казбек Меретуков | 3 месяца',
+  },
   description:
-    'Работа на камеру, короткометражный фильм, самопробы для кастингов. Режиссёр Казбек Меретуков, ТЕФИ-2012. Пробное бесплатно.',
+    'Курс актёрского мастерства в Москве от 3000 ₽, 3 месяца. Режиссёр Казбек Меретуков, ТЭФИ. Актёрское искусство, работа на камеру, театральная база и кино. Пробное бесплатно.',
   alternates: { canonical: 'https://kazbek-meretukov.ru/acting' },
   openGraph: {
     url: 'https://kazbek-meretukov.ru/acting',
-    title: 'Курс актёрского мастерства — режиссёр Казбек Меретуков',
-    description: 'Работа на камеру, съёмка фильма, самопробы для кастингов. Режиссёр телесериалов, победитель ТЕФИ-2012.',
+    title:
+      'Курс актёрского мастерства в Москве от 3000 руб | Режиссёр Казбек Меретуков | 3 месяца',
+    description:
+      'Актёрское искусство в Москве: курс 3 месяца, камера, съёмка, режиссёр Казбек Меретуков. Пробное бесплатно.',
     type: 'website',
   },
 };
@@ -87,7 +97,7 @@ async function getBlog(): Promise<BlogPost[]> {
 }
 
 export default async function Page() {
-  const [modules, reviews, faq, gallery, blog, team, content] = await Promise.all([
+  const [modules, reviews, faqRaw, gallery, blog, team, content] = await Promise.all([
     getModules(),
     getGalleryResource<Review>('reviews'),
     getGalleryResource<FAQ>('faq'),
@@ -97,18 +107,49 @@ export default async function Page() {
     getContentMap(),
   ]);
 
+  const actingFaq = mergeActingSeoFaqWithApi(faqRaw);
+
   const courseSchema = {
     '@context': 'https://schema.org',
     '@type': 'Course',
-    name: 'Курс актёрского мастерства',
+    name: 'Курс актёрского мастерства в Москве',
     description:
-      'Профессиональное обучение актёрскому мастерству от режиссёра телесериалов. Работа на камеру, съёмка короткометражного фильма, практические упражнения.',
+      'Профессиональное обучение актёрскому мастерству от режиссёра телесериалов. Работа на камеру, съёмка короткометражного фильма, практические упражнения. Продолжительность около 3 месяцев.',
+    url: 'https://kazbek-meretukov.ru/acting',
+    timeRequired: 'P3M',
+    offers: {
+      '@type': 'Offer',
+      price: '3000',
+      priceCurrency: 'RUB',
+      availability: 'https://schema.org/InStock',
+      url: 'https://kazbek-meretukov.ru/acting',
+    },
     provider: {
       '@type': 'Organization',
       name: 'Школа актёрского мастерства Казбека Меретукова',
       sameAs: 'https://kazbek-meretukov.ru',
+      url: 'https://kazbek-meretukov.ru',
     },
-    url: 'https://kazbek-meretukov.ru',
+    instructor: {
+      '@type': 'Person',
+      name: 'Казбек Меретуков',
+      url: 'https://kazbek-meretukov.ru/teacher',
+      jobTitle: 'Режиссёр, преподаватель',
+    },
+  };
+
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Казбек Меретуков',
+    jobTitle: 'Режиссёр, преподаватель актёрского мастерства',
+    url: 'https://kazbek-meretukov.ru/teacher',
+    award: 'ТЭФИ',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Школа актёрского мастерства Казбека Меретукова',
+      url: 'https://kazbek-meretukov.ru',
+    },
   };
 
   const reviewsSchema = {
@@ -136,7 +177,7 @@ export default async function Page() {
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faq.map((item) => ({
+    mainEntity: actingFaq.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: { '@type': 'Answer', text: item.answer },
@@ -155,6 +196,7 @@ export default async function Page() {
   return (
     <>
       <JsonLd data={courseSchema} />
+      <JsonLd data={personSchema} />
       <JsonLd data={reviewsSchema} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumbsSchema} />
@@ -180,7 +222,11 @@ export default async function Page() {
         <TeamSection team={team} />
         <CallToActionSection />
         <BlogSection blog={blog} />
-        <FAQSection faq={faq} />
+        <FAQSection
+          faq={actingFaq}
+          title={ACTING_FAQ_SECTION_TITLE}
+          intro={ACTING_FAQ_SECTION_INTRO}
+        />
         <ContactSection />
         <Footer />
       </div>

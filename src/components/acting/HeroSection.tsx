@@ -27,7 +27,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
       <div className="absolute inset-0">
         <Image
           src="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/0c090e0f-2880-4f27-8c3e-d4c43afc5fda.jpg"
-          alt="Курс актёрского мастерства в Москве — обучение от режиссёра Казбека Меретукова"
+          alt="Курсы актерского мастерства Москва — занятия актерским мастерством, школа Казбека Меретукова"
           className="w-full h-full object-cover"
           eager={true}
         />

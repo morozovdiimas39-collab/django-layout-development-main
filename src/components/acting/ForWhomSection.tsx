@@ -7,7 +7,8 @@ export default function ForWhomSection() {
       <div className="container mx-auto">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 md:mb-4">Для кого этот курс?</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Курс подходит для всех, кто хочет развить актерские навыки, уверенность в себе и раскрыть свой творческий потенциал
+          Курс подходит тем, кто хочет развить актёрское искусство в практике — от уверенности до кадра; если вы сравнивали
+          театральные курсы и кино, здесь упор на экран и работу с режиссёром
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           <Card className="hover:shadow-lg transition">
