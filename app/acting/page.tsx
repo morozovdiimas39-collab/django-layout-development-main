@@ -16,7 +16,6 @@ import CallToActionSection from '@/components/acting/CallToActionSection';
 import BlogSection from '@/components/acting/BlogSection';
 import FAQSection from '@/components/acting/FAQSection';
 import ContactSection from '@/components/acting/ContactSection';
-import CoursePricingSection from '@/components/CoursePricingSection';
 import { API_URLS, type BlogPost, type CourseModule, type FAQ, type GalleryImage, type Review, type SiteContent, type TeamMember } from '@/lib/api';
 import JsonLd from '@/components/JsonLd';
 import {
@@ -213,12 +212,6 @@ export default async function Page() {
         <AboutSection content={content} />
         <GallerySection gallery={gallery} />
         <ReviewsSection reviews={reviews} />
-        <CoursePricingSection
-          variant="acting"
-          courseStartDate={content.course_start_date || ''}
-          contactPhone={content.phone || ''}
-          address={content.address || ''}
-        />
         <TeamSection team={team} />
         <CallToActionSection />
         <BlogSection blog={blog} />

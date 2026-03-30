@@ -45,6 +45,8 @@ MIGRATIONS = [
     "V0025__add_source_and_missing_leads_columns.sql",
     "V0026__ensure_blog_posts.sql",
     "V0027__add_utm_journey_and_referrer_to_leads.sql",
+    "V0028__create_chat_bots_table.sql",
+    "V0029__chat_bots_start_message_only.sql",
 ]
 
 

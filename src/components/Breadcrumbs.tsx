@@ -11,6 +11,7 @@ interface BreadcrumbItem {
 const routeMap: Record<string, string> = {
   '': 'Главная',
   'acting': 'Актёрское мастерство',
+  'probnoe': 'Бесплатное пробное',
   'oratory': 'Ораторское искусство',
   'realtors': 'Ораторское мастерство для риелторов',
   'showreel': 'Визитки',

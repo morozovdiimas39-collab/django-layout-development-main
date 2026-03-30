@@ -10,6 +10,8 @@ export const API_URLS = {
   analyzeNote: 'https://functions.yandexcloud.net/d4edf6r0o36gh78pctr0',
   /** Конструктор ботов в админке (создай функцию admin-bot-studio и подставь URL) */
   botStudio: 'https://functions.yandexcloud.net/REPLACE_ADMIN_BOT_STUDIO',
+  /** CRUD черновиков ботов — отдельная функция backend/chat-bots */
+  chatBots: 'https://functions.yandexcloud.net/REPLACE_CHAT_BOTS',
 };
 
 export interface SiteContent {
@@ -112,6 +114,16 @@ export interface BlogPaginated {
   total_pages: number;
 }
 
+/** Запись для Telegram: текст, который бот отправляет после /start */
+export interface ChatBot {
+  id: number;
+  name: string;
+  start_message: string;
+  order_num: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface TeamMember {
   id: number;
   name: string;
@@ -165,6 +177,55 @@ export const api = {
       if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : `Content ${response.status}`);
       return data;
     }
+  },
+
+  chatBots: {
+    list: async (token: string): Promise<ChatBot[]> => {
+      if (API_URLS.chatBots.includes('REPLACE_')) return [];
+      const response = await fetch(API_URLS.chatBots, {
+        headers: { 'X-Auth-Token': token },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots ${response.status}`);
+      }
+      return Array.isArray(data) ? data : [];
+    },
+    create: async (payload: Partial<ChatBot>, token: string): Promise<ChatBot> => {
+      const response = await fetch(API_URLS.chatBots, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots create ${response.status}`);
+      }
+      return data as ChatBot;
+    },
+    update: async (bot: ChatBot, token: string): Promise<ChatBot> => {
+      const response = await fetch(API_URLS.chatBots, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
+        body: JSON.stringify(bot),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots update ${response.status}`);
+      }
+      return data as ChatBot;
+    },
+    delete: async (id: number, token: string): Promise<void> => {
+      const response = await fetch(`${API_URLS.chatBots}?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
+        body: JSON.stringify({ id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots delete ${response.status}`);
+      }
+    },
   },
   
   leads: {

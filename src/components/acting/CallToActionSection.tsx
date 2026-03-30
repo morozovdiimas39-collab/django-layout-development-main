@@ -1,7 +1,14 @@
 import Icon from '@/components/ui/icon';
 import LeadForm from '@/components/LeadForm';
 
-export default function CallToActionSection() {
+interface CallToActionSectionProps {
+  /** На странице пробного — другие подписи и source заявки */
+  variant?: 'acting' | 'trial';
+}
+
+export default function CallToActionSection({ variant = 'acting' }: CallToActionSectionProps) {
+  const isTrial = variant === 'trial';
+
   return (
     <section className="py-12 px-4 md:py-20 md:px-4 relative overflow-hidden bg-background">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-background"></div>
@@ -14,11 +21,18 @@ export default function CallToActionSection() {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-2xl border border-primary/20">
             <div className="mb-6">
-              <h3 className="text-xl font-bold mb-2">Запишитесь на курс</h3>
-              <p className="text-sm text-muted-foreground">Укажите ваше имя и номер телефона</p>
+              <h3 className="text-xl font-bold mb-2">
+                {isTrial ? 'Запись на пробное или консультацию' : 'Запишитесь на курс'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {isTrial
+                  ? 'Укажите телефон — перезвоним по пробному и основному курсу'
+                  : 'Укажите ваше имя и номер телефона'}
+              </p>
             </div>
-            <LeadForm 
-              source="acting_cta"
+            <LeadForm
+              source={isTrial ? 'acting_trial_cta' : 'acting_cta'}
+              course="acting"
               title=""
               description=""
               buttonText="Отправить заявку"
@@ -35,10 +49,20 @@ export default function CallToActionSection() {
               <span className="text-primary font-semibold text-sm">Присоединяйтесь к нам</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              Станьте частью <span className="text-primary">актёрского</span> мира
+              {isTrial ? (
+                <>
+                  От пробного — к <span className="text-primary">полному курсу</span>
+                </>
+              ) : (
+                <>
+                  Станьте частью <span className="text-primary">актёрского</span> мира
+                </>
+              )}
             </h2>
             <p className="text-base md:text-lg text-muted-foreground mb-6">
-              Запишитесь сейчас и получите:
+              {isTrial
+                ? 'Пробное показывает формат школы; программа на месяцы — на странице курса.'
+                : 'Запишитесь сейчас и получите:'}
             </p>
             <div className="space-y-4">
               <div className="flex items-start gap-3">

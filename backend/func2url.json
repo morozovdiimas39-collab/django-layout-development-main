@@ -16,5 +16,6 @@
   "whatsapp-admin": "https://functions.yandexcloud.net/d4e3ua2afh8p6196fe3n",
   "whatsapp-cron": "https://functions.yandexcloud.net/d4e0v0dad2s56ino778s",
   "whatsapp-sender": "https://functions.yandexcloud.net/d4ekf1kqhsodfoojvu00",
-  "telegram-bot-gemini": "https://functions.yandexcloud.net/d4e8038qeqq8t9ore67s"
+  "telegram-bot-gemini": "https://functions.yandexcloud.net/d4e8038qeqq8t9ore67s",
+  "chat-bots": "https://functions.yandexcloud.net/REPLACE_CHAT_BOTS"
 }

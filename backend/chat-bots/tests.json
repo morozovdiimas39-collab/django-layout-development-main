@@ -1,0 +1,9 @@
+{
+  "tests": [
+    {
+      "name": "options",
+      "request": { "httpMethod": "OPTIONS" },
+      "expected": { "statusCode": 200 }
+    }
+  ]
+}

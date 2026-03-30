@@ -6,6 +6,12 @@ const GALLERY_URL = process.env.GALLERY_URL || 'https://functions.yandexcloud.ne
 const staticRoutes: MetadataRoute.Sitemap = [
   { url: BASE, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
   { url: `${BASE}/acting`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+  {
+    url: `${BASE}/acting/probnoe`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  },
   { url: `${BASE}/oratory`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
   { url: `${BASE}/realtors`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
   { url: `${BASE}/acting-cards`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },

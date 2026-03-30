@@ -48,6 +48,7 @@ EXPECTED_SCHEMA = {
         "file_url", "file_type", "file_name",
     ],
     "team_members": ["id", "name", "role", "bio", "photo_url", "sort_order"],
+    "chat_bots": ["id", "name", "start_message", "order_num", "created_at", "updated_at"],
 }
 
 # Таблица content используется в backend/leads/index.py (trial_date, oratory_trial_date),

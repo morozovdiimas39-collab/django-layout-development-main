@@ -62,6 +62,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://i.1.creatium.io" />
         <link rel="dns-prefetch" href="https://maps.yastatic.net" />
         <link rel="dns-prefetch" href="https://mc.yandex.ru" />
+        <link rel="dns-prefetch" href="https://top-fwz1.mail.ru" />
       </head>
       <body>
         <Providers>{children}</Providers>
@@ -74,6 +75,32 @@ export default function RootLayout({
             />
           </div>
         </noscript>
+        <noscript>
+          <div>
+            <img
+              src="https://top-fwz1.mail.ru/counter?id=3753615;js=na"
+              style={{ position: 'absolute', left: '-9999px' }}
+              alt="Top.Mail.Ru"
+            />
+          </div>
+        </noscript>
+        <Script
+          id="top-mail-ru-counter"
+          strategy="lazyOnload"
+          dangerouslySetInnerHTML={{
+            __html: `
+var _tmr = window._tmr || (window._tmr = []);
+_tmr.push({id: "3753615", type: "pageView", start: (new Date()).getTime()});
+(function (d, w, id) {
+  if (d.getElementById(id)) return;
+  var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
+  ts.src = "https://top-fwz1.mail.ru/js/code.js";
+  var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+  if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window, "tmr-code");
+            `.trim(),
+          }}
+        />
         <Script
           id="yandex-metrika"
           strategy="lazyOnload"
