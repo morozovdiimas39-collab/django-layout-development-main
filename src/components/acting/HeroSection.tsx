@@ -68,12 +68,12 @@ export default function HeroSection({ content, variant = 'acting' }: HeroSection
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-8">
             <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-2 rounded-lg text-sm md:text-base">
               <Icon name="Calendar" className="text-primary flex-shrink-0" size={18} />
-              <span className="whitespace-nowrap">Пробное: {content.trial_date ? formatDate(content.trial_date) : '25 марта 2026'}</span>
+              <span className="whitespace-nowrap">Пробное: {content.trial_date ? formatDate(content.trial_date) : 'дата уточняется'}</span>
             </div>
             {!isTrial && (
               <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-2 rounded-lg text-sm md:text-base">
                 <Icon name="PlayCircle" className="text-primary flex-shrink-0" size={18} />
-                <span className="whitespace-nowrap">Старт: {content.course_start_date ? formatDate(content.course_start_date) : '1 апреля 2026'}</span>
+                <span className="whitespace-nowrap">Старт: {content.course_start_date ? formatDate(content.course_start_date) : 'дата уточняется'}</span>
               </div>
             )}
             {isTrial && (

@@ -188,7 +188,7 @@ export default function ActingCardsPage() {
                     size={18}
                   />
                   <span>
-                    Старт: {content.acting_cards_start_date ? formatDate(content.acting_cards_start_date) : '15 марта 2026'}
+                    Старт: {content.acting_cards_start_date ? formatDate(content.acting_cards_start_date) : 'дата уточняется'}
                   </span>
                 </div>
               </div>
