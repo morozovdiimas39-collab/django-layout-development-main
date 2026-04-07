@@ -10,8 +10,11 @@ export const API_URLS = {
   analyzeNote: 'https://functions.yandexcloud.net/d4edf6r0o36gh78pctr0',
   /** Конструктор ботов в админке (создай функцию admin-bot-studio и подставь URL) */
   botStudio: 'https://functions.yandexcloud.net/REPLACE_ADMIN_BOT_STUDIO',
-  /** CRUD черновиков ботов — отдельная функция backend/chat-bots */
-  chatBots: 'https://functions.yandexcloud.net/REPLACE_CHAT_BOTS',
+  /**
+   * CRUD черновиков ботов — используем наш серверный прокси, чтобы не упираться в CORS из браузера.
+   * Route: `app/api/chat-bots/route.ts`
+   */
+  chatBots: '/api/chat-bots',
 };
 
 export interface SiteContent {
@@ -185,11 +188,23 @@ export const api = {
       const response = await fetch(API_URLS.chatBots, {
         headers: { 'X-Auth-Token': token },
       });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots ${response.status}`);
+      const text = await response.text().catch(() => '');
+      let data: unknown = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
       }
-      return Array.isArray(data) ? data : [];
+      if (!response.ok) {
+        const detail =
+          (data && typeof data === 'object' && 'error' in data && typeof (data as any).error === 'string')
+            ? (data as any).error
+            : text
+              ? text
+              : `chatBots ${response.status}`;
+        throw new Error(detail);
+      }
+      return Array.isArray(data) ? (data as ChatBot[]) : [];
     },
     create: async (payload: Partial<ChatBot>, token: string): Promise<ChatBot> => {
       const response = await fetch(API_URLS.chatBots, {
@@ -197,9 +212,21 @@ export const api = {
         headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
         body: JSON.stringify(payload),
       });
-      const data = await response.json().catch(() => ({}));
+      const text = await response.text().catch(() => '');
+      let data: unknown = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
+      }
       if (!response.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots create ${response.status}`);
+        const detail =
+          (data && typeof data === 'object' && 'error' in data && typeof (data as any).error === 'string')
+            ? (data as any).error
+            : text
+              ? text
+              : `chatBots create ${response.status}`;
+        throw new Error(detail);
       }
       return data as ChatBot;
     },
@@ -209,9 +236,21 @@ export const api = {
         headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
         body: JSON.stringify(bot),
       });
-      const data = await response.json().catch(() => ({}));
+      const text = await response.text().catch(() => '');
+      let data: unknown = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
+      }
       if (!response.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots update ${response.status}`);
+        const detail =
+          (data && typeof data === 'object' && 'error' in data && typeof (data as any).error === 'string')
+            ? (data as any).error
+            : text
+              ? text
+              : `chatBots update ${response.status}`;
+        throw new Error(detail);
       }
       return data as ChatBot;
     },
@@ -221,9 +260,21 @@ export const api = {
         headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
         body: JSON.stringify({ id }),
       });
-      const data = await response.json().catch(() => ({}));
+      const text = await response.text().catch(() => '');
+      let data: unknown = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
+      }
       if (!response.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : `chatBots delete ${response.status}`);
+        const detail =
+          (data && typeof data === 'object' && 'error' in data && typeof (data as any).error === 'string')
+            ? (data as any).error
+            : text
+              ? text
+              : `chatBots delete ${response.status}`;
+        throw new Error(detail);
       }
     },
   },

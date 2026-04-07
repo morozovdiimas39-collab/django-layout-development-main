@@ -82,6 +82,28 @@ jobs:
             --source-path=backend/auto-blog \
             || true
 
+      - name: Deploy chat-bots function
+        run: |
+          yc serverless function version create \
+            --function-name=chat-bots \
+            --runtime=python312 \
+            --entrypoint=handler \
+            --memory=256m \
+            --execution-timeout=60 \
+            --source-path=backend/chat-bots \
+            || true
+
+      - name: Deploy run-migrations function
+        run: |
+          yc serverless function version create \
+            --function-name=run-migrations \
+            --runtime=python312 \
+            --entrypoint=handler \
+            --memory=256m \
+            --execution-timeout=60 \
+            --source-path=backend/run-migrations \
+            || true
+
       - name: Deploy sitemap function
         run: |
           yc serverless function version create \

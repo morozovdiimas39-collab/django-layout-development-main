@@ -290,6 +290,12 @@ def handler(event: dict, context) -> dict:
     start_photo = os.environ.get("TELEGRAM_START_PHOTO_URL") or os.environ.get("TELEGRAM_START_PHOTO_FILE_ID") or ""
     start_video = os.environ.get("TELEGRAM_START_VIDEO_URL") or os.environ.get("TELEGRAM_START_VIDEO_FILE_ID") or ""
 
+    # Если подключено: берём текст ответа после /start из облачной функции `chat-bots`
+    # (админка "Боты" редактирует таблицу chat_bots).
+    chat_bots_api_url = os.environ.get("CHAT_BOTS_API_URL") or ""
+    chat_bots_api_token = os.environ.get("CHAT_BOTS_API_TOKEN") or ""
+    chat_bot_active_id_raw = os.environ.get("CHAT_BOT_ACTIVE_ID") or ""
+
     if not token:
         return {
             "statusCode": 500,
@@ -323,14 +329,69 @@ def handler(event: dict, context) -> dict:
         chat_id = message["chat"]["id"]
         text = (message.get("text") or "").strip()
 
-        start_reply = (
+        start_reply_default = (
             "Здравствуйте! 👋 Рады видеть вас!\n\n"
             "Курс ораторского «Я говорю, меня слышат» — это про то, чтобы вас действительно слышали: сильный голос, уверенность перед любой аудиторией, победа над страхом выступлений. Это выгодно и для карьеры, и для жизни — презентации, переговоры, просто уверенная речь. ✨\n\n"
             "На пробном занятии вы познакомитесь с педагогом и методикой, попробуете упражнения на голос и дыхание, почувствуете атмосферу. Бесплатно и ни к чему не обязывает. 🎤\n\n"
             "Есть вопросы? Или записать вас на пробное? 💬"
         )
+
+        start_reply = start_reply_default
+
+        def _fetch_chat_bots() -> list:
+            """
+            Получить список ботов из облачной функции `chat-bots`.
+            Если функция не подключена/не настроена — вернёт пустой список.
+            """
+            if not chat_bots_api_url or not chat_bots_api_token:
+                return []
+            try:
+                r = requests.get(
+                    chat_bots_api_url,
+                    headers={"X-Auth-Token": chat_bots_api_token},
+                    timeout=10,
+                )
+                if r.status_code != 200:
+                    return []
+                data = r.json()
+                return data if isinstance(data, list) else []
+            except Exception as e:
+                print(f"[chat-bots] fetch failed: {e}")
+                return []
+
+        def _get_start_message_from_chat_bots() -> Optional[str]:
+            bots = _fetch_chat_bots()
+            if not bots:
+                return None
+
+            chosen = None
+            if chat_bot_active_id_raw:
+                try:
+                    active_id = int(chat_bot_active_id_raw)
+                    for b in bots:
+                        try:
+                            if int(b.get("id")) == active_id:
+                                chosen = b
+                                break
+                        except Exception:
+                            continue
+                except ValueError:
+                    chosen = None
+
+            # Если конкретный бот не найден — используем первый (функция уже сортирует по order_num, id).
+            if chosen is None:
+                chosen = bots[0]
+
+            if not isinstance(chosen, dict):
+                return None
+            return chosen.get("start_message") or chosen.get("system_prompt") or None
+
         # /start — сразу отправляем ответ (текст или фото/видео с подписью)
         if text == "/start":
+            maybe_start_message = _get_start_message_from_chat_bots()
+            if maybe_start_message:
+                start_reply = maybe_start_message
+
             if start_photo:
                 _send_telegram_photo(token, chat_id, start_photo.strip(), start_reply, proxy_url)
             elif start_video:

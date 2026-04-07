@@ -40,10 +40,8 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml', sizes: 'any' },
-      { url: '/favicon.ico', sizes: '48x48' },
-    ],
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml', sizes: 'any' }],
+    shortcut: ['/favicon.svg'],
     apple: '/favicon.svg',
   },
 };
@@ -57,7 +55,7 @@ export default function RootLayout({
     <html lang="ru" className={`${inter.variable} ${montserrat.variable}`}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
         {/* Логотип в шапке — реальный ранний запрос; API Yandex Cloud грузится после гидрации, preconnect к нему даёт «неиспользуемое подключение» в PSI */}
         <link rel="preconnect" href="https://i.1.creatium.io" />
         <link rel="dns-prefetch" href="https://maps.yastatic.net" />

@@ -4,7 +4,8 @@
 """
 import json
 import os
-import psycopg2
+from urllib.parse import urlparse
+import pg8000
 from datetime import datetime
 from xml.sax.saxutils import escape
 
@@ -50,7 +51,14 @@ def handler(event: dict, context) -> dict:
         if not dsn:
             print("[sitemap] DATABASE_URL not set")
         else:
-            conn = psycopg2.connect(dsn)
+            parsed = urlparse(dsn)
+            conn = pg8000.connect(
+                user=parsed.username or "postgres",
+                password=parsed.password or "",
+                host=parsed.hostname or "localhost",
+                port=parsed.port or 5432,
+                database=(parsed.path or "").lstrip("/") or "postgres",
+            )
             cur = conn.cursor()
             search_path = os.environ.get("DB_SEARCH_PATH", "t_p90119217_django_layout_develo, public")
             cur.execute(f"SET search_path TO {search_path}")

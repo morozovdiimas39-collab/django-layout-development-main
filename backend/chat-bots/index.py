@@ -13,8 +13,8 @@ import json
 import os
 from typing import Any, Dict, Optional
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import pg8000
+from urllib.parse import urlparse
 
 
 def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
@@ -68,18 +68,44 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
 
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"])
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        parsed = urlparse(os.environ["DATABASE_URL"])
+        conn = pg8000.connect(
+            user=parsed.username or "postgres",
+            password=parsed.password or "",
+            host=parsed.hostname or "localhost",
+            port=parsed.port or 5432,
+            database=(parsed.path or "").lstrip("/") or "postgres",
+        )
+        conn.autocommit = False
+        cur = conn.cursor()
         cur.execute("SET search_path TO public, t_p90119217_django_layout_develo")
 
         json_headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
         if method == "GET":
-            cur.execute("SELECT * FROM chat_bots ORDER BY order_num, id")
-            rows = [dict(r) for r in cur.fetchall()]
+            cur.execute(
+                """
+                SELECT id, name, start_message, order_num, created_at, updated_at
+                FROM chat_bots
+                ORDER BY order_num, id
+                """
+            )
+            rows = cur.fetchall()
+            out = []
+            for r in rows:
+                out.append(
+                    {
+                        "id": r[0],
+                        "name": r[1],
+                        "start_message": r[2],
+                        "order_num": r[3],
+                        "created_at": r[4],
+                        "updated_at": r[5],
+                    }
+                )
             cur.close()
             conn.close()
-            return {"statusCode": 200, "headers": json_headers, "body": json.dumps(rows, default=str)}
+            return {"statusCode": 200, "headers": json_headers, "body": json.dumps(out, default=str)}
 
         if method == "POST":
             body = _parse_body(event)
@@ -88,12 +114,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             order_num = body.get("order_num")
             if order_num is None:
                 cur.execute("SELECT COALESCE(MAX(order_num), -1) + 1 AS n FROM chat_bots")
-                order_num = cur.fetchone()["n"]
+                order_num = cur.fetchone()[0]
             cur.execute(
                 """
                 INSERT INTO chat_bots (name, start_message, order_num)
                 VALUES (%s, %s, %s)
-                RETURNING *
+                RETURNING id, name, start_message, order_num, created_at, updated_at
                 """,
                 (name, start_message, int(order_num)),
             )
@@ -101,7 +127,23 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             conn.commit()
             cur.close()
             conn.close()
-            return {"statusCode": 201, "headers": json_headers, "body": json.dumps(dict(row), default=str)}
+            # pg8000 возвращает tuple
+            # ожидаем порядок колонок как в SELECT *: id, name, start_message, order_num, created_at, updated_at
+            return {
+                "statusCode": 201,
+                "headers": json_headers,
+                "body": json.dumps(
+                    {
+                        "id": row[0],
+                        "name": row[1],
+                        "start_message": row[2],
+                        "order_num": row[3],
+                        "created_at": row[4],
+                        "updated_at": row[5],
+                    },
+                    default=str,
+                ),
+            }
 
         if method == "PUT":
             body = _parse_body(event)
@@ -132,7 +174,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     order_num = %s,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
-                RETURNING *
+                RETURNING id, name, start_message, order_num, created_at, updated_at
                 """,
                 (
                     (body.get("name") or "Бот").strip() or "Бот",
@@ -147,7 +189,21 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             conn.close()
             if not row:
                 return {"statusCode": 404, "headers": json_headers, "body": json.dumps({"error": "Not found"})}
-            return {"statusCode": 200, "headers": json_headers, "body": json.dumps(dict(row), default=str)}
+            return {
+                "statusCode": 200,
+                "headers": json_headers,
+                "body": json.dumps(
+                    {
+                        "id": row[0],
+                        "name": row[1],
+                        "start_message": row[2],
+                        "order_num": row[3],
+                        "created_at": row[4],
+                        "updated_at": row[5],
+                    },
+                    default=str,
+                ),
+            }
 
         if method == "DELETE":
             params = event.get("queryStringParameters") or {}

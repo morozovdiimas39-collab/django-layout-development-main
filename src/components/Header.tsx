@@ -92,7 +92,7 @@ export default function Header() {
       description: 'Обучение актёрскому мастерству, работа на камеру',
       trial: {
         href: '/acting/probnoe',
-        label: 'Бесплатное пробное занятие',
+        label: 'Пробное занятие',
         description: 'Тот же зал и преподаватель — без оплаты за первый визит',
       },
     },

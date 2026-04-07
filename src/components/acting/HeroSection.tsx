@@ -10,10 +10,10 @@ const DEFAULT_HERO_SUBTITLE = 'Запишитесь на пробное заня
 const DEFAULT_HERO_DESCRIPTION =
   'Профессиональное обучение от режиссера Казбека Меретукова. Преодолейте страх камеры, обретите уверенность и снимите свое настоящее кино с прослушиванием!';
 
-const TRIAL_HERO_TITLE = 'Бесплатное пробное занятие по актёрскому мастерству в Москве';
-const TRIAL_HERO_SUBTITLE = 'Тот же зал, преподаватель и формат, что и на основном курсе — без оплаты за первый визит';
+const TRIAL_HERO_TITLE = 'Пробное занятие по актерскому мастерству в Москве!';
+const TRIAL_HERO_SUBTITLE = '';
 const TRIAL_HERO_DESCRIPTION =
-  'Приходите познакомиться со школой, группой и режиссёром Казбеком Меретуковым. Короткая работа в зале, ответы на вопросы — и решение, идти ли в полную программу курса.';
+  'На занятии вы познакомитесь с преподавателем и группой, узнаете несколько рабочих секретов актёрского мастерства, погрузитесь в процесс и поймёте, подходит ли вам этот формат обучения.';
 
 const TelegramIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
@@ -38,7 +38,7 @@ export default function HeroSection({ content, variant = 'acting' }: HeroSection
           src="https://cdn.poehali.dev/projects/d006fe31-f11a-48d3-ba82-54149e58d318/files/0c090e0f-2880-4f27-8c3e-d4c43afc5fda.jpg"
           alt={
             isTrial
-              ? 'Бесплатное пробное занятие по актёрскому мастерству в Москве — школа Казбека Меретукова'
+              ? 'Пробное занятие по актерскому мастерству в Москве — школа Казбека Меретукова'
               : 'Курсы актерского мастерства Москва — занятия актерским мастерством, школа Казбека Меретукова'
           }
           className="w-full h-full object-cover"
@@ -70,29 +70,20 @@ export default function HeroSection({ content, variant = 'acting' }: HeroSection
               <Icon name="Calendar" className="text-primary flex-shrink-0" size={18} />
               <span className="whitespace-nowrap">Пробное: {content.trial_date ? formatDate(content.trial_date) : 'дата уточняется'}</span>
             </div>
-            {!isTrial && (
+            {content.course_start_date && (
               <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-2 rounded-lg text-sm md:text-base">
                 <Icon name="PlayCircle" className="text-primary flex-shrink-0" size={18} />
-                <span className="whitespace-nowrap">Старт: {content.course_start_date ? formatDate(content.course_start_date) : 'дата уточняется'}</span>
+                <span className="whitespace-nowrap">Старт: {formatDate(content.course_start_date)}</span>
               </div>
-            )}
-            {isTrial && (
-              <Link
-                href="/acting"
-                className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-2 rounded-lg text-sm md:text-base hover:bg-card transition-colors"
-              >
-                <Icon name="GraduationCap" className="text-primary flex-shrink-0" size={18} />
-                <span className="whitespace-nowrap">Полный курс — программа и сроки</span>
-              </Link>
             )}
           </div>
           <div className="inline-flex flex-col gap-3">
             <PhoneForm 
               source={isTrial ? 'hero_acting_trial' : 'hero_acting'}
               course="acting"
-              triggerText={isTrial ? 'Записаться на бесплатное пробное' : 'Записаться на пробный урок'}
+              triggerText={isTrial ? 'Записаться на пробное занятие' : 'Записаться на пробный урок'}
               triggerSize="lg"
-              title={isTrial ? 'Запись на бесплатное пробное' : 'Запись на пробное занятие'}
+              title={isTrial ? 'Запись на пробное занятие' : 'Запись на пробное занятие'}
               description={
                 isTrial
                   ? 'Оставьте номер — пригласим на пробное в том же формате, что и основной курс'
