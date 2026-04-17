@@ -101,6 +101,9 @@ export interface BlogPost {
   slug?: string;
   content: string;
   excerpt?: string;
+  /** Переопределение <title> и сниппета для поиска (если пусто — берутся title и excerpt) */
+  seo_title?: string;
+  seo_description?: string;
   cover_image_url?: string;
   image_url?: string;
   author?: string;

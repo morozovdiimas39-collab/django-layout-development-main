@@ -17,6 +17,28 @@ def _update_sitemap():
         print(f"[gallery] Error updating sitemap: {e}")
 
 
+# Транслитерация slug в латиницу (URL без кириллицы)
+_RU_TO_LAT = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+}
+
+
+def _slugify_latin(text: str) -> str:
+    import re
+    t = (text or '').lower().strip()
+    out = []
+    for ch in t:
+        out.append(_RU_TO_LAT.get(ch, ch))
+    s = ''.join(out)
+    s = re.sub(r'[^a-z0-9]+', '-', s)
+    s = re.sub(r'-+', '-', s).strip('-')[:200]
+    return s or 'post'
+
+
 def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     body = event.get('body') or '{}'
     if isinstance(body, dict):
@@ -198,18 +220,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     (body_data.get('question'), body_data.get('answer'), body_data.get('order_num', 0))
                 )
             elif resource == 'blog':
-                import re
                 title = (body_data.get('title') or '').strip() or 'Без названия'
                 content = body_data.get('content') or ''
-                slug = (body_data.get('slug') or '').strip()
-                if not slug:
-                    slug = re.sub(r'[^\w\s-]', '', title.lower())
-                    slug = re.sub(r'[\s_-]+', '-', slug).strip('-')[:200] or 'post'
+                slug_raw = (body_data.get('slug') or '').strip()
+                slug = _slugify_latin(slug_raw) if slug_raw else _slugify_latin(title)
                 excerpt = body_data.get('excerpt') or ''
                 image_url = body_data.get('image_url') or ''
+                seo_title = (body_data.get('seo_title') or '').strip()
+                seo_description = (body_data.get('seo_description') or '').strip()
                 cur.execute(
-                    "INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published) VALUES (%s, %s, %s, %s, %s, %s) RETURNING *",
-                    (title, slug, content, excerpt, image_url, body_data.get('published', False))
+                    "INSERT INTO blog_posts (title, slug, content, excerpt, image_url, published, seo_title, seo_description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *",
+                    (title, slug, content, excerpt, image_url, body_data.get('published', False), seo_title or None, seo_description or None)
                 )
             elif resource == 'team':
                 cur.execute(
@@ -279,10 +300,37 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 )
             elif resource == 'blog':
                 image_url = body_data.get('image_url') or ''
-                cur.execute(
-                    "UPDATE blog_posts SET title = %s, content = %s, excerpt = %s, image_url = %s WHERE id = %s RETURNING *",
-                    (body_data.get('title'), body_data.get('content'), body_data.get('excerpt'), image_url, item_id)
-                )
+                seo_title = body_data.get('seo_title')
+                seo_description = body_data.get('seo_description')
+                new_slug_raw = (body_data.get('slug') or '').strip()
+                new_slug = _slugify_latin(new_slug_raw) if new_slug_raw else None
+                if new_slug:
+                    cur.execute(
+                        "UPDATE blog_posts SET title = %s, content = %s, excerpt = %s, image_url = %s, slug = %s, seo_title = %s, seo_description = %s WHERE id = %s RETURNING *",
+                        (
+                            body_data.get('title'),
+                            body_data.get('content'),
+                            body_data.get('excerpt'),
+                            image_url,
+                            new_slug,
+                            (seo_title or '').strip() or None,
+                            (seo_description or '').strip() or None,
+                            item_id,
+                        ),
+                    )
+                else:
+                    cur.execute(
+                        "UPDATE blog_posts SET title = %s, content = %s, excerpt = %s, image_url = %s, seo_title = %s, seo_description = %s WHERE id = %s RETURNING *",
+                        (
+                            body_data.get('title'),
+                            body_data.get('content'),
+                            body_data.get('excerpt'),
+                            image_url,
+                            (seo_title or '').strip() or None,
+                            (seo_description or '').strip() or None,
+                            item_id,
+                        ),
+                    )
             elif resource == 'faq':
                 cur.execute(
                     "UPDATE faq SET question = %s, answer = %s, order_num = %s WHERE id = %s RETURNING *",

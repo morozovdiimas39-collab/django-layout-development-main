@@ -11,6 +11,7 @@ import { SiteContent } from '@/lib/api';
 /** Все известные ключи контента — можно добавить, даже если в БД их ещё нет */
 export const ALL_CONTENT_KEYS = [
   'phone', 'email', 'address', 'working_hours',
+  'lead_notifications_email',
   'instagram_url', 'youtube_url', 'telegram_url', 'whatsapp_url',
   'trial_date', 'course_start_date', 'oratory_trial_date', 'oratory_course_start_date', 'acting_cards_start_date',
   'hero_video_url', 'final_video_url', 'map_embed', 'kazbek_bio', 'olga_bio',
@@ -33,6 +34,7 @@ const getContentLabel = (key: string): string => {
   const labels: Record<string, string> = {
     'phone': 'Телефон',
     'email': 'Email',
+    'lead_notifications_email': 'Email для уведомлений о заявках',
     'address': 'Адрес',
     'working_hours': 'Режим работы',
     'instagram_url': 'Instagram',

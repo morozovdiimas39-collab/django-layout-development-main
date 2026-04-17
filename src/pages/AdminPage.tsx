@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api, Lead, SiteContent, CourseModule, FAQ, Review, GalleryImage, BlogPost, TeamMember } from '@/lib/api';
 import { toast } from '@/components/ui/use-toast';
 import LoginForm from '@/components/admin/LoginForm';
@@ -65,8 +65,19 @@ export default function AdminPage() {
     title: '',
     excerpt: '',
     content: '',
-    image_url: ''
+    image_url: '',
+    slug: '',
+    seo_title: '',
+    seo_description: '',
   });
+
+  const handleNewBlogPostChange = useCallback((field: string, value: string) => {
+    setNewBlogPost((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleEditingBlogPostChange = useCallback((field: string, value: string) => {
+    setEditingBlogPost((prev) => (prev ? { ...prev, [field]: value } : null));
+  }, []);
 
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null);
@@ -447,7 +458,15 @@ export default function AdminPage() {
     try {
       await api.gallery.createBlogPost(newBlogPost, token);
       await loadData(token);
-      setNewBlogPost({ title: '', excerpt: '', content: '', image_url: '' });
+      setNewBlogPost({
+        title: '',
+        excerpt: '',
+        content: '',
+        image_url: '',
+        slug: '',
+        seo_title: '',
+        seo_description: '',
+      });
       toast({ title: 'Статья добавлена' });
     } catch (error) {
       console.error('Error creating blog post:', error);
@@ -607,8 +626,8 @@ export default function AdminPage() {
                 onGenerate={handleGenerateBlogPost}
                 newBlogPost={newBlogPost}
                 editingBlogPost={editingBlogPost}
-                onNewPostChange={(field, value) => setNewBlogPost({ ...newBlogPost, [field]: value })}
-                onEditingPostChange={(field, value) => setEditingBlogPost(editingBlogPost ? { ...editingBlogPost, [field]: value } : null)}
+                onNewPostChange={handleNewBlogPostChange}
+                onEditingPostChange={handleEditingBlogPostChange}
                 onCreate={handleCreateBlogPost}
                 onUpdate={handleUpdateBlogPost}
                 onDelete={handleDeleteBlogPost}

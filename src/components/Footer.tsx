@@ -135,9 +135,15 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground text-center md:text-left">
             © {new Date().getFullYear()} Школа Казбека Меретукова. Все права защищены.
           </p>
-          <div className="flex gap-4 text-sm">
-            <a href="/admin" className="text-muted-foreground hover:text-primary transition">
-              Админка
+          <div className="text-sm text-muted-foreground text-center">
+            Сайт и реклама:{' '}
+            <a
+              href="https://0101.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              0101.studio
             </a>
           </div>
         </div>

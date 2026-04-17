@@ -6,9 +6,76 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 import urllib.request
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 BOT_TOKEN = "8238321643:AAEV7kBinohHb-RSLah7VSBJ2XSsXTQUpW4"
 ADMIN_CHAT_ID = os.environ.get('TELEGRAM_ADMIN_CHAT_ID', '')
+
+
+def get_lead_notification_email(cur) -> str:
+    """Берем email для уведомлений из настроек сайта."""
+    cur.execute(
+        """
+        SELECT value
+        FROM site_content
+        WHERE key IN ('lead_notifications_email', 'email')
+          AND COALESCE(NULLIF(TRIM(value), ''), '') <> ''
+        ORDER BY CASE WHEN key = 'lead_notifications_email' THEN 0 ELSE 1 END
+        LIMIT 1
+        """
+    )
+    row = cur.fetchone()
+    if not row:
+        return ''
+    return (row.get('value') or '').strip()
+
+
+def send_email_notification(lead: dict, recipient_email: str):
+    """Отправка email-уведомления о новой заявке."""
+    smtp_host = os.environ.get('SMTP_HOST')
+    smtp_user = os.environ.get('SMTP_USER')
+    smtp_password = os.environ.get('SMTP_PASSWORD')
+    smtp_from = os.environ.get('SMTP_FROM_EMAIL') or smtp_user
+    smtp_port = int(os.environ.get('SMTP_PORT', '465'))
+
+    if not smtp_host or not smtp_user or not smtp_password or not smtp_from:
+        raise RuntimeError('SMTP settings are not configured')
+
+    created_at = lead.get('created_at')
+    if isinstance(created_at, str):
+        created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+
+    if not isinstance(created_at, datetime):
+        created_at = datetime.now()
+
+    course_name = (
+        'Актерское мастерство' if lead.get('course') == 'acting'
+        else 'Ораторское искусство' if lead.get('course') == 'oratory'
+        else 'Не указан'
+    )
+
+    subject = f"Новая заявка #{lead.get('id')}"
+    html = f"""
+    <h2>Новая заявка с сайта</h2>
+    <p><b>ID:</b> {lead.get('id')}</p>
+    <p><b>Имя:</b> {lead.get('name') or 'Не указано'}</p>
+    <p><b>Телефон:</b> {lead.get('phone')}</p>
+    <p><b>Курс:</b> {course_name}</p>
+    <p><b>Источник:</b> {lead.get('source') or 'website'}</p>
+    <p><b>Дата:</b> {created_at.strftime('%d.%m.%Y %H:%M')}</p>
+    """
+
+    message = MIMEMultipart('alternative')
+    message['Subject'] = subject
+    message['From'] = smtp_from
+    message['To'] = recipient_email
+    message.attach(MIMEText(html, 'html', 'utf-8'))
+
+    with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=20) as server:
+        server.login(smtp_user, smtp_password)
+        server.sendmail(smtp_from, [recipient_email], message.as_string())
 
 def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     body = event.get('body') or '{}'
@@ -159,6 +226,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             )
             lead = cur.fetchone()
             conn.commit()
+
+            try:
+                notification_email = get_lead_notification_email(cur)
+                if notification_email:
+                    send_email_notification(dict(lead), notification_email)
+            except Exception as e:
+                print(f"Failed to send email notification: {e}")
             
             if ADMIN_CHAT_ID:
                 try:

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import BlogPostPage from '@/pages/BlogPostPage';
 import { API_URLS, type BlogPost } from '@/lib/api';
+import { stripHtmlForDescription } from '@/lib/blog-content';
 
 const SITE_BASE = 'https://kazbek-meretukov.ru';
 
@@ -72,26 +73,40 @@ export async function generateMetadata({
       robots: { index: false, follow: false },
     };
   }
-  const title = post.title;
-  const rawDesc = post.excerpt || post.content?.substring(0, 160) || '';
+  /** Заголовок для поиска и вкладки (может отличаться от H1 на странице) */
+  const metaTitle = post.seo_title?.trim() || post.title;
+  const rawDesc =
+    post.seo_description?.trim() ||
+    post.excerpt?.trim() ||
+    stripHtmlForDescription(post.content || '', 200);
   const trimmed = rawDesc.trim();
   const clipped = trimmed.length > 155 ? `${trimmed.slice(0, 152)}…` : trimmed;
   const description =
     clipped ||
-    `Статья «${title}» — блог школы Казбека Меретукова.`.slice(0, 160);
+    `Статья «${metaTitle}» — блог школы Казбека Меретукова.`.slice(0, 160);
   const url = `${SITE_BASE}/blog/${post.slug || slug}`;
+  const ogImage = post.image_url || post.cover_image_url;
 
   return {
-    title,
+    title: `${metaTitle} | Блог`,
     description,
     alternates: { canonical: url },
     openGraph: {
       url,
-      title: post.title,
+      title: metaTitle,
       description,
       type: 'article',
-      images: post.image_url || post.cover_image_url ? [post.image_url || post.cover_image_url] : undefined,
+      locale: 'ru_RU',
+      siteName: 'Школа Казбека Меретукова',
+      images: ogImage ? [{ url: ogImage, alt: post.title }] : undefined,
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: metaTitle,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -103,5 +118,39 @@ export default async function Page({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  return <BlogPostPage slug={slug} initialPost={post} />;
+  const articleUrl = `${SITE_BASE}/blog/${post.slug || slug}`;
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Главная',
+        item: `${SITE_BASE}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Блог',
+        item: `${SITE_BASE}/blog`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: articleUrl,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <BlogPostPage slug={slug} initialPost={post} />
+    </>
+  );
 }

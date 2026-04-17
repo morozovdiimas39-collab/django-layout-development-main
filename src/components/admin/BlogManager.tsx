@@ -8,7 +8,9 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { BlogPost } from '@/lib/api';
 import { sampleArticles } from '@/lib/sample-articles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import BlogMarkdownEditor from '@/components/admin/BlogMarkdownEditor';
+import { slugifyLatin } from '@/lib/slugify';
 
 interface BlogManagerProps {
   blog: BlogPost[];
@@ -18,6 +20,9 @@ interface BlogManagerProps {
     excerpt: string;
     content: string;
     image_url: string;
+    slug: string;
+    seo_title: string;
+    seo_description: string;
   };
   editingBlogPost: BlogPost | null;
   onNewPostChange: (field: string, value: string) => void;
@@ -46,6 +51,20 @@ export default function BlogManager({
 }: BlogManagerProps) {
   const [loadingSamples, setLoadingSamples] = useState(false);
   const [loadingGenerate, setLoadingGenerate] = useState(false);
+  /** Пользователь сам правил slug у новой статьи — не перезаписывать при смене заголовка */
+  const [newSlugManual, setNewSlugManual] = useState(false);
+
+  useEffect(() => {
+    if (!newBlogPost.title.trim() && !newBlogPost.content.trim()) {
+      setNewSlugManual(false);
+    }
+  }, [newBlogPost.title, newBlogPost.content]);
+
+  useEffect(() => {
+    if (newSlugManual) return;
+    const t = newBlogPost.title.trim();
+    onNewPostChange('slug', t ? slugifyLatin(t) : '');
+  }, [newBlogPost.title, newSlugManual, onNewPostChange]);
 
   const handleGenerate = async () => {
     if (!onGenerate) return;
@@ -116,17 +135,59 @@ export default function BlogManager({
             />
           </div>
           <div>
-            <Label className="text-slate-700">Полный текст</Label>
-            <Textarea
-              value={newBlogPost.content}
-              onChange={(e) => onNewPostChange('content', e.target.value)}
-              placeholder="Полный текст статьи..."
-              rows={6}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Label className="text-slate-700">URL (slug, только латиница)</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => {
+                  setNewSlugManual(false);
+                  onNewPostChange('slug', slugifyLatin(newBlogPost.title));
+                }}
+              >
+                Из заголовка
+              </Button>
+            </div>
+            <Input
+              value={newBlogPost.slug}
+              onChange={(e) => {
+                setNewSlugManual(true);
+                onNewPostChange('slug', e.target.value);
+              }}
+              placeholder="generiruetsya-iz-zagolovka"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+            />
+            <p className="text-xs text-slate-500 mt-1">
+              Пока вы не меняли поле вручную, slug обновляется из заголовка. При сохранении на сервере кириллица всё равно станет латиницей.
+            </p>
+          </div>
+          <div>
+            <Label className="text-slate-700">SEO: заголовок для поиска (необязательно)</Label>
+            <Input
+              value={newBlogPost.seo_title}
+              onChange={(e) => onNewPostChange('seo_title', e.target.value)}
+              placeholder="Если пусто — как основной заголовок"
               className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div>
-            <Label className="text-slate-700">URL изображения</Label>
+            <Label className="text-slate-700">SEO: описание для сниппета (необязательно)</Label>
+            <Textarea
+              value={newBlogPost.seo_description}
+              onChange={(e) => onNewPostChange('seo_description', e.target.value)}
+              placeholder="150–160 символов; если пусто — из краткого описания или текста"
+              rows={2}
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+            />
+          </div>
+          <div>
+            <Label className="text-slate-700">Текст статьи</Label>
+            <BlogMarkdownEditor value={newBlogPost.content} onChange={(v) => onNewPostChange('content', v)} />
+          </div>
+          <div>
+            <Label className="text-slate-700">Обложка: URL изображения</Label>
             <Input
               value={newBlogPost.image_url}
               onChange={(e) => onNewPostChange('image_url', e.target.value)}
@@ -178,18 +239,54 @@ export default function BlogManager({
                         />
                       </div>
                       <div>
-                        <Label className="text-slate-700">Полный текст</Label>
-                        <Textarea
-                          value={editingBlogPost.content}
-                          onChange={(e) => onEditingPostChange('content', e.target.value)}
-                          rows={6}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <Label className="text-slate-700">Slug (URL, латиница)</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() =>
+                              onEditingPostChange('slug', slugifyLatin(editingBlogPost.title))
+                            }
+                          >
+                            Из заголовка
+                          </Button>
+                        </div>
+                        <Input
+                          value={editingBlogPost.slug || ''}
+                          onChange={(e) => onEditingPostChange('slug', e.target.value)}
                           className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div>
-                        <Label className="text-slate-700">URL изображения</Label>
+                        <Label className="text-slate-700">SEO: заголовок для поиска</Label>
                         <Input
-                          value={editingBlogPost.image_url}
+                          value={editingBlogPost.seo_title || ''}
+                          onChange={(e) => onEditingPostChange('seo_title', e.target.value)}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-slate-700">SEO: описание (сниппет)</Label>
+                        <Textarea
+                          value={editingBlogPost.seo_description || ''}
+                          onChange={(e) => onEditingPostChange('seo_description', e.target.value)}
+                          rows={2}
+                          className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-slate-700">Текст статьи</Label>
+                        <BlogMarkdownEditor
+                          value={editingBlogPost.content}
+                          onChange={(v) => onEditingPostChange('content', v)}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-slate-700">Обложка: URL изображения</Label>
+                        <Input
+                          value={editingBlogPost.image_url || ''}
                           onChange={(e) => onEditingPostChange('image_url', e.target.value)}
                           className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400"
                         />

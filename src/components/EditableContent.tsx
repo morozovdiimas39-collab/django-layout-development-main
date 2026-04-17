@@ -29,12 +29,18 @@ export default function EditableContent({
 }: EditableContentProps) {
   const { isAuthenticated } = useAuth();
   const { getContent, updateContent, isLoading: globalLoading } = useContent();
+  const [mounted, setMounted] = useState(false);
+  const canEdit = mounted && isAuthenticated;
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const content = getContent(contentKey, defaultValue);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isEditing && type === 'textarea' && textareaRef.current) {
@@ -46,7 +52,7 @@ export default function EditableContent({
   }, [isEditing, type]);
 
   const saveContent = async (newValue: string) => {
-    if (!isAuthenticated) return;
+    if (!canEdit) return;
     
     try {
       setIsSaving(true);
@@ -106,7 +112,7 @@ export default function EditableContent({
     }
   };
 
-  if (!isAuthenticated) {
+  if (!canEdit) {
     if (globalLoading) {
       return <Component className={className}>{defaultValue}</Component>;
     }
