@@ -16,6 +16,12 @@ const Index = () => {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleContactSubmit = () => {
+    if (typeof window !== 'undefined' && (window as any)._tmr?.push) {
+      (window as any)._tmr.push({ type: 'reachGoal', id: 3753615, goal: 'send' });
+    }
+  };
+
   const courses = [
     {
       icon: 'Dumbbell',
@@ -346,7 +352,7 @@ const Index = () => {
           </div>
           <Card className="max-w-2xl mx-auto shadow-xl">
             <CardContent className="pt-6">
-              <form className="space-y-4">
+              <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Имя *</label>

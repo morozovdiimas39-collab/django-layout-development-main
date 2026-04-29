@@ -75,6 +75,9 @@ export default function PhoneForm({
       if (typeof window !== 'undefined' && (window as any).ym) {
         (window as any).ym(104854671, 'reachGoal', 'send_form');
       }
+      if (typeof window !== 'undefined' && (window as any)._tmr?.push) {
+        (window as any)._tmr.push({ type: 'reachGoal', id: 3753615, goal: 'send' });
+      }
       
       setTimeout(() => {
         setOpen(false);

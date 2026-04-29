@@ -67,6 +67,9 @@ export default function LeadForm({
       if (typeof window !== 'undefined' && (window as any).ym) {
         (window as any).ym(104854671, 'reachGoal', 'send_form');
       }
+      if (typeof window !== 'undefined' && (window as any)._tmr?.push) {
+        (window as any)._tmr.push({ type: 'reachGoal', id: 3753615, goal: 'send' });
+      }
       
       setTimeout(() => setSubmitted(false), 3000);
     } catch (error) {

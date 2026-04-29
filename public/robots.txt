@@ -1,10 +1,19 @@
 User-agent: *
 Allow: /
+
+# Закрываем служебные разделы
 Disallow: /admin
 Disallow: /settings
 Disallow: /metrika-goal
 
+# ❗ Закрываем мусорные URL
+Disallow: /null
+
+# ❗ Закрываем параметры (все)
+Disallow: /*?
+
 Sitemap: https://kazbek-meretukov.ru/sitemap.xml
+
 
 # Специфичные боты
 User-agent: Googlebot
@@ -12,16 +21,24 @@ Allow: /
 Disallow: /admin
 Disallow: /settings
 Disallow: /metrika-goal
+Disallow: /null
+Disallow: /*?
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /settings
 Disallow: /metrika-goal
+Disallow: /null
+Disallow: /*?
 
 User-agent: Yandex
 Allow: /
 Disallow: /admin
 Disallow: /settings
 Disallow: /metrika-goal
-Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&_ym_uid&_ym_d&_ym_is_ad&etext&ybaip
+Disallow: /null
+Disallow: /*?
+
+# Параметры для Яндекса
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&_ym_uid&_ym_d&_ym_is_ad&etext&ybaip&source_type

@@ -18,6 +18,9 @@ export default function LoginForm({ onLogin, loading }: LoginFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (typeof window !== 'undefined' && (window as any)._tmr?.push) {
+      (window as any)._tmr.push({ type: 'reachGoal', id: 3753615, goal: 'send' });
+    }
     await onLogin(username, password);
   };
 
