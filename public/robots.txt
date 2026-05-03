@@ -10,6 +10,7 @@ Disallow: /metrika-goal
 Disallow: /null
 
 # ❗ Закрываем параметры (все)
+Disallow: /null
 Disallow: /*?
 
 Sitemap: https://kazbek-meretukov.ru/sitemap.xml
